@@ -1,0 +1,17 @@
+{
+  "name": "aible-skills",
+  "description": "Aible AI 교육 강사 도구 모음 (박한민) — 강의·발표·교안 제작에 활용하는 Claude Code 플러그인",
+  "owner": {
+    "name": "aible-edu",
+    "url": "https://github.com/aible-edu"
+  },
+  "plugins": [
+    {
+      "name": "vanilla-slide",
+      "description": "순수 HTML/CSS/JavaScript로 풀스크린 웹 프레젠테이션 단일 파일 생성. 키보드·터치·풀스크린·진행바·data-step 빌드 효과 포함.",
+      "source": "./plugins/vanilla-slide",
+      "category": "education",
+      "tags": ["slides", "presentation", "html", "korean", "education", "single-file"]
+    }
+  ]
+}
