@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!-- ✏️ 교체: 문서 제목 -->
+<title>Vanilla Slide 템플릿</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+/* ================================================================
+   엔진 CSS — 슬라이드 콘텐츠용 클래스 외에는 수정하지 않는다.
+   팔레트 변경은 :root 변수 교체만으로 한다.
+   ================================================================ */
+:root {
+  --bg:             #F0F2F5;
+  --surface:        #FFFFFF;
+  --border:         #E2E8F0;
+  --text-primary:   #1A2332;
+  --text-secondary: #4A5568;
+  --text-muted:     #94A3B8;
+  --accent:         #4A8FDB;
+  --accent-light:   #BFDBF7;
+  --accent-dark:    #2563EB;
+  --shadow:         0 2px 12px rgba(26,35,50,0.07);
+  --shadow-lg:      0 8px 32px rgba(26,35,50,0.12);
+  --radius:         14px;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; }
+body {
+  font-family: 'Noto Sans KR', 'Inter', -apple-system, 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif;
+  background: var(--bg);
+  color: var(--text-primary);
+  overflow: hidden;
+  word-break: keep-all;          /* 한국어: 단어 중간 끊김 방지 */
+  overflow-wrap: break-word;
+  touch-action: pan-y;
+  overscroll-behavior: none;
+  -webkit-font-smoothing: antialiased;
+}
+[hidden] { display: none !important; }
+
+/* ---------- 슬라이드 레이어 ---------- */
+.slide {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 60px;
+  background: var(--bg);                /* 불투명 필수 — 정리 중인 뒷슬라이드 가림 */
+  transform: translateX(100%);          /* 기본: 오른쪽 대기 */
+  transition: transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  will-change: transform;
+}
+.slide.is-active  { transform: translateX(0); }
+.slide.exit-left  { transform: translateX(-100%); }
+.slide.exit-right { transform: translateX(100%); }
+body.is-animating { pointer-events: none; }   /* 전환 중 클릭 차단 */
+
+.slide__content { width: 100%; max-width: 1280px; }
+
+/* ---------- 타이포그래피 ---------- */
+.slide__tag {
+  font: 600 1.05rem 'Inter', sans-serif;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 20px;
+}
+.slide__title {
+  font-size: clamp(2.6rem, 5.2vw, 4.2rem);
+  font-weight: 700;
+  line-height: 1.18;
+  margin-bottom: 24px;
+}
+.slide__subtitle {
+  font-size: clamp(1.4rem, 2.9vw, 2rem);
+  font-weight: 400;
+  color: var(--text-secondary);
+  line-height: 1.4;
+  margin-bottom: 16px;
+}
+.slide__body {
+  font-size: clamp(1.3rem, 2.35vw, 1.5rem);
+  color: var(--text-secondary);
+  line-height: 1.65;
+  margin-bottom: 16px;
+}
+.slide__meta { font-size: 1.1rem; color: var(--text-muted); margin-top: 36px; }
+
+/* ---------- 리스트 (dot 정렬: align-items center 고정) ---------- */
+.slide__list { list-style: none; margin-top: 28px; }
+.slide__list li {
+  display: flex;
+  align-items: center;               /* flex-start + margin-top 금지 */
+  gap: 12px;
+  font-size: clamp(1.3rem, 2.35vw, 1.5rem);
+  color: var(--text-secondary);
+  line-height: 1.65;
+  padding: 10px 0;
+}
+.slide__list li::before {
+  content: '';
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  background: var(--accent);
+  flex-shrink: 0;
+}
+
+/* ---------- 카드 ---------- */
+.cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 24px;
+  margin-top: 36px;
+}
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 30px 28px;
+  box-shadow: var(--shadow);
+}
+.card__icon  { font-size: 2.6rem; margin-bottom: 14px; }
+.card__title { font-size: 1.35rem; font-weight: 700; margin-bottom: 10px; }
+.card__body  { font-size: 1.2rem; color: var(--text-secondary); line-height: 1.6; }
+
+/* ---------- 코드 블록 ---------- */
+.code-block {
+  background: #1A2332;
+  color: #E2E8F0;
+  border-radius: var(--radius);
+  padding: 26px 30px;
+  margin-top: 28px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 1.05rem;
+  line-height: 1.7;
+  overflow-x: auto;
+  box-shadow: var(--shadow-lg);
+}
+.code-block .cm { color: #94A3B8; }   /* 주석용 */
+
+/* ---------- 빌드 효과 ---------- */
+[data-step] {
+  opacity: 0;
+  transform: translateY(12px);
+  transition: opacity 0.35s, transform 0.35s;
+}
+[data-step].visible { opacity: 1; transform: translateY(0); }
+
+/* ---------- 진행바 · 카운터 · 네비 버튼 ---------- */
+#progressBar {
+  position: fixed; top: 0; left: 0;
+  width: 100%; height: 3px;
+  background: var(--border);
+  z-index: 100;
+}
+#progressFill { height: 100%; width: 0; background: var(--accent); transition: width 0.4s ease; }
+#slideCounter {
+  position: fixed; bottom: 20px; right: 24px;
+  font: 400 0.8rem 'Inter', sans-serif;
+  color: var(--text-muted);
+  z-index: 100;
+}
+.nav-btn {
+  position: fixed; bottom: 16px;
+  width: 40px; height: 40px;
+  border-radius: 50%;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text-secondary);
+  font-size: 1rem;
+  cursor: pointer;
+  z-index: 100;
+  opacity: 0.55;
+  transition: opacity 0.2s, color 0.2s;
+}
+.nav-btn:hover { opacity: 1; color: var(--accent); }
+#btnPrev { left: 24px; }
+#btnNext { left: 72px; }
+
+/* ---------- 목차 오버레이 (I 키) ---------- */
+#tocOverlay {
+  position: fixed; inset: 0;
+  background: rgba(26, 35, 50, 0.55);
+  backdrop-filter: blur(6px);
+  z-index: 200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.toc__panel {
+  background: var(--surface);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-lg);
+  width: min(720px, 90vw);
+  max-height: 80vh;
+  overflow-y: auto;
+  padding: 34px 38px;
+}
+.toc__title {
+  font: 600 0.8rem 'Inter', sans-serif;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-bottom: 18px;
+}
+#tocList { list-style: none; }
+#tocList button {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  width: 100%;
+  text-align: left;
+  padding: 12px 14px;
+  border: 0;
+  background: none;
+  border-radius: 10px;
+  font-family: inherit;
+  font-size: 1.1rem;
+  color: var(--text-secondary);
+  cursor: pointer;
+}
+#tocList button:hover { background: var(--bg); color: var(--text-primary); }
+#tocList li.is-current button { background: var(--accent-light); color: var(--text-primary); font-weight: 700; }
+.toc__num { font: 600 0.85rem 'Inter', sans-serif; color: var(--accent); }
+
+/* ---------- 화자 노트 패널 (N 키) ---------- */
+.slide .notes { display: none; }          /* 슬라이드 안의 노트 원본은 항상 숨김 */
+#notesPanel {
+  position: fixed; left: 0; right: 0; bottom: 0;
+  background: rgba(26, 35, 50, 0.94);
+  color: #E2E8F0;
+  padding: 18px 60px 22px;
+  z-index: 90;
+  max-height: 32vh;
+  overflow-y: auto;
+  font-size: 1.05rem;
+  line-height: 1.6;
+}
+#notesPanel .notes__label {
+  font: 600 0.75rem 'Inter', sans-serif;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #94A3B8;
+  margin-bottom: 6px;
+}
+
+/* ---------- 인쇄(PDF 배포) ---------- */
+@media print {
+  html, body { overflow: visible; height: auto; background: #fff; }
+  .slide {
+    position: relative;
+    inset: auto;
+    transform: none !important;
+    transition: none;
+    height: 100vh;
+    page-break-after: always;
+    break-after: page;
+  }
+  [data-step] { opacity: 1 !important; transform: none !important; }
+  #progressBar, #slideCounter, .nav-btn, #tocOverlay, #notesPanel { display: none !important; }
+}
+
+/* ---------- 접근성 · 반응형 ---------- */
+@media (prefers-reduced-motion: reduce) {
+  .slide, [data-step] { transition-duration: 0.01s; }
+}
+@media (max-width: 768px) {
+  .slide { padding: 0 28px; }
+  #notesPanel { padding: 14px 28px 18px; }
+}
+</style>
+</head>
+<body>
+
+<!-- ================================================================
+     ✏️ 슬라이드 영역 — 이 블록 안의 <section>만 교체/추가/삭제한다.
+     규칙:
+       · 각 <section class="slide">에 id="slide-N"(1부터)과 data-title 부여
+       · 화자 노트는 <aside class="notes">메모 텍스트</aside> (레이블 불필요)
+       · 순차 등장 요소에 data-step="1", "2", ...
+     ================================================================ -->
+
+<section class="slide" id="slide-1" data-title="타이틀">
+  <div class="slide__content">
+    <p class="slide__tag">Vanilla Slide</p>
+    <h1 class="slide__title">발표 제목이 들어가는 자리</h1>
+    <p class="slide__subtitle">부제목 또는 한 줄 소개가 들어가는 자리</p>
+    <p class="slide__meta">발표자 이름 · 2026. 00. 00.</p>
+  </div>
+  <aside class="notes">청중 인사 후 오늘 다룰 범위를 한 문장으로 예고한다.</aside>
+</section>
+
+<section class="slide" id="slide-2" data-title="불릿 + 빌드 효과">
+  <div class="slide__content">
+    <p class="slide__tag">Section 01</p>
+    <h1 class="slide__title">불릿 슬라이드 예시</h1>
+    <ul class="slide__list">
+      <li data-step="1">→ 키를 누를 때마다 항목이 하나씩 나타난다</li>
+      <li data-step="2">뒤로 이동해 돌아오면 전부 표시된 상태로 나온다</li>
+      <li data-step="3">불릿 dot은 align-items: center로 정렬되어 있다</li>
+    </ul>
+  </div>
+  <aside class="notes">각 항목이 뜰 때마다 부연 설명을 한 뒤 다음 스텝으로 넘어간다.</aside>
+</section>
+
+<section class="slide" id="slide-3" data-title="카드 레이아웃">
+  <div class="slide__content">
+    <p class="slide__tag">Section 02</p>
+    <h1 class="slide__title">단축키 3종은 표준이다</h1>
+    <div class="cards">
+      <div class="card" data-step="1">
+        <div class="card__icon">⛶</div>
+        <div class="card__title">F — 전체화면</div>
+        <div class="card__body">발표 시작 시 전체화면으로 전환한다.</div>
+      </div>
+      <div class="card" data-step="2">
+        <div class="card__icon">☰</div>
+        <div class="card__title">I — 목차</div>
+        <div class="card__body">목차 오버레이를 열고 원하는 슬라이드로 점프한다.</div>
+      </div>
+      <div class="card" data-step="3">
+        <div class="card__icon">✎</div>
+        <div class="card__title">N — 화자 노트</div>
+        <div class="card__body">하단에 발표자 메모를 띄운다.</div>
+      </div>
+    </div>
+  </div>
+  <aside class="notes">F/I/N 3키는 어떤 덱에서도 빠지면 안 되는 표준 기능이다.</aside>
+</section>
+
+<section class="slide" id="slide-4" data-title="코드 블록">
+  <div class="slide__content">
+    <p class="slide__tag">Section 03</p>
+    <h1 class="slide__title">코드 블록 예시</h1>
+    <p class="slide__body">모노스페이스 폰트와 다크 배경을 쓴다.</p>
+    <pre class="code-block"><code><span class="cm">// 이 템플릿을 쓰는 방법</span>
+1. 슬라이드 영역의 &lt;section&gt;들만 교체한다
+2. :root 변수로 팔레트를 바꾼다
+3. 엔진 CSS/JS는 건드리지 않는다</code></pre>
+  </div>
+  <aside class="notes">코드는 화면 뒤에서도 읽히도록 1rem 이상을 유지한다.</aside>
+</section>
+
+<section class="slide" id="slide-5" data-title="클로징">
+  <div class="slide__content">
+    <p class="slide__tag">Closing</p>
+    <h1 class="slide__title">감사합니다</h1>
+    <p class="slide__subtitle">질문은 지금, 또는 hello@example.com</p>
+  </div>
+  <aside class="notes">Q&amp;A 후 연락처를 다시 안내하고 마친다.</aside>
+</section>
+
+<!-- ================================================================
+     ⛔ 여기부터 엔진 — 수정하지 않는다.
+     ================================================================ -->
+
+<div id="progressBar"><div id="progressFill"></div></div>
+<div id="slideCounter">1 / 1</div>
+<button class="nav-btn" id="btnPrev" type="button" aria-label="이전 슬라이드">←</button>
+<button class="nav-btn" id="btnNext" type="button" aria-label="다음 슬라이드">→</button>
+
+<div id="tocOverlay" hidden>
+  <div class="toc__panel">
+    <p class="toc__title">목차 · 클릭하여 이동 (I 또는 Esc로 닫기)</p>
+    <ol id="tocList"></ol>
+  </div>
+</div>
+
+<div id="notesPanel" hidden>
+  <div class="notes__label">화자 노트</div>
+  <div id="notesBody"></div>
+</div>
+
+<script>
+(function () {
+  'use strict';
+
+  var slides = Array.prototype.slice.call(document.querySelectorAll('.slide'));
+  var total = slides.length;
+  var current = 0;
+  var isAnimating = false;
+  var SWIPE_THRESHOLD = 60;
+  var TRANSITION_MS = 500;   // .slide의 transition-duration과 일치시킬 것
+
+  var progressFill = document.getElementById('progressFill');
+  var slideCounter = document.getElementById('slideCounter');
+  var tocOverlay = document.getElementById('tocOverlay');
+  var tocList = document.getElementById('tocList');
+  var notesPanel = document.getElementById('notesPanel');
+  var notesBody = document.getElementById('notesBody');
+
+  /* ---------- 빌드 스텝 ---------- */
+  function stepsOf(slide) {
+    return Array.prototype.slice.call(slide.querySelectorAll('[data-step]'))
+      .sort(function (a, b) { return Number(a.dataset.step) - Number(b.dataset.step); });
+  }
+  function resetSteps(slide, visible) {
+    stepsOf(slide).forEach(function (el) { el.classList.toggle('visible', visible); });
+  }
+  function advance() {
+    var hidden = stepsOf(slides[current]).filter(function (el) { return !el.classList.contains('visible'); });
+    if (hidden.length) { hidden[0].classList.add('visible'); return; }
+    goTo(current + 1, 'next');
+  }
+  function retreat() {
+    var visible = stepsOf(slides[current]).filter(function (el) { return el.classList.contains('visible'); });
+    if (visible.length) { visible[visible.length - 1].classList.remove('visible'); return; }
+    goTo(current - 1, 'prev');
+  }
+
+  /* ---------- 슬라이드 전환 ---------- */
+  function goTo(nextIndex, direction) {
+    if (isAnimating || nextIndex === current) return;
+    if (nextIndex < 0 || nextIndex >= total) return;
+
+    isAnimating = true;
+    document.body.classList.add('is-animating');
+
+    var prevSlide = slides[current];
+    var nextSlide = slides[nextIndex];
+    var goingNext = direction === 'next';
+
+    // 1. transition 없이 시작 위치 배치
+    nextSlide.style.transition = 'none';
+    nextSlide.classList.remove('is-active', 'exit-left', 'exit-right');
+    nextSlide.style.transform = goingNext ? 'translateX(100%)' : 'translateX(-100%)';
+
+    // 2. 강제 reflow — 이 줄이 없으면 transition이 무시되어 순간이동 버그 발생
+    nextSlide.getBoundingClientRect();
+
+    // 3. transition 복원
+    nextSlide.style.transition = '';
+    nextSlide.style.transform = '';
+
+    // 4. 동시 이동 (뒤로 진입하는 슬라이드는 스텝 전부 표시)
+    prevSlide.classList.remove('is-active');
+    prevSlide.classList.add(goingNext ? 'exit-left' : 'exit-right');
+    resetSteps(nextSlide, !goingNext);
+    nextSlide.classList.add('is-active');
+
+    current = nextIndex;
+    updateUI();
+
+    // 5. 전환 완료 후 정리 — transition을 잠시 꺼서 유령 슬라이드 방지.
+    //    transitionend가 유실될 수 있으므로(탭 숨김·전환 취소 등) 워치독 타이머로 이중 보장.
+    var finished = false;
+    function finish() {
+      if (finished) return;
+      finished = true;
+      prevSlide.style.transition = 'none';
+      prevSlide.classList.remove('exit-left', 'exit-right');
+      prevSlide.getBoundingClientRect();
+      prevSlide.style.transition = '';
+      document.body.classList.remove('is-animating');
+      isAnimating = false;
+      nextSlide.removeEventListener('transitionend', handler);
+    }
+    function handler(e) {
+      if (e.target !== nextSlide || e.propertyName !== 'transform') return;
+      finish();
+    }
+    nextSlide.addEventListener('transitionend', handler);
+    setTimeout(finish, TRANSITION_MS + 150);
+  }
+
+  /* ---------- UI 갱신 ---------- */
+  function updateUI() {
+    progressFill.style.width = (((current + 1) / total) * 100) + '%';
+    slideCounter.textContent = (current + 1) + ' / ' + total;
+    history.replaceState(null, '', '#slide-' + (current + 1));
+    Array.prototype.forEach.call(tocList.children, function (li, i) {
+      li.classList.toggle('is-current', i === current);
+    });
+    updateNotes();
+  }
+  function updateNotes() {
+    var notes = slides[current].querySelector('.notes');
+    notesBody.innerHTML = notes ? notes.innerHTML : '<em>이 슬라이드에는 화자 노트가 없습니다.</em>';
+  }
+
+  /* ---------- 목차 오버레이 ---------- */
+  function slideTitle(slide, i) {
+    if (slide.dataset.title) return slide.dataset.title;
+    var t = slide.querySelector('.slide__title');
+    return t ? t.textContent.trim() : '슬라이드 ' + (i + 1);
+  }
+  function buildToc() {
+    slides.forEach(function (slide, i) {
+      var li = document.createElement('li');
+      var btn = document.createElement('button');
+      btn.type = 'button';
+      var num = document.createElement('span');
+      num.className = 'toc__num';
+      num.textContent = (i + 1 < 10 ? '0' : '') + (i + 1);
+      btn.appendChild(num);
+      btn.appendChild(document.createTextNode(slideTitle(slide, i)));
+      btn.addEventListener('click', function () {
+        closeToc();
+        goTo(i, i > current ? 'next' : 'prev');
+      });
+      li.appendChild(btn);
+      tocList.appendChild(li);
+    });
+  }
+  function openToc()  { tocOverlay.hidden = false; }
+  function closeToc() { tocOverlay.hidden = true; }
+  function toggleToc() { tocOverlay.hidden ? openToc() : closeToc(); }
+  tocOverlay.addEventListener('click', function (e) { if (e.target === tocOverlay) closeToc(); });
+
+  /* ---------- 전체화면 · 노트 ---------- */
+  function toggleFullscreen() {
+    if (document.fullscreenElement) document.exitFullscreen();
+    else document.documentElement.requestFullscreen().catch(function () {});
+  }
+  function toggleNotes() { notesPanel.hidden = !notesPanel.hidden; }
+
+  /* ---------- 키보드 (e.code 사용: 한/영 입력 상태 무관) ---------- */
+  document.addEventListener('keydown', function (e) {
+    if (e.metaKey || e.ctrlKey || e.altKey) return;
+    var code = e.code;
+
+    if (code === 'Escape') { if (!tocOverlay.hidden) closeToc(); return; }
+    if (code === 'KeyI') { e.preventDefault(); toggleToc(); return; }
+    if (!tocOverlay.hidden) return;   // 목차 열려 있으면 나머지 키 무시
+
+    switch (code) {
+      case 'ArrowRight': case 'Space': case 'PageDown':
+        e.preventDefault(); advance(); break;
+      case 'ArrowLeft': case 'PageUp':
+        e.preventDefault(); retreat(); break;
+      case 'Home': e.preventDefault(); goTo(0, 'prev'); break;
+      case 'End':  e.preventDefault(); goTo(total - 1, 'next'); break;
+      case 'KeyF': toggleFullscreen(); break;
+      case 'KeyN': toggleNotes(); break;
+    }
+  });
+
+  /* ---------- 스와이프 (Pointer Events) ---------- */
+  var pointerStart = null;
+  document.addEventListener('pointerdown', function (e) {
+    if (!tocOverlay.hidden) return;
+    if (e.target.closest('button, a, #notesPanel')) return;
+    pointerStart = { x: e.clientX, y: e.clientY };
+  });
+  document.addEventListener('pointerup', function (e) {
+    if (!pointerStart) return;
+    var dx = e.clientX - pointerStart.x;
+    var dy = e.clientY - pointerStart.y;
+    pointerStart = null;
+    if (Math.abs(dx) < SWIPE_THRESHOLD || Math.abs(dx) < Math.abs(dy)) return;
+    if (dx < 0) advance(); else retreat();
+  });
+
+  /* ---------- 네비 버튼 ---------- */
+  document.getElementById('btnPrev').addEventListener('click', retreat);
+  document.getElementById('btnNext').addEventListener('click', advance);
+
+  /* ---------- URL 해시 ---------- */
+  window.addEventListener('hashchange', function () {
+    var m = location.hash.match(/^#slide-(\d+)$/);
+    if (!m) return;
+    var idx = Math.min(Math.max(Number(m[1]) - 1, 0), total - 1);
+    if (idx !== current) goTo(idx, idx > current ? 'next' : 'prev');
+  });
+
+  /* ---------- 초기화 ---------- */
+  function init() {
+    buildToc();
+    var m = location.hash.match(/^#slide-(\d+)$/);
+    var start = m ? Math.min(Math.max(Number(m[1]) - 1, 0), total - 1) : 0;
+    current = start;
+    var s = slides[start];
+    s.style.transition = 'none';
+    s.classList.add('is-active');
+    s.getBoundingClientRect();
+    s.style.transition = '';
+    updateUI();
+  }
+  init();
+})();
+</script>
+</body>
+</html>

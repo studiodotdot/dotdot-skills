@@ -8,7 +8,7 @@
   "plugins": [
     {
       "name": "vanilla-slide",
-      "description": "순수 HTML/CSS/JavaScript로 풀스크린 웹 프레젠테이션 단일 파일 생성. 키보드·터치·풀스크린·진행바·data-step 빌드 효과 포함.",
+      "description": "순수 HTML/CSS/JavaScript로 풀스크린 웹 프레젠테이션 단일 파일 생성. 완성형 엔진 템플릿 동봉 — 키보드·터치·전체화면(F)·목차(I)·화자 노트(N)·진행바·data-step 빌드 효과·인쇄(PDF) 대응.",
       "source": "./plugins/vanilla-slide",
       "category": "education",
       "tags": ["slides", "presentation", "html", "korean", "education", "single-file"]
