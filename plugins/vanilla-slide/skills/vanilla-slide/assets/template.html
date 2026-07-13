@@ -185,6 +185,25 @@ body.is-animating { pointer-events: none; }   /* 전환 중 클릭 차단 */
 #btnPrev { left: 24px; }
 #btnNext { left: 72px; }
 
+/* ---------- 단축키 힌트 (항상 표시) ---------- */
+#kbdHint {
+  position: fixed; bottom: 48px; right: 14px;
+  display: flex; gap: 8px;
+  background: rgba(255,255,255,0.72);
+  backdrop-filter: blur(6px);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 6px 10px;
+  z-index: 100;
+  font-size: 0.72rem; color: var(--text-muted);
+}
+#kbdHint span { display: inline-flex; align-items: center; gap: 3px; }
+#kbdHint kbd {
+  font: 700 0.68rem 'Inter', sans-serif; color: var(--accent);
+  background: var(--surface); border: 1px solid var(--border); border-bottom-width: 2px;
+  border-radius: 4px; padding: 1px 5px;
+}
+
 /* ---------- 목차 오버레이 (I 키) ---------- */
 #tocOverlay {
   position: fixed; inset: 0;
@@ -252,9 +271,54 @@ body.is-animating { pointer-events: none; }   /* 전환 중 클릭 차단 */
   margin-bottom: 6px;
 }
 
-/* ---------- 인쇄(PDF 배포) ---------- */
+/* ---------- 발표자 모드 (S 키 → 같은 파일 ?presenter=1 창) ---------- */
+body.is-presenter { background: #0F1419; overflow: hidden; }
+body.is-presenter > .slide,          /* 직계 자식만 — 미리보기 클론은 살려야 함 */
+body.is-presenter #progressBar, body.is-presenter #slideCounter,
+body.is-presenter .nav-btn, body.is-presenter #tocOverlay,
+body.is-presenter #kbdHint,
+body.is-presenter #notesPanel { display: none !important; }
+#presenterMode { display: none; }
+body.is-presenter #presenterMode {
+  display: flex; flex-direction: column;
+  position: fixed; inset: 0; padding: 18px 22px;
+  color: #fff; z-index: 1000;
+}
+.pm-header { display: flex; justify-content: space-between; align-items: center; padding-bottom: 12px; border-bottom: 1px solid rgba(255,255,255,.12); margin-bottom: 14px; }
+.pm-title { font: 700 0.85rem 'Inter', sans-serif; letter-spacing: 2px; text-transform: uppercase; color: var(--accent); }
+.pm-counter { font: 700 1.4rem 'Inter', sans-serif; }
+.pm-timer { font: 700 1.8rem 'Inter', sans-serif; color: var(--accent); font-variant-numeric: tabular-nums; }
+.pm-timer-reset { margin-left: 10px; background: rgba(255,255,255,.1); border: 1px solid rgba(255,255,255,.2); color: #fff; border-radius: 6px; padding: 4px 10px; font-size: 0.75rem; cursor: pointer; }
+.pm-timer-reset:hover { background: rgba(255,255,255,.2); }
+.pm-body { flex: 1; display: grid; grid-template-columns: 1.15fr 1fr; gap: 18px; min-height: 0; }
+.pm-left { display: flex; flex-direction: column; gap: 12px; min-height: 0; overflow: hidden; }
+.pm-stage { position: relative; width: 100%; aspect-ratio: 16/9; background: var(--bg); border-radius: 10px; overflow: hidden; border: 1px solid rgba(255,255,255,.18); flex-shrink: 0; }
+.pm-stage--next { width: 52%; }
+.pm-scale { position: absolute; top: 0; left: 0; width: 1280px; height: 720px; transform-origin: top left; }
+.pm-scale .slide { position: absolute !important; inset: 0; transform: none !important; transition: none !important; }
+.pm-scale .slide * { transition: none !important; animation: none !important; }
+.pm-scale [data-step] { opacity: 1 !important; transform: translateY(0) !important; }
+.pm-scale .notes { display: none !important; }
+.pm-next-row { display: flex; align-items: flex-start; gap: 14px; flex: 1 1 auto; min-height: 0; overflow: hidden; }
+.pm-next-label { font-size: 0.85rem; color: rgba(255,255,255,.6); padding-bottom: 6px; }
+.pm-panel { background: rgba(255,255,255,.04); border: 1px solid rgba(255,255,255,.08); border-radius: 12px; padding: 24px 28px; display: flex; flex-direction: column; min-height: 0; }
+.pm-panel__label { font: 700 0.78rem 'Inter', sans-serif; letter-spacing: 2px; text-transform: uppercase; color: var(--accent); margin-bottom: 14px; flex-shrink: 0; }
+.pm-current-title { font-size: 1.4rem; font-weight: 700; margin-bottom: 16px; padding-bottom: 12px; border-bottom: 1px solid rgba(255,255,255,.1); flex-shrink: 0; }
+.pm-notes-content { flex: 1; overflow-y: auto; font-size: 1.35rem; line-height: 1.8; color: rgba(255,255,255,.95); padding-right: 10px; }
+.pm-notes-content::-webkit-scrollbar { width: 6px; }
+.pm-notes-content::-webkit-scrollbar-thumb { background: rgba(255,255,255,.2); border-radius: 3px; }
+.pm-footer { display: flex; justify-content: space-between; align-items: center; padding-top: 12px; margin-top: 14px; border-top: 1px solid rgba(255,255,255,.12); font-size: 0.85rem; color: rgba(255,255,255,.55); }
+.pm-kbd { display: inline-flex; gap: 10px; }
+.pm-kbd span { display: inline-flex; align-items: center; gap: 4px; }
+.pm-kbd kbd { display: inline-block; background: rgba(255,255,255,.1); border: 1px solid rgba(255,255,255,.2); border-bottom-width: 2px; border-radius: 4px; padding: 2px 7px; font: 700 0.72rem 'Inter', sans-serif; color: var(--accent); min-width: 14px; text-align: center; }
+
+/* ---------- 인쇄(PDF 배포) — 전 장표가 각 1페이지 ---------- */
+@page { size: 1280px 720px; margin: 0; }
 @media print {
-  html, body { overflow: visible; height: auto; background: #fff; }
+  html, body {
+    overflow: visible; height: auto; background: #fff;
+    -webkit-print-color-adjust: exact; print-color-adjust: exact;
+  }
   .slide {
     position: relative;
     inset: auto;
@@ -263,9 +327,11 @@ body.is-animating { pointer-events: none; }   /* 전환 중 클릭 차단 */
     height: 100vh;
     page-break-after: always;
     break-after: page;
+    break-inside: avoid;
   }
+  .slide:last-of-type { page-break-after: auto; break-after: auto; }  /* 마지막 빈 페이지 방지 */
   [data-step] { opacity: 1 !important; transform: none !important; }
-  #progressBar, #slideCounter, .nav-btn, #tocOverlay, #notesPanel { display: none !important; }
+  #progressBar, #slideCounter, .nav-btn, #kbdHint, #tocOverlay, #notesPanel, #presenterMode { display: none !important; }
 }
 
 /* ---------- 접근성 · 반응형 ---------- */
@@ -295,7 +361,7 @@ body.is-animating { pointer-events: none; }   /* 전환 중 클릭 차단 */
     <p class="slide__subtitle">부제목 또는 한 줄 소개가 들어가는 자리</p>
     <p class="slide__meta">발표자 이름 · 2026. 00. 00.</p>
   </div>
-  <aside class="notes">청중 인사 후 오늘 다룰 범위를 한 문장으로 예고한다.</aside>
+  <aside class="notes">여는 멘트: "안녕하세요, 오늘 발표를 맡은 ○○○입니다." 오늘 다룰 주제를 한 문장으로 예고한다.<br>강조: 청중이 오늘 얻어갈 것 한 가지를 콕 집어 말한다.<br>전환: "그럼 첫 번째 이야기부터 시작하겠습니다."</aside>
 </section>
 
 <section class="slide" id="slide-2" data-title="불릿 + 빌드 효과">
@@ -308,13 +374,13 @@ body.is-animating { pointer-events: none; }   /* 전환 중 클릭 차단 */
       <li data-step="3">불릿 dot은 align-items: center로 정렬되어 있다</li>
     </ul>
   </div>
-  <aside class="notes">각 항목이 뜰 때마다 부연 설명을 한 뒤 다음 스텝으로 넘어간다.</aside>
+  <aside class="notes">각 항목이 뜰 때마다 한 문장씩 부연한다 — 한꺼번에 읽지 않는다.<br>강조: 두 번째 항목이 오늘의 핵심 메시지.<br>전환: "이 기능들을 쓰는 단축키를 정리하면 이렇습니다."</aside>
 </section>
 
 <section class="slide" id="slide-3" data-title="카드 레이아웃">
   <div class="slide__content">
     <p class="slide__tag">Section 02</p>
-    <h1 class="slide__title">단축키 3종은 표준이다</h1>
+    <h1 class="slide__title">단축키 4종은 표준이다</h1>
     <div class="cards">
       <div class="card" data-step="1">
         <div class="card__icon">⛶</div>
@@ -331,9 +397,14 @@ body.is-animating { pointer-events: none; }   /* 전환 중 클릭 차단 */
         <div class="card__title">N — 화자 노트</div>
         <div class="card__body">하단에 발표자 메모를 띄운다.</div>
       </div>
+      <div class="card" data-step="4">
+        <div class="card__icon">🖥</div>
+        <div class="card__title">S — 발표자 모드</div>
+        <div class="card__body">별도 창에 현재·다음 슬라이드와 노트, 타이머를 띄운다.</div>
+      </div>
     </div>
   </div>
-  <aside class="notes">F/I/N 3키는 어떤 덱에서도 빠지면 안 되는 표준 기능이다.</aside>
+  <aside class="notes">F/I/N/S 4키는 어떤 덱에서도 빠지면 안 되는 표준 기능이다.<br>시연: 여기서 S를 눌러 발표자 창을 직접 열어 보여준다.<br>전환: "실제 코드 블록은 어떻게 보이는지 보겠습니다."</aside>
 </section>
 
 <section class="slide" id="slide-4" data-title="코드 블록">
@@ -346,7 +417,7 @@ body.is-animating { pointer-events: none; }   /* 전환 중 클릭 차단 */
 2. :root 변수로 팔레트를 바꾼다
 3. 엔진 CSS/JS는 건드리지 않는다</code></pre>
   </div>
-  <aside class="notes">코드는 화면 뒤에서도 읽히도록 1rem 이상을 유지한다.</aside>
+  <aside class="notes">멘트: "쓰는 방법은 세 줄이 전부입니다." 코드를 위에서부터 한 줄씩 짚는다.<br>강조: 엔진은 건드리지 않는다는 규칙.<br>전환: "마지막으로 정리하겠습니다."</aside>
 </section>
 
 <section class="slide" id="slide-5" data-title="클로징">
@@ -355,7 +426,7 @@ body.is-animating { pointer-events: none; }   /* 전환 중 클릭 차단 */
     <h1 class="slide__title">감사합니다</h1>
     <p class="slide__subtitle">질문은 지금, 또는 hello@example.com</p>
   </div>
-  <aside class="notes">Q&amp;A 후 연락처를 다시 안내하고 마친다.</aside>
+  <aside class="notes">마무리 멘트: 오늘 핵심 한 문장 요약 → "질문 있으시면 편하게 해주세요."<br>Q&amp;A 후 연락처를 다시 안내하고 마친다.</aside>
 </section>
 
 <!-- ================================================================
@@ -366,6 +437,12 @@ body.is-animating { pointer-events: none; }   /* 전환 중 클릭 차단 */
 <div id="slideCounter">1 / 1</div>
 <button class="nav-btn" id="btnPrev" type="button" aria-label="이전 슬라이드">←</button>
 <button class="nav-btn" id="btnNext" type="button" aria-label="다음 슬라이드">→</button>
+<div id="kbdHint">
+  <span><kbd>F</kbd>전체화면</span>
+  <span><kbd>I</kbd>목차</span>
+  <span><kbd>N</kbd>노트</span>
+  <span><kbd>S</kbd>발표자</span>
+</div>
 
 <div id="tocOverlay" hidden>
   <div class="toc__panel">
@@ -379,6 +456,36 @@ body.is-animating { pointer-events: none; }   /* 전환 중 클릭 차단 */
   <div id="notesBody"></div>
 </div>
 
+<div id="presenterMode">
+  <div class="pm-header">
+    <span class="pm-title">발표자 모드</span>
+    <span class="pm-counter" id="pmCounter">1 / 1</span>
+    <span><span class="pm-timer" id="pmTimer">00:00:00</span><button class="pm-timer-reset" id="pmTimerReset" type="button">리셋</button></span>
+  </div>
+  <div class="pm-body">
+    <div class="pm-left">
+      <div class="pm-stage"><div class="pm-scale" id="pmScaleCurrent"></div></div>
+      <div class="pm-next-row">
+        <div class="pm-stage pm-stage--next"><div class="pm-scale" id="pmScaleNext"></div></div>
+        <div class="pm-next-label" id="pmNextLabel">다음 슬라이드</div>
+      </div>
+    </div>
+    <div class="pm-panel">
+      <div class="pm-panel__label">화자 노트</div>
+      <div class="pm-current-title" id="pmCurrentTitle"></div>
+      <div class="pm-notes-content" id="pmNotesContent"></div>
+    </div>
+  </div>
+  <div class="pm-footer">
+    <div class="pm-kbd">
+      <span><kbd>&larr;</kbd>이전</span>
+      <span><kbd>&rarr;</kbd>다음</span>
+      <span><kbd>Esc</kbd>창 닫기</span>
+    </div>
+    <span>관객 창과 자동 동기화 &middot; 양방향 컨트롤</span>
+  </div>
+</div>
+
 <script>
 (function () {
   'use strict';
@@ -389,6 +496,10 @@ body.is-animating { pointer-events: none; }   /* 전환 중 클릭 차단 */
   var isAnimating = false;
   var SWIPE_THRESHOLD = 60;
   var TRANSITION_MS = 500;   // .slide의 transition-duration과 일치시킬 것
+
+  // 발표자 모드: 같은 파일을 ?presenter=1로 열어 BroadcastChannel로 두 창을 동기화
+  var IS_PRESENTER = new URLSearchParams(location.search).has('presenter');
+  var bc = ('BroadcastChannel' in window) ? new BroadcastChannel('vanilla-slide::' + location.pathname) : null;
 
   var progressFill = document.getElementById('progressFill');
   var slideCounter = document.getElementById('slideCounter');
@@ -448,6 +559,7 @@ body.is-animating { pointer-events: none; }   /* 전환 중 클릭 차단 */
 
     current = nextIndex;
     updateUI();
+    if (bc) bc.postMessage({ type: 'goto', index: current });
 
     // 5. 전환 완료 후 정리 — transition을 잠시 꺼서 유령 슬라이드 방지.
     //    transitionend가 유실될 수 있으므로(탭 숨김·전환 취소 등) 워치독 타이머로 이중 보장.
@@ -524,8 +636,21 @@ body.is-animating { pointer-events: none; }   /* 전환 중 클릭 차단 */
 
   /* ---------- 키보드 (e.code 사용: 한/영 입력 상태 무관) ---------- */
   document.addEventListener('keydown', function (e) {
-    if (e.metaKey || e.ctrlKey || e.altKey) return;
+    if (e.metaKey || e.ctrlKey || e.altKey) return;   // 브라우저 단축키(Cmd+P 인쇄 등) 보존
     var code = e.code;
+
+    if (IS_PRESENTER) {   // 발표자 창: 슬라이드 단위 이동 + Esc로 창 닫기
+      switch (code) {
+        case 'ArrowRight': case 'Space': case 'PageDown':
+          e.preventDefault(); pmSet(current + 1); break;
+        case 'ArrowLeft': case 'PageUp':
+          e.preventDefault(); pmSet(current - 1); break;
+        case 'Home': pmSet(0); break;
+        case 'End':  pmSet(total - 1); break;
+        case 'Escape': window.close(); break;
+      }
+      return;
+    }
 
     if (code === 'Escape') { if (!tocOverlay.hidden) closeToc(); return; }
     if (code === 'KeyI') { e.preventDefault(); toggleToc(); return; }
@@ -540,12 +665,14 @@ body.is-animating { pointer-events: none; }   /* 전환 중 클릭 차단 */
       case 'End':  e.preventDefault(); goTo(total - 1, 'next'); break;
       case 'KeyF': toggleFullscreen(); break;
       case 'KeyN': toggleNotes(); break;
+      case 'KeyS': openPresenter(); break;
     }
   });
 
   /* ---------- 스와이프 (Pointer Events) ---------- */
   var pointerStart = null;
   document.addEventListener('pointerdown', function (e) {
+    if (IS_PRESENTER) return;
     if (!tocOverlay.hidden) return;
     if (e.target.closest('button, a, #notesPanel')) return;
     pointerStart = { x: e.clientX, y: e.clientY };
@@ -563,6 +690,84 @@ body.is-animating { pointer-events: none; }   /* 전환 중 클릭 차단 */
   document.getElementById('btnPrev').addEventListener('click', retreat);
   document.getElementById('btnNext').addEventListener('click', advance);
 
+  /* ---------- 발표자 모드 ---------- */
+  function renderPreview(elId, idx) {
+    var box = document.getElementById(elId);
+    box.innerHTML = '';
+    if (idx === null || idx < 0 || idx >= total) return;
+    var clone = slides[idx].cloneNode(true);
+    clone.removeAttribute('id');
+    box.appendChild(clone);
+  }
+  function fitPreviewStages() {
+    // 창 크기와 무관하게 겹침 없이: 현재 미리보기는 세로 62% 이내, 다음 미리보기는 남은 높이에 맞춤
+    var leftEl = document.querySelector('.pm-left');
+    var curStage = document.querySelector('.pm-left > .pm-stage');
+    var nextStage = document.querySelector('.pm-stage--next');
+    if (leftEl && curStage && nextStage) {
+      var curW = Math.min(leftEl.clientWidth, leftEl.clientHeight * 0.62 * 16 / 9);
+      curStage.style.width = curW + 'px';
+      var avail = leftEl.clientHeight - curStage.getBoundingClientRect().height - 12;
+      var nextW = Math.max(160, Math.min(leftEl.clientWidth * 0.52, avail * 16 / 9));
+      nextStage.style.width = nextW + 'px';
+    }
+    Array.prototype.forEach.call(document.querySelectorAll('.pm-stage'), function (stage) {
+      var inner = stage.querySelector('.pm-scale');
+      if (inner) inner.style.transform = 'scale(' + (stage.clientWidth / 1280) + ')';
+    });
+  }
+  function updatePresenterUI() {
+    document.getElementById('pmCounter').textContent = (current + 1) + ' / ' + total;
+    renderPreview('pmScaleCurrent', current);
+    var hasNext = current + 1 < total;
+    renderPreview('pmScaleNext', hasNext ? current + 1 : null);
+    document.getElementById('pmNextLabel').textContent =
+      hasNext ? '다음: ' + slideTitle(slides[current + 1], current + 1) : '마지막 슬라이드입니다';
+    document.getElementById('pmCurrentTitle').textContent = slideTitle(slides[current], current);
+    var notes = slides[current].querySelector('.notes');
+    document.getElementById('pmNotesContent').innerHTML =
+      (notes && notes.innerHTML.trim()) ? notes.innerHTML : '(노트 없음)';
+    fitPreviewStages();
+  }
+  function pmSet(idx) {   // 발표자 창 전용 이동 (슬라이드 단위)
+    idx = Math.min(Math.max(idx, 0), total - 1);
+    if (idx === current) return;
+    current = idx;
+    updatePresenterUI();
+    if (bc) bc.postMessage({ type: 'goto', index: idx });
+  }
+  var pmTimerStart = Date.now();
+  function fmtTime(ms) {
+    var s = Math.floor(ms / 1000);
+    var h = Math.floor(s / 3600); s -= h * 3600;
+    var m = Math.floor(s / 60); s -= m * 60;
+    return String(h).padStart(2, '0') + ':' + String(m).padStart(2, '0') + ':' + String(s).padStart(2, '0');
+  }
+  function startTimer() {
+    setInterval(function () {
+      document.getElementById('pmTimer').textContent = fmtTime(Date.now() - pmTimerStart);
+    }, 1000);
+  }
+  function openPresenter() {   // 메인 창 전용 — S 키
+    var url = location.href.split('?')[0].split('#')[0] + '?presenter=1';
+    var win = window.open(url, 'presenter_window', 'width=1400,height=900');
+    if (!win) alert('팝업이 차단되었습니다. 주소창의 팝업 차단 아이콘에서 허용해 주세요.');
+  }
+  if (bc) bc.onmessage = function (ev) {
+    var msg = ev.data || {};
+    if (IS_PRESENTER) {
+      if (msg.type === 'goto' && typeof msg.index === 'number' && msg.index !== current) {
+        current = msg.index;
+        updatePresenterUI();
+      }
+    } else {
+      if (msg.type === 'goto' && typeof msg.index === 'number' && msg.index !== current) {
+        goTo(msg.index, msg.index > current ? 'next' : 'prev');
+      }
+      if (msg.type === 'request-state') bc.postMessage({ type: 'goto', index: current });
+    }
+  };
+
   /* ---------- URL 해시 ---------- */
   window.addEventListener('hashchange', function () {
     var m = location.hash.match(/^#slide-(\d+)$/);
@@ -573,6 +778,19 @@ body.is-animating { pointer-events: none; }   /* 전환 중 클릭 차단 */
 
   /* ---------- 초기화 ---------- */
   function init() {
+    if (IS_PRESENTER) {
+      document.body.classList.add('is-presenter');
+      updatePresenterUI();
+      startTimer();
+      document.getElementById('pmTimerReset').addEventListener('click', function () {
+        pmTimerStart = Date.now();
+        document.getElementById('pmTimer').textContent = '00:00:00';
+      });
+      window.addEventListener('resize', fitPreviewStages);
+      if (document.fonts && document.fonts.ready) document.fonts.ready.then(fitPreviewStages);
+      if (bc) bc.postMessage({ type: 'request-state' });   // 메인 창에 현재 위치 요청
+      return;
+    }
     buildToc();
     var m = location.hash.match(/^#slide-(\d+)$/);
     var start = m ? Math.min(Math.max(Number(m[1]) - 1, 0), total - 1) : 0;

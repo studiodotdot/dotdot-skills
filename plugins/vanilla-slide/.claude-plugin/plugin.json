@@ -1,7 +1,7 @@
 {
   "name": "vanilla-slide",
-  "version": "1.1.0",
-  "description": "순수 HTML/CSS/JavaScript로 풀스크린 웹 프레젠테이션 단일 파일 생성. 완성형 엔진 템플릿 동봉 — 키보드·터치·전체화면(F)·목차(I)·화자 노트(N)·진행바·data-step 빌드 효과·인쇄(PDF) 대응.",
+  "version": "1.2.0",
+  "description": "순수 HTML/CSS/JavaScript로 풀스크린 웹 프레젠테이션 단일 파일 생성. 완성형 엔진 템플릿 동봉 — 전체화면(F)·목차(I)·화자 노트(N)·발표자 모드(S, 듀얼 창 동기화)·data-step 빌드 효과·인쇄(PDF 전 장 저장) 대응.",
   "author": {
     "name": "aible-edu",
     "url": "https://github.com/aible-edu"
