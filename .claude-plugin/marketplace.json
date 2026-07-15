@@ -1,9 +1,9 @@
 {
-  "name": "aible-skills",
-  "description": "Aible AI 교육 강사 도구 모음 (박한민) — 강의·발표·교안 제작에 활용하는 Claude Code 플러그인",
+  "name": "dotdot-skills",
+  "description": "스튜디오닷닷 AI 교육 강사 도구 모음 (박한민) — 강의·발표·교안 제작에 활용하는 Claude Code 플러그인",
   "owner": {
-    "name": "aible-edu",
-    "url": "https://github.com/aible-edu"
+    "name": "studiodotdot",
+    "url": "https://github.com/studiodotdot"
   },
   "plugins": [
     {

@@ -1,14 +1,14 @@
-# Aible Skills
+# Dotdot Skills
 
-박한민(Aible)의 AI 교육·강의·콘텐츠 제작용 Claude Code 플러그인 모음.
+박한민(스튜디오닷닷)의 AI 교육·강의·콘텐츠 제작용 Claude Code 플러그인 모음.
 
 ## 설치 (Claude Code CLI)
 
 ```bash
 claude
-> /plugin marketplace add aible-edu/aible-skills
-> /plugin install vanilla-slide@aible-skills
-> /plugin install edu-designer@aible-skills
+> /plugin marketplace add studiodotdot/dotdot-skills
+> /plugin install vanilla-slide@dotdot-skills
+> /plugin install edu-designer@dotdot-skills
 ```
 
 ## 플러그인 목록
@@ -20,8 +20,8 @@ claude
 
 ## 만든이
 
-- **박한민** — Aible 대표
-- 웹: [aible-edu](https://github.com/aible-edu)
+- **박한민** — 스튜디오닷닷 대표
+- 웹: [studiodotdot](https://github.com/studiodotdot) · [studiodotdot.kr](https://studiodotdot.kr)
 - 메일: hello@aible-edu.co.kr
 
 ## 라이선스
