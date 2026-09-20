@@ -1,16 +1,66 @@
-# dotdot-skills — Claude Code 스킬 마켓플레이스
+# dotdot-skills — 스킬 관리 전용 폴더 (260920부터 이 폴더 세션이 스킬 전부를 관리)
 
-Claude Code 플러그인/스킬 배포 채널 (강의용 배포 통일 채널).
+Claude Code 플러그인/스킬 배포 채널(강의용 배포 통일 채널) + **한민님이 직접 만든 스킬의 관리 본부**.
+다른 세션에서 스킬을 고치지 않는다 — 스킬 수정·검증·배포는 전부 여기서.
 
-- GitHub: `studiodotdot/dotdot-skills` (Public) — 구 `aible-edu/aible-skills` (260715 계정·레포 rename)
-- 보유 스킬: vanilla-slide v1.3.0 · vanilla-deck v1.0.0 · edu-designer v1.0.0
-- 원본은 `~/.claude/skills/` — 수정 시 이 레포 동기화 + 버전 bump 필수
+## 구조 — 원본과 배포본
+
+| | 경로 | 역할 |
+|---|---|---|
+| **원본** | `~/.claude/skills/<스킬>/` | Claude Code가 실제로 읽는 곳. 여기가 현재 동작 |
+| **배포본** | `plugins/<스킬>/skills/<스킬>/` (이 레포) | 마켓플레이스. 수강생이 설치하는 건 이쪽 |
+| 플러그인 메타 | `plugins/<스킬>/.claude-plugin/plugin.json` + `.claude-plugin/marketplace.json` | 버전·설명 |
+
+- GitHub: `studiodotdot/dotdot-skills` (Public) — 구 `aible-edu/aible-skills`(260715 rename). 커밋에 Co-Author 트레일러 안 붙임(개인 프로젝트)
 - 수강생 설치: `/plugin marketplace add studiodotdot/dotdot-skills` → `/plugin install <스킬>@dotdot-skills`
+- **수정 절차: 원본 고침 → 검증 → `rsync -a --delete ~/.claude/skills/<스킬>/ plugins/<스킬>/skills/<스킬>/` → plugin.json·marketplace.json 버전 bump → README → 커밋·push(push는 한민님 확인)**
+- 🚨 공개 레포다. 업체·고객·직장 실명, `/Users/hanmin` 개인 경로, 회사 자료가 SKILL.md·템플릿에 들어가면 안 된다. push 전 grep
+
+## 보유 스킬
+
+| 스킬 | 버전 | 용도 | 비고 |
+|---|---|---|---|
+| vanilla-slide | 1.3.0 | 강의 교안·교육자료 HTML 슬라이드 | F·I·N·S 4키 엔진 원본 |
+| vanilla-deck | 1.0.0 | 사내 보고·제안·공모전·IR 발표 덱 | vanilla-slide 엔진에서 노트(N)·발표자(S) 뺀 F·I 2키 파생. 흐름 3종 `references/flows.md` |
+| edu-designer | 1.0.0 | ADDIE·딕앤케리·메릴 기반 커리큘럼 설계 | |
+| (buildlog) | — | 제작 과정 빌드로그 | 개인용, 마켓 미등재 |
+
+**엔진 공유 규칙**: 두 vanilla 템플릿의 `⛔ 엔진` 아래(전환 goTo·키 판별·목차·해시·`@page` 인쇄)는 같은 코드다. 공통부를 고치면 **양쪽 템플릿에 똑같이** 반영. 노트·발표자 모드를 deck에 되살리지 않는다(한민님 결정 260918).
+
+## 디자인 근거 — 레퍼런스 이미지 라이브러리 (260919 Aside 수집)
+
+`~/Downloads/레퍼런스_슬라이드_260919/` — 국내 PPT 디자인 업체 포트폴리오 원본 이미지 240장
+(발표 15건 149장 / 교육 6건 91장, `01_슬라이드인덱스.csv` 유형 태그, `02_관찰노트.md`, `99_진행상황.txt`에 미완 목록).
+- **두 스킬의 시각 레이어는 이 이미지를 보고 만들었다.** 부품을 고칠 땐 SKILL.md 개요에 적힌 레퍼런스 장(예: 3단 → `발표/01_*/04`)을 Read로 직접 보고 나란히 비교
+- ⭐ 교훈(메모리 `feedback_mimic_from_images`): 글로 정리한 규칙(색 HSL·구조 서술)로 만든 판은 반려됐다. **실물 이미지를 보고 만들어야 통과.** 업체 색은 고객사 CI라 규칙화 대상이 아님
+- 저작권: 개인 학습 참고용. 재배포·레포 포함 금지
+
+## `_work/` (gitignore, 로컬 작업물)
+
+- `samples/` — 현재 템플릿으로 렌더한 샘플 덱 2개(260920). 브라우저로 열어 확인용
+- `test-decks/` — 260919 실험: 서브에이전트가 **옛 템플릿**으로 만든 공모전·교육 제안서 덱 2개(가짜 수치)
+- `backup/` — vanilla-deck 이전 판 2개(v1 글규칙판 · v2 챔피언 단색 시트형 — 회사 양식 1장 보고서엔 이게 맞을 수 있음)
+
+## 검증 방법 (표준)
+
+```bash
+C="/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
+"$C" --headless=new --hide-scrollbars --window-size=1280,720 --virtual-time-budget=3000 --screenshot=sN.png "file://$PWD/덱.html#slide-N"
+"$C" --headless=new --no-pdf-header-footer --virtual-time-budget=3000 --print-to-pdf=덱.pdf "file://$PWD/덱.html"   # 페이지 수 = 슬라이드 수
+```
+- 캡처를 Read로 직접 보고 레퍼런스와 비교. data-step 요소는 복사본에 `[data-step]{opacity:1!important;transform:none!important}` 넣어 확인
+- 스킬 자체 테스트는 맥락 없는 서브에이전트에게 가짜 요청을 주고 "헷갈린 점"을 보고받는 방식이 효과적이었음(260919, 지적 20여 건 반영)
+
+## 한민님 취향·결정 (되돌리지 말 것)
+
+- 명조·손글씨 금지, Pretendard(jsdelivr) · 원문자 ①② 금지 · `word-break: keep-all`
+- 채도 높은 형광색 금지("눈 아픔"). 색 조합을 내가 먼저 제안하지 않는다 — 레퍼런스나 지정 색에서 출발
+- 산출물에 가정·검증 메모 금지, 결과만. 지어내지 않는다(수치·출처·실적 없으면 묻거나 `확인 필요`)
+- 대용량 제작은 서브에이전트 병렬. 백그라운드 에이전트 10분 무응답이면 멈추고 확인
 
 ## 남은 작업
-- [x] vanilla-slide 배포 마무리 (260713 v1.2.0)
-- [x] v1.2.0 GitHub push (260715)
-- [x] edu-designer v1.0.0 등재 + push (260715)
-- [x] 계정·레포·마켓 rename (aible-edu/aible-skills → studiodotdot/dotdot-skills, 260715)
-- [x] vanilla-slide v1.3.0 — 교육자료 설계 규칙·부품(니모닉·빈칸·정리·금지 예시·활동지·챕터 색) + 발표자 미리보기 제목 색 버그 수정 (260918) → **260920 레퍼런스 이미지 실측(교육 6건 91장) 기준으로 시각 레이어 전면 재작성**(파스텔 배경 + 흰 종이 카드, 아이콘 제목, 빈칸·금지·정리·숫자·서약서 부품, 12장 샘플). 발표자료용 파생 스킬 `vanilla-deck` v1.0.0 **260920 마켓 등재**(노트·발표자 모드 없는 F·I 2키 엔진, 공통부 수정 시 양쪽 동기화)
-- [x] vanilla-slide v1.3.0 + vanilla-deck v1.0.0 등재·GitHub push (260920)
+- [x] vanilla-slide v1.2.0 배포·push (260715) · edu-designer v1.0.0 등재 (260715) · 계정·레포 rename (260715)
+- [x] vanilla-slide v1.3.0 교육 레이어 재작성 + vanilla-deck v1.0.0 신규 등재 · push (260920)
+- [ ] vanilla-deck 레이아웃 재점검 (260920 한민님: "레이아웃이 너무 별로, 표 사이즈가 안 맞는 게 많다") — ▶ 한민님: 어떤 파일 기준인지 확인(`_work/test-decks/` 옛 템플릿 실험 덱 / `_work/samples/vanilla-deck_샘플`). 표·부품 크기 정합부터, 레퍼런스 장과 나란히 비교 후 수정 → 1.0.1 bump
+- [ ] vanilla-slide 아이콘·이미지 보강 방법 찾기 (전반은 OK. 표지·3장 개념·12장 마무리의 이모지 아이콘이 위치·크기 엉뚱) — 이모지 대체(SVG 아이콘 세트·일러스트 소스) 검토, `.fig`/`.cover__fig`/`.hd__icon` 슬롯 크기·위치 규칙 정리 → 1.3.1 bump
+- [ ] 레퍼런스 라이브러리 미완분 — 발표 10건 99장 태그 미부여, 나머지 55건 미수집(`99_진행상황.txt`). 필요해지면 Aside에 이어서 지시(지시문 `~/Downloads/Aside지시문_레퍼런스_슬라이드_수집_260919.txt`)
