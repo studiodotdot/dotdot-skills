@@ -8,7 +8,7 @@
   "plugins": [
     {
       "name": "vanilla-slide",
-      "description": "순수 HTML/CSS/JavaScript로 풀스크린 웹 프레젠테이션 단일 파일 생성. 완성형 엔진 템플릿 동봉 — 전체화면(F)·목차(I)·화자 노트(N)·발표자 모드(S, 듀얼 창 동기화)·data-step 빌드 효과·인쇄(PDF 전 장 저장) 대응.",
+      "description": "강의 교안·교육자료용 풀스크린 웹 슬라이드 단일 파일 생성. 완성형 엔진 템플릿 동봉 — 전체화면(F)·목차(I)·화자 노트(N)·발표자 모드(S, 듀얼 창 동기화)·빌드 효과·인쇄(PDF 전 장 저장) + 교육자료 설계 부품(니모닉 목차·빈칸 채우기·정리 슬라이드·금지 예시·활동지·챕터별 색 코딩).",
       "source": "./plugins/vanilla-slide",
       "category": "education",
       "tags": [
@@ -17,6 +17,21 @@
         "html",
         "korean",
         "education",
+        "single-file"
+      ]
+    },
+    {
+      "name": "vanilla-deck",
+      "description": "사내 보고·제안·공모전·IR 발표용 단일 파일 HTML 덱 생성. vanilla-slide 엔진 파생(F 전체화면·I 목차·PDF 전 장 인쇄) + 국내 발표자료 포트폴리오 실측 시각 문법 — 다크 표지·간지, 완결 문장 제목 밴드, 챕터 내비, 차트→요인→영향 3단, 컬러 카드 격자, 목표·기대효과, 타임라인, 결론 밴드, 출처·페이지 푸터.",
+      "source": "./plugins/vanilla-deck",
+      "category": "education",
+      "tags": [
+        "slides",
+        "presentation",
+        "report",
+        "proposal",
+        "html",
+        "korean",
         "single-file"
       ]
     },

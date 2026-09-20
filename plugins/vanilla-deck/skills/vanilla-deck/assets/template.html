@@ -1,0 +1,1031 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!-- ✏️ 교체: 문서 제목 -->
+<title>교육사업본부 운영 성과 보고</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+/* ================================================================
+   엔진 CSS — 슬라이드 콘텐츠용 클래스 외에는 수정하지 않는다.
+   팔레트 변경은 :root 변수 교체만으로 한다.
+   ================================================================ */
+:root {
+  /* 글자·선 */
+  --ink:            #14171C;   /* 제목·본문 */
+  --ink2:           #3A3F47;   /* 보조 글자 */
+  --muted:          #7A808A;   /* 캡션·출처 */
+  --line:           #E1E3E7;
+  --bar:            #B9BDC4;   /* 비교 막대(이전·대조군) */
+  /* POINT — 자유롭게 쓴다: 숫자·선·배지·체크·차트 강조·핵심어. 큰 면은 틴트만 */
+  --point:          #1F5FBF;
+  --point-tint:     #E8F0FB;
+  --point-on-dark:  #7FB3FF;   /* 다크 밴드 위 강조 글자 */
+  --yellow:         #F5D33F;   /* 사진 위 순위·강조 숫자 */
+  /* 카드 헤더 색 세트 (3색) — 기본은 POINT 계열 + 2색. 단색으로 가려면 셋 다 --point 로 */
+  --c1:             #1F5FBF;
+  --c2:             #E8562E;
+  --c3:             #7A4FBF;
+  /* 다크 면 — 표지·간지·차트 헤더·타임라인 라벨 */
+  --dark:           #0B0F17;
+  --dark-soft:      #4A4E55;
+  --glow1:          rgba(31,95,191,.85);   /* 표지 그라데이션 덩어리 2개 */
+  --glow2:          rgba(0,160,120,.55);
+  /* 엔진 토큰 — 위 값에 연결 */
+  --bg:             #FFFFFF;
+  --surface:        #FFFFFF;
+  --border:         var(--line);
+  --text-primary:   var(--ink);
+  --text-secondary: var(--ink2);
+  --text-muted:     var(--muted);
+  --accent:         var(--point);
+  --accent-light:   var(--point-tint);
+  --accent-dark:    var(--point);
+  --shadow:         0 2px 12px rgba(0,0,0,0.06);
+  --shadow-lg:      0 8px 32px rgba(0,0,0,0.12);
+  --radius:         6px;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; }
+body {
+  font-family: 'Noto Sans KR', 'Inter', -apple-system, 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif;
+  background: var(--bg);
+  color: var(--text-primary);
+  overflow: hidden;
+  word-break: keep-all;          /* 한국어: 단어 중간 끊김 방지 */
+  overflow-wrap: break-word;
+  touch-action: pan-y;
+  overscroll-behavior: none;
+  -webkit-font-smoothing: antialiased;
+}
+[hidden] { display: none !important; }
+
+/* ---------- 슬라이드 레이어 ---------- */
+.slide {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 60px;
+  background: var(--bg);                /* 불투명 필수 — 정리 중인 뒷슬라이드 가림 */
+  transform: translateX(100%);          /* 기본: 오른쪽 대기 */
+  transition: transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  will-change: transform;
+}
+.slide.is-active  { transform: translateX(0); }
+.slide.exit-left  { transform: translateX(-100%); }
+.slide.exit-right { transform: translateX(100%); }
+body.is-animating { pointer-events: none; }   /* 전환 중 클릭 차단 */
+
+.slide__content { width: 100%; max-width: 1280px; }
+
+/* ---------- 타이포그래피 ---------- */
+.slide__tag {
+  font: 600 1.05rem 'Inter', sans-serif;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 20px;
+}
+.slide__title {
+  font-size: clamp(2.6rem, 5.2vw, 4.2rem);
+  font-weight: 700;
+  line-height: 1.18;
+  margin-bottom: 24px;
+}
+.slide__subtitle {
+  font-size: clamp(1.4rem, 2.9vw, 2rem);
+  font-weight: 400;
+  color: var(--text-secondary);
+  line-height: 1.4;
+  margin-bottom: 16px;
+}
+.slide__body {
+  font-size: clamp(1.3rem, 2.35vw, 1.5rem);
+  color: var(--text-secondary);
+  line-height: 1.65;
+  margin-bottom: 16px;
+}
+.slide__meta { font-size: 1.1rem; color: var(--text-muted); margin-top: 36px; }
+
+/* ---------- 리스트 (dot 정렬: align-items center 고정) ---------- */
+.slide__list { list-style: none; margin-top: 28px; }
+.slide__list li {
+  display: flex;
+  align-items: center;               /* flex-start + margin-top 금지 */
+  gap: 12px;
+  font-size: clamp(1.3rem, 2.35vw, 1.5rem);
+  color: var(--text-secondary);
+  line-height: 1.65;
+  padding: 10px 0;
+}
+.slide__list li::before {
+  content: '';
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  background: var(--accent);
+  flex-shrink: 0;
+}
+
+/* ---------- 카드 ---------- */
+.cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 24px;
+  margin-top: 36px;
+}
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 30px 28px;
+  box-shadow: var(--shadow);
+}
+.card__icon  { font-size: 2.6rem; margin-bottom: 14px; }
+.card__title { font-size: 1.35rem; font-weight: 700; margin-bottom: 10px; }
+.card__body  { font-size: 1.2rem; color: var(--text-secondary); line-height: 1.6; }
+
+/* ---------- 코드 블록 ---------- */
+.code-block {
+  background: #1A2332;
+  color: #E2E8F0;
+  border-radius: var(--radius);
+  padding: 26px 30px;
+  margin-top: 28px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 1.05rem;
+  line-height: 1.7;
+  overflow-x: auto;
+  box-shadow: var(--shadow-lg);
+}
+.code-block .cm { color: #94A3B8; }   /* 주석용 */
+
+/* ---------- 빌드 효과 ---------- */
+[data-step] {
+  opacity: 0;
+  transform: translateY(12px);
+  transition: opacity 0.35s, transform 0.35s;
+}
+[data-step].visible { opacity: 1; transform: translateY(0); }
+
+/* ---------- 진행바 · 카운터 · 네비 버튼 ---------- */
+#progressBar {
+  position: fixed; top: 0; left: 0;
+  width: 100%; height: 3px;
+  background: var(--border);
+  z-index: 100;
+}
+#progressFill { height: 100%; width: 0; background: var(--accent); transition: width 0.4s ease; }
+#slideCounter {
+  position: fixed; bottom: 20px; right: 24px;
+  font: 400 0.8rem 'Inter', sans-serif;
+  color: var(--text-muted);
+  z-index: 100;
+}
+.nav-btn {
+  position: fixed; bottom: 16px;
+  width: 40px; height: 40px;
+  border-radius: 50%;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text-secondary);
+  font-size: 1rem;
+  cursor: pointer;
+  z-index: 100;
+  opacity: 0.55;
+  transition: opacity 0.2s, color 0.2s;
+}
+.nav-btn:hover { opacity: 1; color: var(--accent); }
+#btnPrev { left: 24px; }
+#btnNext { left: 72px; }
+
+/* ---------- 단축키 힌트 (항상 표시) ---------- */
+#kbdHint {
+  position: fixed; bottom: 48px; right: 14px;
+  display: flex; gap: 8px;
+  background: rgba(255,255,255,0.72);
+  backdrop-filter: blur(6px);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 6px 10px;
+  z-index: 100;
+  font-size: 0.72rem; color: var(--text-muted);
+}
+#kbdHint span { display: inline-flex; align-items: center; gap: 3px; }
+#kbdHint kbd {
+  font: 700 0.68rem 'Inter', sans-serif; color: var(--accent);
+  background: var(--surface); border: 1px solid var(--border); border-bottom-width: 2px;
+  border-radius: 4px; padding: 1px 5px;
+}
+
+/* ---------- 목차 오버레이 (I 키) ---------- */
+#tocOverlay {
+  position: fixed; inset: 0;
+  background: rgba(26, 35, 50, 0.55);
+  backdrop-filter: blur(6px);
+  z-index: 200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.toc__panel {
+  background: var(--surface);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-lg);
+  width: min(720px, 90vw);
+  max-height: 80vh;
+  overflow-y: auto;
+  padding: 34px 38px;
+}
+.toc__title {
+  font: 600 0.8rem 'Inter', sans-serif;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-bottom: 18px;
+}
+#tocList { list-style: none; }
+#tocList button {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  width: 100%;
+  text-align: left;
+  padding: 12px 14px;
+  border: 0;
+  background: none;
+  border-radius: 10px;
+  font-family: inherit;
+  font-size: 1.1rem;
+  color: var(--text-secondary);
+  cursor: pointer;
+}
+#tocList button:hover { background: var(--bg); color: var(--text-primary); }
+#tocList li.is-current button { background: var(--accent-light); color: var(--text-primary); font-weight: 700; }
+.toc__num { font: 600 0.85rem 'Inter', sans-serif; color: var(--accent); }
+
+/* ---------- 화자 노트 — vanilla-deck은 노트를 쓰지 않는다. 실수로 들어가도 화면에 안 보이게만 ---------- */
+.slide .notes { display: none; }
+
+/* ---------- 인쇄(PDF 배포) — 전 장표가 각 1페이지 ---------- */
+@page { size: 1280px 720px; margin: 0; }
+@media print {
+  html, body {
+    overflow: visible; height: auto; background: #fff;
+    -webkit-print-color-adjust: exact; print-color-adjust: exact;
+  }
+  .slide {
+    position: relative;
+    inset: auto;
+    transform: none !important;
+    transition: none;
+    height: 100vh;
+    page-break-after: always;
+    break-after: page;
+    break-inside: avoid;
+  }
+  .slide:last-of-type { page-break-after: auto; break-after: auto; }  /* 마지막 빈 페이지 방지 */
+  [data-step] { opacity: 1 !important; transform: none !important; }
+  #progressBar, #slideCounter, .nav-btn, #kbdHint, #tocOverlay { display: none !important; }
+}
+
+/* ================================================================
+   📊 덱 레이어 — 발표자료 부품 (vanilla-deck 전용)
+   기준: 국내 PPT 디자인 업체 발표자료 포트폴리오 실측(IR·정책발표·공공보고·표준템플릿)
+   크기는 전부 em — .slide 의 font-size 가 화면에 맞춰 커지고 줄어든다 (1280×720 기준 19.2px)
+   ================================================================ */
+.nav-btn { bottom: auto; top: 50%; transform: translateY(-50%); opacity: 0; }
+.nav-btn:hover { opacity: 1; }
+#btnPrev { left: 10px; }
+#btnNext { left: auto; right: 10px; }
+#slideCounter { display: none; }
+#kbdHint { bottom: 8px; right: auto; left: 50%; transform: translateX(-50%); opacity: 0; transition: opacity .2s; }   /* 가리지 않게 — 하단에 마우스를 올리면 보인다 */
+body:hover #kbdHint { opacity: .25; }
+#kbdHint:hover { opacity: 1; }
+
+body { font-family: 'Pretendard', 'Noto Sans KR', -apple-system, 'Apple SD Gothic Neo', sans-serif; }
+.slide { font-size: min(1.5vw, 2.6667vh); color: var(--ink); }
+.slide b, .slide strong { font-weight: 800; }
+.pt { color: var(--point); }                      /* 핵심어 — POINT 색 */
+.slide--page { display: flex; flex-direction: column; align-items: stretch; justify-content: flex-start; padding: 0; }
+.slide--page > .head, .slide--page > .head--num, .slide--page > .head--dark { flex-shrink: 0; }
+
+/* ---------- 상단 제목 영역 (3종) ---------- */
+/* A. 연회색 밴드 + 큰 제목 (IR형) — 기본 */
+.head { position: relative; padding: 1.1em 3em 0.9em; background: linear-gradient(180deg, #EEF0F2 0%, #F7F8F9 100%); }
+.head__meta { display: flex; justify-content: space-between; align-items: center; font-size: 0.72em; color: var(--muted); margin-bottom: 0.9em; }
+.head__crumb b { color: var(--point); font-weight: 800; margin-right: 0.7em; }
+.head__crumb i { font-style: normal; color: var(--ink2); }
+.head__nav { display: flex; gap: 0; }
+.head__nav span { padding: 0 0.7em; border-left: 1px solid var(--line); color: var(--muted); }
+.head__nav span:first-child { border-left: 0; }
+.head__nav span.is-current { color: var(--point); font-weight: 700; }
+.head__title { font-size: 2.05em; font-weight: 800; line-height: 1.22; letter-spacing: -0.02em; max-width: 24em; }
+/* B. 컬러 번호 박스 + 제목 (공공 보고형) */
+.head--num { background: #fff; padding: 1.1em 3em 0.7em; border-bottom: 1px solid var(--line); display: flex; align-items: center; gap: 1em; }
+.head--num .head__num { width: 2.2em; height: 2.2em; background: var(--point); color: #fff; font-weight: 800; font-size: 1.1em; display: flex; align-items: center; justify-content: center; border-radius: 0.2em; flex-shrink: 0; }
+.head--num .head__title { font-size: 1.75em; max-width: none; }
+.head--num .head__meta { margin: 0 0 0 auto; }
+/* C. 다크 밴드 흰 제목 (매뉴얼·교육형 혼용) */
+.head--dark { background: var(--dark); color: #fff; padding: 0.9em 3em; display: flex; align-items: center; gap: 1em; }
+.head--dark .head__title { color: #fff; font-size: 1.6em; max-width: none; }
+.head--dark .head__meta { margin: 0 0 0 auto; color: rgba(255,255,255,.75); }
+
+/* ---------- 본문 · 하단 ---------- */
+.body { padding: 1.4em 3em 2.6em; flex: 1; min-height: 0; display: flex; flex-direction: column; gap: 1em; }
+.body > .grow { flex: 1; min-height: 0; }
+.cards3.grow { grid-auto-rows: 1fr; }
+.tri.grow > .tri__col > .chart { flex: 1; }
+.body--flush { padding: 0; }
+.foot { position: absolute; left: 3em; right: 3em; bottom: 0.9em; display: flex; justify-content: space-between; align-items: flex-end; font-size: 0.62em; color: var(--muted); gap: 2em; }
+.foot__pg { position: absolute; left: 50%; transform: translateX(-50%); bottom: 0; }
+.foot__src { flex: 1; line-height: 1.5; }
+.foot__pg { font-variant-numeric: tabular-nums; }
+.foot__logo { font-weight: 800; color: var(--ink2); font-size: 1.05em; letter-spacing: -0.01em; }
+.unit { font-size: 0.62em; color: var(--muted); }
+
+/* 결론 밴드 — 장 하단 큰 문장 (「」 안이 POINT) */
+.conclusion { margin-top: 1.2em; padding: 0.9em 1em; text-align: center; font-size: 1.35em; font-weight: 800; line-height: 1.4; letter-spacing: -0.02em; background: linear-gradient(180deg, transparent, #F3F4F6); }
+.conclusion q { quotes: '「' '」'; color: var(--point); }
+.conclusion q::before, .conclusion q::after { color: var(--point); }
+.lead-band { background: var(--dark); color: #fff; padding: 0.8em 1.2em; font-size: 1.05em; font-weight: 700; line-height: 1.45; border-radius: 0.3em; }
+.lead-band b { color: var(--point-on-dark); }
+
+/* ---------- 차트 박스 (다크 헤더 스트립 + 연회색 바탕) ---------- */
+.chart { background: #F1F2F3; display: flex; flex-direction: column; }
+.chart__head { background: var(--dark-soft); color: #fff; font-weight: 700; text-align: center; padding: 0.55em; font-size: 0.85em; }
+.chart__body { padding: 0.9em 1em 0.8em; flex: 1; display: flex; flex-direction: column; }
+.chart__legend { display: flex; gap: 1.2em; font-size: 0.65em; color: var(--ink2); margin-bottom: 0.8em; align-items: center; }
+.chart__legend i { display: inline-block; width: 1.4em; height: 0.18em; background: var(--bar); margin-right: 0.4em; vertical-align: middle; }
+.chart__legend i.on { background: var(--point); }
+.chart__legend .unit { margin-left: auto; }
+.bars { display: flex; align-items: flex-end; gap: 1em; flex: 1; min-height: 8em; border-bottom: 1px solid #C9CCD0; padding-top: 1.6em; }
+.bar { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; height: 100%; position: relative; }
+.bar i { display: block; width: 62%; max-width: 3.2em; height: var(--v); background: var(--bar); position: relative; }
+.bar i.on { background: var(--point); }
+.bar i::after { content: attr(data-v); position: absolute; bottom: 100%; left: 50%; transform: translateX(-50%); padding-bottom: 0.25em; font-size: 0.75em; font-weight: 700; color: var(--ink2); white-space: nowrap; }
+.bar i.on::after { color: var(--point); font-weight: 800; }
+.bar.hi i::after { border: 2px solid var(--point); border-radius: 50%; padding: 0.15em 0.55em; bottom: calc(100% + 0.15em); color: var(--point); }   /* 손그림 타원 느낌 강조 */
+.bar-labels { display: flex; gap: 1em; margin-top: 0.4em; }
+.bar-labels span { flex: 1; text-align: center; font-size: 0.7em; color: var(--ink2); }
+.callout { position: absolute; right: 0.6em; top: 0.4em; background: var(--point); color: #fff; font-size: 0.68em; font-weight: 700; padding: 0.25em 0.7em; border-radius: 1em; }
+
+/* ---------- 3단: 사실(차트) → 요인(번호 블록) → 영향(틴트 박스) ---------- */
+.tri { display: grid; grid-template-columns: 1.15fr 1fr 0.68fr; gap: 1.1em; align-items: stretch; }
+.tri__col { display: flex; flex-direction: column; }
+.tri__head { text-align: center; font-size: 0.9em; font-weight: 700; line-height: 1.4; padding: 0.7em 0 0.8em; border-top: 2px solid var(--ink2); margin-bottom: 0.2em; }
+.tri__col--pt .tri__head { border-top-color: var(--point); }
+.factors { display: flex; flex-direction: column; gap: 0.5em; flex: 1; }
+.factor { background: #F1F2F3; padding: 1.5em 1em 1em; text-align: center; font-size: 0.78em; line-height: 1.5; color: var(--ink2); position: relative; flex: 1; display: flex; align-items: center; justify-content: center; }
+.factor::before { content: attr(data-n); position: absolute; top: 0; left: 50%; transform: translateX(-50%); background: #A9ADB3; color: #fff; font-weight: 700; font-size: 0.85em; padding: 0.1em 0.9em 0.2em; clip-path: polygon(0 0, 100% 0, 85% 100%, 15% 100%); }
+.impacts { display: flex; flex-direction: column; gap: 0.5em; flex: 1; }
+.impact { background: var(--point-tint); color: var(--point); font-weight: 700; text-align: center; font-size: 0.82em; padding: 1em 0.6em; flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0.3em; line-height: 1.4; }
+.impact::before { content: '✓'; font-size: 1.3em; opacity: .55; }
+
+/* ---------- 카드 격자 (컬러 헤더 + 번호 + 큰 제목) ---------- */
+.cards3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1em 1.1em; }
+.ccard { background: #F7F7F8; border: 1px solid var(--line); border-radius: 0.3em; overflow: hidden; display: flex; flex-direction: column; }
+.ccard__kicker { font-size: 0.7em; color: var(--ink2); padding: 0.55em 0.9em 0.45em; background: #fff; border-bottom: 1px solid var(--line); }
+.ccard__title { display: flex; align-items: center; gap: 0.6em; padding: 0.55em 0.9em; color: #fff; font-size: 1.05em; font-weight: 800; background: var(--c1); }
+.ccard__title i { font-style: normal; font-size: 0.7em; background: #fff; color: var(--c1); width: 1.6em; height: 1.6em; display: inline-flex; align-items: center; justify-content: center; border-radius: 0.2em; font-weight: 800; }
+.ccard--2 { border-color: var(--c2); } .ccard--2 .ccard__title { background: var(--c2); } .ccard--2 .ccard__title i { color: var(--c2); } .ccard--2 .ccard__kicker { color: var(--c2); }
+.ccard--3 { border-color: var(--c3); } .ccard--3 .ccard__title { background: var(--c3); } .ccard--3 .ccard__title i { color: var(--c3); } .ccard--3 .ccard__kicker { color: var(--c3); }
+.ccard--1 { border-color: var(--c1); } .ccard--1 .ccard__kicker { color: var(--c1); }
+.ccard__body { padding: 0.8em 0.95em 0.9em; font-size: 0.74em; line-height: 1.55; color: var(--ink2); flex: 1; }
+
+/* ---------- 큰 숫자 3열 (목표 알약 → 번호 → 기대효과) ---------- */
+.goals { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.2em; text-align: center; }
+.goal { position: relative; padding-bottom: 1em; }
+.goal::before { content: ''; position: absolute; left: 50%; top: 4.2em; transform: translateX(-50%); width: 15em; height: 15em; max-width: 100%; border-radius: 50%; background: radial-gradient(circle, var(--point-tint) 0%, rgba(255,255,255,0) 72%); z-index: 0; }
+.goal > * { position: relative; }
+.goal__pill { background: var(--c1); color: #fff; border-radius: 3em; padding: 1.2em 1em 1.3em; font-size: 0.95em; font-weight: 700; line-height: 1.45; }
+.goal--2 .goal__pill { background: var(--c2); } .goal--3 .goal__pill { background: var(--c3); }
+.goal__pill b { display: block; font-size: 1.15em; font-weight: 500; margin-top: 0.3em; }
+.goal__pill b strong { font-size: 2.2em; font-weight: 800; line-height: 1; }
+.goal__n { width: 2.2em; height: 2.2em; margin: -1.1em auto 0.3em; background: var(--c1); color: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 0.85em; border: 3px solid #fff; position: relative; }
+.goal--2 .goal__n { background: var(--c2); } .goal--3 .goal__n { background: var(--c3); }
+.goal__label { font-size: 0.72em; color: var(--muted); }
+.goal__title { font-size: 1.2em; font-weight: 800; color: var(--c1); line-height: 1.35; margin: 0.25em 0 0.4em; }
+.goal--2 .goal__title { color: var(--c2); } .goal--3 .goal__title { color: var(--c3); }
+.goal__desc { font-size: 0.78em; color: var(--ink2); line-height: 1.5; }
+
+/* ---------- 타임라인 (좌 다크 라벨 + 선 위 POINT 점) ---------- */
+.tl-years { display: grid; grid-template-columns: 8.5em repeat(var(--n, 6), 1fr); margin-bottom: 0.5em; }
+.tl-years span { text-align: center; font-size: 0.82em; color: var(--ink2); border-left: 1px solid var(--line); }
+.tl-years span:first-child { border-left: 0; }
+.tl-row { display: grid; grid-template-columns: 8.5em 1fr; gap: 0.4em; margin-bottom: 0.5em; }
+.tl-row__label { background: var(--dark-soft); color: #fff; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0.3em; padding: 1em 0.6em; font-weight: 700; font-size: 0.85em; text-align: center; }
+.tl-row__label i { font-style: normal; font-size: 1.6em; opacity: .85; }
+.tl-row__track { background: #F1F2F3; position: relative; min-height: 5.2em; }
+.tl-row__track::before { content: ''; position: absolute; left: 0; right: 3%; top: 50%; height: 1px; background: var(--ink2); }
+.tl-row__track::after { content: ''; position: absolute; right: 2.4%; top: 50%; transform: translateY(-50%); border: 0.28em solid transparent; border-left-color: var(--ink2); }
+.tl-pt { position: absolute; left: var(--x); top: 50%; transform: translate(-50%, -50%); width: 0.75em; height: 0.75em; border-radius: 50%; background: #fff; border: 0.18em solid var(--point); }
+.tl-pt span { position: absolute; left: 50%; transform: translateX(-50%); white-space: nowrap; font-size: 0.72em; color: var(--ink); top: 1.1em; }
+.tl-pt.up span { top: auto; bottom: 1.1em; }
+
+/* ---------- 사진 카드 (오버레이 텍스트 + 큰 순위) ---------- */
+.pcards { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1em; }
+.pcard { background: #F1F2F3; display: flex; flex-direction: column; }
+.pcard__img { aspect-ratio: 3/4; background: var(--img, linear-gradient(160deg, #3A4A6A, #101828)) center/cover; position: relative; display: flex; flex-direction: column; justify-content: flex-end; align-items: center; text-align: center; color: #fff; padding: 0 0.6em 1.1em; text-shadow: 0 1px 4px rgba(0,0,0,.5); }
+.pcard__img::before { content: ''; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(0,0,0,0) 40%, rgba(0,0,0,.55)); }
+.pcard__img > * { position: relative; }
+.pcard__t { font-size: 0.8em; font-weight: 700; line-height: 1.35; }
+.pcard__rank { font-size: 1.6em; font-weight: 800; color: var(--yellow); margin-top: 0.2em; line-height: 1.1; }
+.pcard__cap { font-size: 0.68em; color: var(--ink2); text-align: center; padding: 0.7em 0.5em; line-height: 1.4; }
+
+/* ---------- 원형 지표 (아이콘 원 + 라벨 + 수치) ---------- */
+.circles { display: flex; flex-wrap: wrap; justify-content: center; gap: 1em; }
+.circle { width: 7.2em; height: 7.2em; border-radius: 50%; background: var(--point-tint); display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; gap: 0.1em; }
+.circle i { font-style: normal; font-size: 1.6em; }
+.circle b { font-size: 0.85em; color: var(--point); }
+.circle span { font-size: 0.72em; color: var(--ink); font-weight: 700; }
+.circle span strong { font-size: 1.3em; }
+
+/* ---------- KPI 큰 숫자 줄 ---------- */
+.kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(9em, 1fr)); gap: 1em; }
+.kpi { border-top: 3px solid var(--point); padding: 0.7em 0.9em 0.8em; background: #F7F7F8; }
+.kpi__label { font-size: 0.72em; color: var(--muted); }
+.kpi__value { font-size: 2em; font-weight: 800; line-height: 1.15; letter-spacing: -0.02em; }
+.kpi__value small { font-size: 0.45em; font-weight: 700; margin-left: 0.15em; }
+.kpi__delta { font-size: 0.72em; font-weight: 700; color: var(--point); margin-top: 0.15em; }
+
+/* ---------- 표 (헤더 틴트 · 세로선 없음) ---------- */
+.tbl { width: 100%; border-collapse: collapse; font-size: 0.74em; }
+.tbl caption { text-align: left; font-weight: 800; color: var(--ink); font-size: 1.05em; padding-bottom: 0.5em; }
+.tbl caption::before { content: ''; display: inline-block; width: 0.25em; height: 0.9em; background: var(--point); margin-right: 0.5em; vertical-align: -0.1em; }
+.tbl th { background: var(--point-tint); color: var(--ink); font-weight: 700; padding: 0.55em 0.8em; text-align: center; }
+.tbl td { padding: 0.55em 0.8em; border-bottom: 1px solid var(--line); text-align: center; color: var(--ink2); }
+.tbl td:first-child { text-align: left; font-weight: 700; color: var(--ink); }
+.tbl .num { text-align: right; font-variant-numeric: tabular-nums; }
+.tbl .pct { color: var(--muted); font-size: 0.9em; }
+.tbl tr.hi td { background: var(--point-tint); color: var(--ink); font-weight: 700; }
+.kv { width: 100%; border-collapse: collapse; font-size: 0.78em; }
+.kv th { width: 22%; text-align: left; font-weight: 500; color: var(--muted); background: #F3F4F6; padding: 0.55em 0.9em; border-bottom: 2px solid #fff; vertical-align: top; }
+.kv td { padding: 0.55em 0.9em; border-bottom: 1px solid var(--line); color: var(--ink2); line-height: 1.5; }
+.kv td li { list-style: none; }
+.kv td li::before { content: '· '; }
+
+/* ---------- 60/40 · 2단 · 세로 큰 제목 ---------- */
+.split { display: grid; grid-template-columns: 1.4fr 1fr; gap: 1.6em; align-items: start; }
+.split--even { grid-template-columns: 1fr 1fr; }
+.stack { display: flex; flex-direction: column; gap: 0.9em; }
+.sub { font-size: 0.95em; font-weight: 800; display: flex; align-items: center; gap: 0.45em; margin-bottom: 0.45em; }
+.sub::before { content: '›'; width: 1.1em; height: 1.1em; background: var(--point); color: #fff; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-size: 0.85em; }
+.vtitle { font-size: 2.2em; font-weight: 800; line-height: 1.15; letter-spacing: -0.02em; color: var(--point); padding-left: 0.45em; border-left: 0.14em solid var(--point); }
+.vtitle small { display: block; font-size: 0.42em; color: var(--muted); font-weight: 500; margin-top: 0.5em; letter-spacing: 0; }
+.visual { background: var(--img, radial-gradient(circle at 50% 45%, #DDE7F3, #F3F5F8 70%)) center/cover; border-radius: 50%; aspect-ratio: 1; width: min(100%, 15em); margin: 0 auto; display: flex; align-items: center; justify-content: center; font-size: 0.75em; color: var(--muted); }
+
+/* ---------- 프로세스 · 불릿 ---------- */
+.steps { display: grid; grid-template-columns: repeat(var(--n, 4), 1fr); gap: 0.8em; }
+.step { background: #F1F2F3; padding: 1em 1em 1.1em; position: relative; }
+.step::before { content: attr(data-n); display: inline-flex; align-items: center; justify-content: center; width: 1.7em; height: 1.7em; border-radius: 50%; background: var(--point); color: #fff; font-weight: 800; font-size: 0.8em; margin-bottom: 0.6em; }
+.step h4 { font-size: 0.95em; font-weight: 800; margin-bottom: 0.3em; }
+.step p { font-size: 0.72em; line-height: 1.5; color: var(--ink2); }
+.step + .step::after { content: '›'; position: absolute; left: -0.62em; top: 50%; transform: translateY(-50%); color: #B8BCC2; font-size: 1.4em; }
+.dots { list-style: none; }
+.dots li { position: relative; padding-left: 1.1em; font-size: 0.85em; line-height: 1.5; margin-bottom: 0.45em; color: var(--ink); }
+.dots li::before { content: '›'; position: absolute; left: 0; top: 0; width: 0.9em; height: 0.9em; border-radius: 50%; background: var(--point); color: #fff; font-size: 0.8em; display: flex; align-items: center; justify-content: center; margin-top: 0.3em; }
+.dots li small { display: block; font-size: 0.85em; color: var(--muted); font-weight: 400; padding-left: 0.6em; }
+
+/* ---------- 표지 · 간지 · 목차 · 마무리 ---------- */
+.slide--cover, .slide--divider, .slide--closing { background: var(--dark); color: #fff; padding: 0; overflow: hidden; }
+.glow { position: absolute; inset: 0; background:
+  radial-gradient(60% 45% at 78% 30%, var(--glow1) 0%, transparent 65%),
+  radial-gradient(70% 40% at 40% 92%, var(--glow2) 0%, transparent 65%); opacity: .95; }
+.cover__in { position: absolute; left: 11%; top: 16%; right: 10%; }
+.cover__year { font-size: 2.6em; font-weight: 800; color: rgba(255,255,255,.55); line-height: 1; margin-bottom: 0.2em; }
+.cover__title { font-size: 3.1em; font-weight: 800; line-height: 1.12; letter-spacing: -0.02em; }
+.cover__sub { font-size: 1.05em; margin-top: 1.4em; color: rgba(255,255,255,.9); }
+.cover__logo { position: absolute; right: 4%; bottom: 7%; font-weight: 800; font-size: 0.9em; }
+.divider__n { position: absolute; right: 6%; top: 11%; font-size: 3.6em; font-weight: 800; line-height: 1; }
+.divider__in { position: absolute; left: 11%; top: 22%; right: 20%; }
+.divider__line { width: 100%; max-width: 32em; height: 3px; background: #fff; margin-bottom: 0.9em; }
+.divider__title { font-size: 2.9em; font-weight: 800; line-height: 1.12; letter-spacing: -0.02em; }
+.divider__sub { font-size: 1.05em; margin-top: 1.6em; color: rgba(255,255,255,.85); }
+.slide--toc { padding: 0; background: #fff; }
+.toc__deco { position: absolute; left: 0; top: 0; bottom: 0; width: 34%; background:
+  radial-gradient(circle at 25% 18%, var(--point) 0 6.5em, transparent 6.6em),
+  repeating-linear-gradient(135deg, var(--point) 0 0.14em, transparent 0.14em 0.6em) 0 0 / 40% 30% no-repeat,
+  linear-gradient(var(--point), var(--point)) 0 62% / 55% 22% no-repeat,
+  radial-gradient(circle at 20% 92%, var(--point-tint) 0 5em, transparent 5.1em); }
+.toc__deco::after { content: ''; position: absolute; right: 12%; top: 34%; width: 6em; height: 6em; background: var(--point-tint); border-radius: 50%; }
+.toc__head { position: absolute; left: 38%; top: 9%; }
+.toc__head h2 { font-size: 2em; font-weight: 800; letter-spacing: -0.02em; }
+.toc__head small { display: block; font-size: 0.7em; color: var(--muted); letter-spacing: 0.35em; margin-top: 0.4em; }
+.toc__list { position: absolute; left: 50%; top: 27%; list-style: none; }
+.toc__list li { display: flex; align-items: baseline; gap: 1.2em; font-size: 1.05em; font-weight: 700; margin-bottom: 0.75em; }
+.toc__list li span { color: var(--point); font-weight: 400; min-width: 1.2em; }
+.toc__list li small { display: block; font-weight: 400; color: var(--ink2); font-size: 0.82em; margin-top: 0.35em; }
+.slide--closing .cover__title { font-size: 2.6em; }
+
+/* ✏️ 덱 전용 스타일 — 이 덱에만 필요한 부품은 여기에 추가한다. 위 부품 규칙은 수정하지 않는다 */
+
+
+@media screen and (max-width: 900px) {
+  .head, .head--num, .head--dark, .body { padding-left: 1.4em; padding-right: 1.4em; }
+  .foot { left: 1.4em; right: 1.4em; }
+  .head__nav { display: none; }
+  .tri, .cards3, .goals, .pcards, .split, .split--even { grid-template-columns: 1fr; }
+  .steps { grid-template-columns: 1fr 1fr; }
+}
+
+/* ---------- 접근성 · 반응형 ---------- */
+@media (prefers-reduced-motion: reduce) {
+  .slide, [data-step] { transition-duration: 0.01s; }
+}
+@media screen and (max-width: 768px) {
+  .slide { padding: 0 28px; }
+}
+</style>
+</head>
+<body data-logo="EDU DIVISION">
+
+<!-- ================================================================
+     ✏️ 슬라이드 영역 — 이 블록 안의 <section>만 교체/추가/삭제한다.
+     규칙:
+       · 각 <section class="slide">에 id="slide-N"(1부터)과 data-title 부여
+       · 유형: slide--cover / slide--toc / slide--divider(data-chapter 필수) / slide--page(본문) / slide--closing
+       · 본문 = <div class="head">(제목 영역, 3종 중 택1) → <div class="body">(부품) → <div class="foot">(출처·페이지·로고)
+         - head 안의 <span class="head__nav"></span> 은 비워 두면 덱 헬퍼가 챕터 내비를 채운다
+         - foot 안의 <span class="foot__pg"></span> 도 헬퍼가 채운다. 로고 자리는 <body data-logo="…">
+       · 제목은 완결 문장(주어+서술어) 또는 짧은 주제. 결론은 .conclusion 밴드 또는 제목이 맡는다
+       · 아래 수치는 전부 예시다. 실제 덱에서는 반드시 교체한다
+     ================================================================ -->
+
+<section class="slide slide--cover" id="slide-1" data-title="표지">
+  <div class="glow"></div>
+  <div class="cover__in">
+    <div class="cover__year">2026</div>
+    <h1 class="cover__title">교육사업본부<br>운영 성과 보고</h1>
+    <p class="cover__sub">2026. 10. 00.</p>
+  </div>
+  <div class="cover__logo">EDU DIVISION</div>
+</section>
+
+<section class="slide slide--toc" id="slide-2" data-title="목차">
+  <div class="toc__deco"></div>
+  <div class="toc__head"><h2>Contents</h2><small>| 목 차 |</small></div>
+  <ol class="toc__list">
+    <li><span>1</span>운영 성과</li>
+    <li><span>2</span>과정별 실적<small>실습형 · 강의형 4개 과정</small></li>
+    <li><span>3</span>확산 전략</li>
+    <li><span>4</span>추진 일정 및 요청</li>
+  </ol>
+</section>
+
+<section class="slide slide--divider" id="slide-3" data-title="01 운영 성과" data-chapter="운영 성과">
+  <div class="glow"></div>
+  <div class="divider__n">01</div>
+  <div class="divider__in">
+    <div class="divider__line"></div>
+    <h2 class="divider__title">운영 성과</h2>
+    <p class="divider__sub">실습형 전환이 만족도와 추천 의향을 함께 끌어올렸다</p>
+  </div>
+</section>
+
+<section class="slide slide--page" id="slide-4" data-title="만족도 상승 요인">
+  <div class="head">
+    <div class="head__meta"><span class="head__crumb"><b>01</b><i>운영 성과</i></span><span class="head__nav"></span></div>
+    <h2 class="head__title">실습 비중을 40%로 올린 3분기에<br>만족도가 최고치를 기록했다</h2>
+  </div>
+  <div class="body">
+    <div class="tri grow">
+      <div class="tri__col">
+        <div class="chart">
+          <div class="chart__head">분기별 교육 만족도 추이</div>
+          <div class="chart__body">
+            <div class="chart__legend"><span><i></i>강의형</span><span><i class="on"></i>실습형 전환 후</span><span class="unit">(단위: 점, 5점 만점)</span></div>
+            <div class="bars">
+              <div class="bar"><i style="--v:62%" data-v="4.1"></i></div>
+              <div class="bar"><i style="--v:68%" data-v="4.2"></i></div>
+              <div class="bar"><i style="--v:72%" data-v="4.3"></i></div>
+              <div class="bar hi"><i class="on" style="--v:88%" data-v="4.6"></i></div>
+            </div>
+            <div class="bar-labels"><span>'25 4Q</span><span>'26 1Q</span><span>'26 2Q</span><span>'26 3Q</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="tri__col">
+        <div class="tri__head">만족도 상승에 기여한<br>세 가지 변화</div>
+        <div class="factors">
+          <div class="factor" data-n="1">실습 비중을 25%에서 40%로 확대해<br>본인 업무 문서로 직접 실습</div>
+          <div class="factor" data-n="2">과정당 정원을 30명에서 20명으로 줄여<br>1인당 피드백 시간 확보</div>
+          <div class="factor" data-n="3">사전 과제로 출발선을 맞춰<br>당일 수준 편차 완화</div>
+        </div>
+      </div>
+      <div class="tri__col tri__col--pt">
+        <div class="tri__head">4분기 운영에<br>미치는 영향</div>
+        <div class="impacts">
+          <div class="impact">실습형 설계<br>전 과정 확대</div>
+          <div class="impact">정원 20명<br>유지</div>
+          <div class="impact">만족도 4.5 이상<br>목표 상향</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="foot"><span class="foot__src">Source: 사내 교육 만족도 조사(응답 1,102명), 2026. 9. 30. 기준</span><span class="foot__pg"></span><span class="foot__logo"></span></div>
+</section>
+
+<section class="slide slide--page" id="slide-5" data-title="현황과 필요성">
+  <div class="head head--num">
+    <div class="head__num">1</div>
+    <h2 class="head__title">운영 현황과 개선 필요성</h2>
+    <div class="head__meta"><span class="head__nav"></span></div>
+  </div>
+  <div class="body">
+    <div class="cards3 grow">
+      <div class="ccard ccard--1"><div class="ccard__kicker">실습형 2개 과정은 목표를 넘겼으나</div><div class="ccard__title"><i>1</i>강의형 이수율 79.5%</div><div class="ccard__body">보고서 작성·리더십 기초 2개 과정의 이수율이 80% 아래로 떨어져 전체 이수율(86.8%)이 목표 90%에 3.2%p 미달</div></div>
+      <div class="ccard ccard--2"><div class="ccard__kicker">중도 이탈자 94명 설문 결과</div><div class="ccard__title"><i>2</i>이탈 사유 1위 "업무 호출"</div><div class="ccard__body">응답의 62%가 업무 호출을 꼽았고 내용 불만은 8%에 그침. 오전 4시간 연속 편성이 월말 마감 주간과 겹친 것이 원인</div></div>
+      <div class="ccard ccard--3"><div class="ccard__kicker">실습형 과정 시범 운영에서</div><div class="ccard__title"><i>3</i>분할 편성 시 이수율 +11%p</div><div class="ccard__body">오후 2시간 × 2회로 나눈 시범 회차에서 이수율이 11%p 상승. 같은 강사·같은 강의장으로 추가 비용 없이 검증</div></div>
+      <div class="ccard ccard--1"><div class="ccard__kicker">정원 축소에도</div><div class="ccard__title"><i>4</i>교육 인원 1,240명 (▲18%)</div><div class="ccard__body">과정당 정원을 20명으로 줄였지만 차수를 62회로 늘려 전년 동기 대비 인원이 18% 증가</div></div>
+      <div class="ccard ccard--2"><div class="ccard__kicker">추천 의향(NPS)</div><div class="ccard__title"><i>5</i>+43 → +52</div><div class="ccard__body">실습형 2개 과정이 추천 상위 1·2위. 목표 +40을 12p 초과</div></div>
+      <div class="ccard ccard--3"><div class="ccard__kicker">4분기 편성 확정을 위해</div><div class="ccard__title"><i>6</i>10월 둘째 주 결정 필요</div><div class="ccard__body">강의형 2개 과정의 오후 분할 편성 승인과 마감 주간 편성 제외 협조 공문, 두 가지 결정이 필요</div></div>
+    </div>
+    <p class="conclusion">강의형 과정의 <q>오후 분할 편성</q>으로 4분기 이수율 90% 회복</p>
+  </div>
+  <div class="foot"><span class="foot__src">Source: 학습관리시스템 이수 데이터 · 중도 이탈자 설문(응답 94명)</span><span class="foot__pg"></span><span class="foot__logo"></span></div>
+</section>
+
+<section class="slide slide--divider" id="slide-6" data-title="02 과정별 실적" data-chapter="과정별 실적">
+  <div class="glow"></div>
+  <div class="divider__n">02</div>
+  <div class="divider__in">
+    <div class="divider__line"></div>
+    <h2 class="divider__title">과정별 실적</h2>
+    <p class="divider__sub">실습형과 강의형의 격차는 내용이 아니라 편성 시간에서 났다</p>
+  </div>
+</section>
+
+<section class="slide slide--page" id="slide-7" data-title="과정별 실적">
+  <div class="head head--num">
+    <div class="head__num">2</div>
+    <h2 class="head__title">과정별 실적 개요</h2>
+    <div class="head__meta"><span class="head__nav"></span></div>
+  </div>
+  <div class="body">
+    <div class="split">
+      <div>
+        <div class="vtitle">4개 과정<br>1,240명<small>2026년 3분기 · 62회차 운영</small></div>
+        <div class="visual" style="margin-top:1.2em">지도 · 사진 · 도식 자리</div>
+      </div>
+      <div class="stack">
+        <div>
+          <p class="sub">운영 개요</p>
+          <table class="kv">
+            <tr><th>기간</th><td>2026. 7. 1. ~ 9. 30. (3개월)</td></tr>
+            <tr><th>대상</th><td>전 구성원 · 과정당 정원 20명</td></tr>
+            <tr><th>구성</th><td><ul><li>실습형: AI 실무 활용 · 데이터 리터러시</li><li>강의형: 보고서 작성 · 리더십 기초</li></ul></td></tr>
+          </table>
+        </div>
+        <div>
+          <p class="sub">과정별 이수 현황</p>
+          <table class="tbl">
+            <thead><tr><th>과정</th><th>유형</th><th>인원</th><th>이수율</th><th>만족도</th></tr></thead>
+            <tbody>
+              <tr class="hi"><td>AI 실무 활용</td><td>실습형</td><td class="num">420</td><td class="num">92.4%</td><td class="num">4.8</td></tr>
+              <tr><td>데이터 리터러시</td><td>실습형</td><td class="num">310</td><td class="num">91.0%</td><td class="num">4.7</td></tr>
+              <tr><td>보고서 작성</td><td>강의형</td><td class="num">280</td><td class="num">80.7%</td><td class="num">4.4</td></tr>
+              <tr><td>리더십 기초</td><td>강의형</td><td class="num">230</td><td class="num">78.3%</td><td class="num">4.3</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+    <div class="kpis">
+      <div class="kpi"><div class="kpi__label">교육 만족도</div><div class="kpi__value">4.6<small>/5</small></div><div class="kpi__delta">▲ 0.3 (목표 4.3)</div></div>
+      <div class="kpi"><div class="kpi__label">추천 의향 NPS</div><div class="kpi__value">+52</div><div class="kpi__delta">▲ 9 (목표 +40)</div></div>
+      <div class="kpi"><div class="kpi__label">전체 이수율</div><div class="kpi__value">86.8<small>%</small></div><div class="kpi__delta" style="color:var(--muted)">▼ 3.2%p (목표 90%)</div></div>
+      <div class="kpi"><div class="kpi__label">교육 인원</div><div class="kpi__value">1,240<small>명</small></div><div class="kpi__delta">▲ 18%</div></div>
+    </div>
+  </div>
+  <div class="foot"><span class="foot__src">Source: 학습관리시스템 · 이수 = 출석 80% 이상 + 과제 제출</span><span class="foot__pg"></span><span class="foot__logo"></span></div>
+</section>
+
+<section class="slide slide--page" id="slide-8" data-title="확산 전략" data-chapter="확산 전략">
+  <div class="head head--num">
+    <div class="head__num">3</div>
+    <h2 class="head__title">추진 목표 및 기대 효과</h2>
+    <div class="head__meta"><span class="head__nav"></span></div>
+  </div>
+  <div class="body">
+    <div class="goals">
+      <div class="goal goal--1">
+        <div class="goal__pill">실습형 설계<br>전 과정 확대<b>이수율 <strong>90</strong>%</b></div>
+        <div class="goal__n">1</div><div class="goal__label">기대효과</div>
+        <div class="goal__title">강의형 2개 과정<br>이수율 회복</div>
+        <div class="goal__desc">오후 분할 편성으로 업무 호출<br>이탈을 줄여 분기당 54명 추가 이수</div>
+      </div>
+      <div class="goal goal--2">
+        <div class="goal__pill">사전 과제<br>표준 도입<b>만족도 <strong>4.5</strong>+</b></div>
+        <div class="goal__n">2</div><div class="goal__label">기대효과</div>
+        <div class="goal__title">수준 편차 없는<br>실습 운영</div>
+        <div class="goal__desc">출발선을 맞춰 4분기 전 과정<br>만족도 4.5 이상 유지</div>
+      </div>
+      <div class="goal goal--3">
+        <div class="goal__pill">프롬프트 카드<br>부서 배포<b>총 <strong>10</strong>장</b></div>
+        <div class="goal__n">3</div><div class="goal__label">기대효과</div>
+        <div class="goal__title">교육 후에도<br>쓰이는 자료</div>
+        <div class="goal__desc">교육 다음 날부터 복사해 쓰는<br>카드로 현업 적용률 측정</div>
+      </div>
+    </div>
+    <div class="steps" style="--n:4">
+      <div class="step" data-n="1"><h4>편성 승인</h4><p>강의형 2개 과정 오후 분할 편성 확정</p></div>
+      <div class="step" data-n="2"><h4>사전 과제 배포</h4><p>개강 1주 전 표준 과제 발송</p></div>
+      <div class="step" data-n="3"><h4>운영·측정</h4><p>회차별 이수율·만족도 주간 집계</p></div>
+      <div class="step" data-n="4"><h4>카드 배포</h4><p>수료자 전원에게 프롬프트 카드 10장</p></div>
+    </div>
+  </div>
+  <div class="foot"><span class="foot__src">기준: 3분기 시범 운영 결과 · 추가 이수자 = 강의형 인원 510명 × 이수율 개선폭</span><span class="foot__pg"></span><span class="foot__logo"></span></div>
+</section>
+
+<section class="slide slide--page" id="slide-9" data-title="추진 일정" data-chapter="추진 일정 및 요청">
+  <div class="head">
+    <div class="head__meta"><span class="head__crumb"><b>04</b><i>추진 일정 및 요청</i></span><span class="head__nav"></span></div>
+    <h2 class="head__title">4분기 추진 Timeline</h2>
+  </div>
+  <div class="body">
+    <div class="tl-years" style="--n:6"><span></span><span>10월 2주</span><span>10월 3주</span><span>10월 4주</span><span>11월</span><span>12월</span><span>1월</span></div>
+    <div class="tl-row"><div class="tl-row__label"><i>📋</i>편성 승인</div><div class="tl-row__track"><div class="tl-pt" style="--x:8%"><span>분할 편성안 승인</span></div><div class="tl-pt up" style="--x:25%"><span>협조 공문 발송</span></div></div></div>
+    <div class="tl-row"><div class="tl-row__label"><i>🎓</i>과정 운영</div><div class="tl-row__track"><div class="tl-pt up" style="--x:25%"><span>수강 신청 오픈</span></div><div class="tl-pt" style="--x:58%"><span>분할 편성 첫 회차</span></div><div class="tl-pt up" style="--x:75%"><span>4분기 과정 종료</span></div></div></div>
+    <div class="tl-row"><div class="tl-row__label"><i>📊</i>결과 보고</div><div class="tl-row__track"><div class="tl-pt" style="--x:75%"><span>이수율 결과 보고</span></div><div class="tl-pt up" style="--x:92%"><span>'27 편성 반영</span></div></div></div>
+    <ul class="dots" style="margin-top:0.9em">
+      <li>결정 요청 1 — 강의형 2개 과정 오후 2시간 × 2회 분할 편성 승인 <small>기한 10월 둘째 주</small></li>
+      <li>결정 요청 2 — 월말 마감 주간 교육 편성 제외, 부서장 협조 공문 발송</li>
+    </ul>
+  </div>
+  <div class="foot"><span class="foot__src">기준: 본 계획 (2026. 10.)</span><span class="foot__pg"></span><span class="foot__logo"></span></div>
+</section>
+
+<section class="slide slide--closing" id="slide-10" data-title="마무리">
+  <div class="glow"></div>
+  <div class="cover__in">
+    <h2 class="cover__title">실습은 늘리고,<br>일정은 쪼갠다</h2>
+    <p class="cover__sub">4분기 목표 — 만족도 4.5 유지 · 이수율 90% 회복</p>
+  </div>
+  <div class="cover__logo">EDU DIVISION</div>
+</section>
+
+<script>
+/* ================================================================
+   🔧 덱 헬퍼 — 수정하지 않는다.
+   · .head__nav 가 비어 있으면 챕터 내비(data-chapter 순서, 현재만 강조)를 채운다
+   · .foot__pg 에 페이지 번호를 넣고, .foot__logo 가 비어 있으면 <body data-logo> 를 넣는다
+   · 본문 장에 data-chapter 가 없으면 직전 챕터를 이어받는다
+   ================================================================ */
+(function () {
+  'use strict';
+  var slides = Array.prototype.slice.call(document.querySelectorAll('body > .slide'));
+  var logo = document.body.getAttribute('data-logo') || '';
+  var chapters = [], chOf = [], cur = -1;
+  slides.forEach(function (s) {
+    var c = s.getAttribute('data-chapter');
+    if (c) { var k = chapters.indexOf(c); if (k < 0) { chapters.push(c); k = chapters.length - 1; } cur = k; }
+    chOf.push(cur);
+  });
+  slides.forEach(function (s, i) {
+    if (!s.classList.contains('slide--page')) return;
+    var nav = s.querySelector('.head__nav');
+    if (nav && !nav.children.length) {
+      chapters.forEach(function (c, k) {
+        var sp = document.createElement('span'); sp.textContent = c;
+        if (k === chOf[i]) sp.className = 'is-current';
+        nav.appendChild(sp);
+      });
+    }
+    var pg = s.querySelector('.foot__pg');
+    if (pg) pg.textContent = i + 1;
+    var lg = s.querySelector('.foot__logo');
+    if (lg && !lg.textContent.trim()) lg.textContent = logo;
+  });
+})();
+</script>
+
+<!-- ================================================================
+     ⛔ 여기부터 엔진 — 수정하지 않는다.
+     ================================================================ -->
+
+<div id="progressBar"><div id="progressFill"></div></div>
+<div id="slideCounter">1 / 1</div>
+<button class="nav-btn" id="btnPrev" type="button" aria-label="이전 슬라이드">←</button>
+<button class="nav-btn" id="btnNext" type="button" aria-label="다음 슬라이드">→</button>
+<div id="kbdHint">
+  <span><kbd>F</kbd>전체화면</span>
+  <span><kbd>I</kbd>목차</span>
+</div>
+
+<div id="tocOverlay" hidden>
+  <div class="toc__panel">
+    <p class="toc__title">목차 · 클릭하여 이동 (I 또는 Esc로 닫기)</p>
+    <ol id="tocList"></ol>
+  </div>
+</div>
+
+<script>
+(function () {
+  'use strict';
+
+  var slides = Array.prototype.slice.call(document.querySelectorAll('.slide'));
+  var total = slides.length;
+  var current = 0;
+  var isAnimating = false;
+  var SWIPE_THRESHOLD = 60;
+  var TRANSITION_MS = 500;   // .slide의 transition-duration과 일치시킬 것
+
+  var progressFill = document.getElementById('progressFill');
+  var slideCounter = document.getElementById('slideCounter');
+  var tocOverlay = document.getElementById('tocOverlay');
+  var tocList = document.getElementById('tocList');
+
+  /* ---------- 빌드 스텝 ---------- */
+  function stepsOf(slide) {
+    return Array.prototype.slice.call(slide.querySelectorAll('[data-step]'))
+      .sort(function (a, b) { return Number(a.dataset.step) - Number(b.dataset.step); });
+  }
+  function resetSteps(slide, visible) {
+    stepsOf(slide).forEach(function (el) { el.classList.toggle('visible', visible); });
+  }
+  function advance() {
+    var hidden = stepsOf(slides[current]).filter(function (el) { return !el.classList.contains('visible'); });
+    if (hidden.length) { hidden[0].classList.add('visible'); return; }
+    goTo(current + 1, 'next');
+  }
+  function retreat() {
+    var visible = stepsOf(slides[current]).filter(function (el) { return el.classList.contains('visible'); });
+    if (visible.length) { visible[visible.length - 1].classList.remove('visible'); return; }
+    goTo(current - 1, 'prev');
+  }
+
+  /* ---------- 슬라이드 전환 ---------- */
+  function goTo(nextIndex, direction) {
+    if (isAnimating || nextIndex === current) return;
+    if (nextIndex < 0 || nextIndex >= total) return;
+
+    isAnimating = true;
+    document.body.classList.add('is-animating');
+
+    var prevSlide = slides[current];
+    var nextSlide = slides[nextIndex];
+    var goingNext = direction === 'next';
+
+    // 1. transition 없이 시작 위치 배치
+    nextSlide.style.transition = 'none';
+    nextSlide.classList.remove('is-active', 'exit-left', 'exit-right');
+    nextSlide.style.transform = goingNext ? 'translateX(100%)' : 'translateX(-100%)';
+
+    // 2. 강제 reflow — 이 줄이 없으면 transition이 무시되어 순간이동 버그 발생
+    nextSlide.getBoundingClientRect();
+
+    // 3. transition 복원
+    nextSlide.style.transition = '';
+    nextSlide.style.transform = '';
+
+    // 4. 동시 이동 (뒤로 진입하는 슬라이드는 스텝 전부 표시)
+    prevSlide.classList.remove('is-active');
+    prevSlide.classList.add(goingNext ? 'exit-left' : 'exit-right');
+    resetSteps(nextSlide, !goingNext);
+    nextSlide.classList.add('is-active');
+
+    current = nextIndex;
+    updateUI();
+
+    // 5. 전환 완료 후 정리 — transition을 잠시 꺼서 유령 슬라이드 방지.
+    //    transitionend가 유실될 수 있으므로(탭 숨김·전환 취소 등) 워치독 타이머로 이중 보장.
+    var finished = false;
+    function finish() {
+      if (finished) return;
+      finished = true;
+      prevSlide.style.transition = 'none';
+      prevSlide.classList.remove('exit-left', 'exit-right');
+      prevSlide.getBoundingClientRect();
+      prevSlide.style.transition = '';
+      document.body.classList.remove('is-animating');
+      isAnimating = false;
+      nextSlide.removeEventListener('transitionend', handler);
+    }
+    function handler(e) {
+      if (e.target !== nextSlide || e.propertyName !== 'transform') return;
+      finish();
+    }
+    nextSlide.addEventListener('transitionend', handler);
+    setTimeout(finish, TRANSITION_MS + 150);
+  }
+
+  /* ---------- UI 갱신 ---------- */
+  function updateUI() {
+    progressFill.style.width = (((current + 1) / total) * 100) + '%';
+    slideCounter.textContent = (current + 1) + ' / ' + total;
+    history.replaceState(null, '', '#slide-' + (current + 1));
+    Array.prototype.forEach.call(tocList.children, function (li, i) {
+      li.classList.toggle('is-current', i === current);
+    });
+  }
+
+  /* ---------- 목차 오버레이 ---------- */
+  function slideTitle(slide, i) {
+    if (slide.dataset.title) return slide.dataset.title;
+    var t = slide.querySelector('.slide__title');
+    return t ? t.textContent.trim() : '슬라이드 ' + (i + 1);
+  }
+  function buildToc() {
+    slides.forEach(function (slide, i) {
+      var li = document.createElement('li');
+      var btn = document.createElement('button');
+      btn.type = 'button';
+      var num = document.createElement('span');
+      num.className = 'toc__num';
+      num.textContent = (i + 1 < 10 ? '0' : '') + (i + 1);
+      btn.appendChild(num);
+      btn.appendChild(document.createTextNode(slideTitle(slide, i)));
+      btn.addEventListener('click', function () {
+        closeToc();
+        goTo(i, i > current ? 'next' : 'prev');
+      });
+      li.appendChild(btn);
+      tocList.appendChild(li);
+    });
+  }
+  function openToc()  { tocOverlay.hidden = false; }
+  function closeToc() { tocOverlay.hidden = true; }
+  function toggleToc() { tocOverlay.hidden ? openToc() : closeToc(); }
+  tocOverlay.addEventListener('click', function (e) { if (e.target === tocOverlay) closeToc(); });
+
+  /* ---------- 전체화면 ---------- */
+  function toggleFullscreen() {
+    if (document.fullscreenElement) document.exitFullscreen();
+    else document.documentElement.requestFullscreen().catch(function () {});
+  }
+
+  /* ---------- 키보드 (e.code 사용: 한/영 입력 상태 무관) ---------- */
+  document.addEventListener('keydown', function (e) {
+    if (e.metaKey || e.ctrlKey || e.altKey) return;   // 브라우저 단축키(Cmd+P 인쇄 등) 보존
+    var code = e.code;
+
+    if (code === 'Escape') { if (!tocOverlay.hidden) closeToc(); return; }
+    if (code === 'KeyI') { e.preventDefault(); toggleToc(); return; }
+    if (!tocOverlay.hidden) return;   // 목차 열려 있으면 나머지 키 무시
+
+    switch (code) {
+      case 'ArrowRight': case 'Space': case 'PageDown':
+        e.preventDefault(); advance(); break;
+      case 'ArrowLeft': case 'PageUp':
+        e.preventDefault(); retreat(); break;
+      case 'Home': e.preventDefault(); goTo(0, 'prev'); break;
+      case 'End':  e.preventDefault(); goTo(total - 1, 'next'); break;
+      case 'KeyF': toggleFullscreen(); break;
+    }
+  });
+
+  /* ---------- 스와이프 (Pointer Events) ---------- */
+  var pointerStart = null;
+  document.addEventListener('pointerdown', function (e) {
+    if (!tocOverlay.hidden) return;
+    if (e.target.closest('button, a')) return;
+    pointerStart = { x: e.clientX, y: e.clientY };
+  });
+  document.addEventListener('pointerup', function (e) {
+    if (!pointerStart) return;
+    var dx = e.clientX - pointerStart.x;
+    var dy = e.clientY - pointerStart.y;
+    pointerStart = null;
+    if (Math.abs(dx) < SWIPE_THRESHOLD || Math.abs(dx) < Math.abs(dy)) return;
+    if (dx < 0) advance(); else retreat();
+  });
+
+  /* ---------- 네비 버튼 ---------- */
+  document.getElementById('btnPrev').addEventListener('click', retreat);
+  document.getElementById('btnNext').addEventListener('click', advance);
+
+  /* ---------- URL 해시 ---------- */
+  window.addEventListener('hashchange', function () {
+    var m = location.hash.match(/^#slide-(\d+)$/);
+    if (!m) return;
+    var idx = Math.min(Math.max(Number(m[1]) - 1, 0), total - 1);
+    if (idx !== current) goTo(idx, idx > current ? 'next' : 'prev');
+  });
+
+  /* ---------- 초기화 ---------- */
+  function init() {
+    buildToc();
+    var m = location.hash.match(/^#slide-(\d+)$/);
+    var start = m ? Math.min(Math.max(Number(m[1]) - 1, 0), total - 1) : 0;
+    current = start;
+    var s = slides[start];
+    s.style.transition = 'none';
+    s.classList.add('is-active');
+    s.getBoundingClientRect();
+    s.style.transition = '';
+    updateUI();
+  }
+  init();
+})();
+</script>
+</body>
+</html>

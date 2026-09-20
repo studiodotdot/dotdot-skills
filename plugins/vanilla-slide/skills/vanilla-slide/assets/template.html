@@ -4,9 +4,10 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <!-- ✏️ 교체: 문서 제목 -->
-<title>Vanilla Slide 템플릿</title>
+<title>마음열기 대화법 — 교육 템플릿</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
 <style>
 /* ================================================================
@@ -23,9 +24,37 @@
   --accent:         #4A8FDB;
   --accent-light:   #BFDBF7;
   --accent-dark:    #2563EB;
+  --point:          #F59E0B;   /* 포인트 강조색 — 어두운 발표자 창 강조색 겸용 */
   --shadow:         0 2px 12px rgba(26,35,50,0.07);
   --shadow-lg:      0 8px 32px rgba(26,35,50,0.12);
   --radius:         14px;
+  /* ---- 교육용 토큰 (교육자료 설계 규칙) ---- */
+  --edu-bg:          #FFF6D6;   /* 챕터 지정이 없을 때 배경 */
+  --edu-main:        #1F5FA8;   /* 제목·정답·강조 — 진한 파랑 */
+  --edu-green:       #2E8B6A;   /* 제목 대안 — 진한 초록 (간지·라벨) */
+  --edu-point:       #F26B4B;   /* 코랄 — 숫자·밑줄·금지 라벨·두문자 배지 */
+  --edu-point-soft:  #F9B5A5;
+  --edu-yellow:      #FFD54F;   /* 아이콘 원·상자 테두리 */
+  --edu-yellow-dark: #E0A81C;
+  --edu-yellow-soft: #FFEFB8;
+  --edu-sky:         #5BB3E6;   /* 차시 점·세로 구분선 */
+  --edu-sky-soft:    #DDEFFB;
+  --edu-green-soft:  #E4F2DD;
+  --edu-lime:        #CFE28A;
+  --edu-orange:      #F29B3E;   /* 밴드 번호 박스 */
+  --edu-navy:        #3A4A63;   /* 다크 밴드·큰 결론 글자 */
+  --edu-brown:       #8B6B4E;   /* 정리 리본 */
+  --edu-cream:       #F4EFE4;   /* 서약서 종이 */
+  --edu-peach:       #FFD9C2;   /* 블롭 일러스트 바탕 */
+  --edu-fig:         #E9EDF2;   /* 원형 일러스트 바탕 */
+  --edu-ink:         #2F3A4A;
+  --edu-ink2:        #4B5563;
+  --edu-muted:       #8A93A3;
+  /* 챕터 색 코딩 — 배경(파스텔)과 페이지 배지·목차 색이 한 쌍. 색 = 위치 기억. 챕터 수만큼 쌍으로 추가 */
+  --ch1: #E8A93A;  --ch1-bg: #FFF6D6;   /* 연노랑 */
+  --ch2: #5DBB9A;  --ch2-bg: #E4F2DD;   /* 연그린 */
+  --ch3: #F48A6E;  --ch3-bg: #DDEFFB;   /* 연블루 (배지는 코랄) */
+  --ch4: #A57C5B;  --ch4-bg: #F1E7DA;   /* 베이지 */
 }
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -145,6 +174,282 @@ body.is-animating { pointer-events: none; }   /* 전환 중 클릭 차단 */
   box-shadow: var(--shadow-lg);
 }
 .code-block .cm { color: #94A3B8; }   /* 주석용 */
+
+/* ---------- 교육 부품 (교육자료 설계 규칙) ----------
+   기준: 국내 PPT 디자인 업체 교육자료 포트폴리오 실측(6건 91장).
+   파스텔 배경 + 흰 라운드 종이 카드 + 큰 글자 + 일러스트 자리. 챕터마다 배경색이 바뀐다.
+   크기는 전부 em — .slide.edu 의 font-size 가 화면에 맞춰 변한다 (1280×720 기준 19.2px) */
+.slide.edu {
+  font-size: min(1.5vw, 2.6667vh);
+  font-family: 'Pretendard', 'Noto Sans KR', -apple-system, 'Apple SD Gothic Neo', sans-serif;
+  color: var(--edu-ink);
+  padding: 0; display: block;
+  background: var(--ch-bg, var(--edu-bg));
+  --ch: var(--edu-main);
+}
+.slide.edu[data-chapter="1"] { --ch: var(--ch1); --ch-bg: var(--ch1-bg); }
+.slide.edu[data-chapter="2"] { --ch: var(--ch2); --ch-bg: var(--ch2-bg); }
+.slide.edu[data-chapter="3"] { --ch: var(--ch3); --ch-bg: var(--ch3-bg); }
+.slide.edu[data-chapter="4"] { --ch: var(--ch4); --ch-bg: var(--ch4-bg); }
+.slide.edu b, .slide.edu strong { font-weight: 800; }
+
+/* 종이 카드 — 파스텔 배경 위 흰 라운드 카드. 본문은 전부 이 안에 */
+.paper {
+  position: absolute; inset: 2.1em 1.7em 2.2em;
+  background: #fff; border-radius: 1.5em;
+  padding: 1.5em 2.2em 1.6em;
+  display: flex; flex-direction: column; overflow: hidden;
+}
+.paper > .grow { flex: 1 1 auto; min-height: 0; display: flex; flex-direction: column; justify-content: center; }
+.course { position: absolute; top: 0.55em; right: 1.9em; font-size: 0.82em; font-weight: 800; color: var(--edu-main); }
+.pgno {
+  position: absolute; bottom: 0.45em; left: 50%; transform: translateX(-50%);
+  width: 1.9em; height: 1.9em; border-radius: 50%;
+  background: var(--ch); color: #fff;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.9em; font-weight: 700; font-variant-numeric: tabular-nums;
+}
+
+/* 제목 A — 아이콘 원 + 큰 색 제목 + 짧은 색 밑줄 (밑줄은 제목 폭만큼) */
+.hd {
+  display: inline-flex; align-items: center; gap: 0.7em; align-self: flex-start;
+  margin: 0 0 1.3em -2.2em; padding: 0 1.4em 0.5em 2.2em;
+  border-bottom: 0.2em solid var(--edu-point);
+}
+.hd__icon {
+  width: 2.9em; height: 2.9em; border-radius: 50%; flex-shrink: 0;
+  background: var(--edu-yellow); display: flex; align-items: center; justify-content: center;
+  font-size: 1em; line-height: 1;
+}
+.hd__icon > span { font-size: 1.6em; font-family: 'Apple Color Emoji','Segoe UI Emoji','Noto Color Emoji',sans-serif; }
+.hd__title { font-size: 2.3em; font-weight: 800; color: var(--edu-main); line-height: 1.15; letter-spacing: -0.02em; }
+/* 두문자 배지 — 종이 카드 좌상단 모서리에 걸친 코랄 원 */
+.badge-char {
+  position: absolute; top: 0.55em; left: 0.75em; z-index: 2;
+  width: 3.3em; height: 3.3em; border-radius: 50%;
+  background: var(--edu-point); color: #fff;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1em; font-weight: 800;
+}
+.badge-char > span { font-size: 1.7em; }
+.paper.has-badge { padding-left: 3.2em; }
+.paper.has-badge .hd { margin-left: -3.2em; padding-left: 3.2em; }
+
+/* 제목 B — 큰 번호 + 노란 라운드 테두리 상자 + 우상단 차시 점 + 우측 세로 과정명 (종이 카드 없이 흰 배경) */
+.slide.edu.edu--plain { background: #fff; padding: 2.6em 3.2em 2.4em; display: flex; flex-direction: column; }
+.hd-box {
+  position: relative; border: 0.28em solid var(--edu-yellow); border-radius: 0.9em;
+  padding: 0.95em 1.9em; margin: 0.8em 0 1.4em; flex-shrink: 0;
+}
+.hd-box__no {
+  position: absolute; top: -1.05em; left: 1.4em; padding: 0 0.35em;
+  background: #fff; color: var(--edu-yellow-dark);
+  font-size: 1.5em; font-weight: 800; line-height: 1;
+}
+.hd-box__title { font-size: 2em; font-weight: 800; color: var(--edu-main); line-height: 1.2; }
+.session {
+  position: absolute; top: 0.6em; right: 3.2em;
+  display: flex; align-items: center; gap: 0.5em;
+  font-size: 0.82em; font-weight: 700; color: var(--edu-main);
+}
+.session__dots { display: flex; gap: 0.45em; }
+.session__dots i { width: 0.85em; height: 0.85em; border-radius: 50%; background: #D5DAE2; }
+.session__dots i.is-on { background: var(--edu-sky); }
+.course-rail {
+  position: absolute; right: 0.6em; top: 50%; transform: translateY(-50%);
+  writing-mode: vertical-rl; font-size: 0.68em; color: var(--edu-muted); letter-spacing: 0.05em;
+}
+.edu--plain .pgno { background: transparent; color: var(--edu-muted); font-weight: 500; }
+
+/* 제목 C — 좌측 컬러 번호 박스 + 다크 밴드 흰 제목 + 우측 breadcrumb (풀블리드) */
+.band {
+  position: absolute; top: 0; left: 0; right: 0; height: 3.4em;
+  background: var(--edu-navy); color: #fff; display: flex; align-items: center;
+}
+.band__no { width: 3.4em; height: 100%; background: var(--edu-orange); display: flex; align-items: center; justify-content: center; font-size: 1em; font-weight: 800; }
+.band__no > span { font-size: 2em; }
+.band__title { flex: 1; padding: 0 1.2em; font-size: 1.75em; font-weight: 800; color: var(--edu-yellow); }
+.band__crumb { padding-right: 1.4em; font-size: 0.85em; font-weight: 700; opacity: 0.95; }
+.slide.edu.edu--band { background: #fff; padding: 5.2em 3.2em 2.6em; display: flex; flex-direction: column; }
+.edu--band .grow { display: flex; flex-direction: column; justify-content: center; gap: 1.2em; font-size: 1.12em; }
+.edu--band .pgno { background: var(--edu-navy); border-radius: 0.2em; width: 2.6em; }
+
+/* 일러스트 자리 — 원형 마스크. 이미지 없으면 이모지·아이콘을 크게 */
+.fig {
+  width: 100%; max-width: 19em; aspect-ratio: 1; border-radius: 50%; flex-shrink: 0;
+  background: var(--edu-fig); display: flex; align-items: center; justify-content: center; overflow: hidden;
+  margin: 0 auto;
+}
+.fig img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.fig > span { font-size: 7em; line-height: 1; font-family: 'Apple Color Emoji','Segoe UI Emoji','Noto Color Emoji',sans-serif; }
+.fig--blob { border-radius: 46% 54% 52% 48% / 55% 45% 55% 45%; background: var(--edu-peach); }
+.fig--sm { max-width: 11em; }
+.fig--sm > span { font-size: 4.5em; }
+
+/* 2단 — 일러스트 | 큰 불릿 */
+.pair { display: grid; grid-template-columns: 1fr 1.25fr; gap: 2.4em; align-items: center; flex: 1; min-height: 0; }
+.pair--even { grid-template-columns: 1fr 1fr; }
+.biglist { list-style: none; display: flex; flex-direction: column; gap: 0.75em; }
+.biglist li { position: relative; padding-left: 1.2em; font-size: 1.5em; font-weight: 700; color: var(--edu-main); line-height: 1.35; }   /* flex 금지 — 인라인 <b>가 쪼개진다 */
+.biglist li::before { content: ''; position: absolute; left: 0; top: 0.45em; width: 0.5em; height: 0.5em; border-radius: 50%; background: #C9CFD8; }
+.biglist--2col { display: grid; grid-template-columns: 1fr 1fr; column-gap: 1.6em; row-gap: 0.75em; }
+.biglist--plain li { font-weight: 500; color: var(--edu-ink); font-size: 1.3em; }
+
+/* 아이콘 줄 — 노란 원 아이콘 N개 + 라벨, 사이 세로선 */
+.iconrow { display: flex; align-items: flex-start; justify-content: center; }
+.iconrow__item { flex: 1; display: flex; flex-direction: column; align-items: center; text-align: center; gap: 0.8em; position: relative; padding: 0 0.6em; }
+.iconrow__item + .iconrow__item::before { content: ''; position: absolute; left: 0; top: 55%; height: 3.2em; width: 0.16em; background: var(--edu-sky); }
+.iconrow__icon { width: 5.6em; height: 5.6em; border-radius: 50%; background: var(--edu-yellow); display: flex; align-items: center; justify-content: center; }
+.iconrow__icon > span { font-size: 2.8em; line-height: 1; font-family: 'Apple Color Emoji','Segoe UI Emoji','Noto Color Emoji',sans-serif; }
+.iconrow__label { font-size: 1.45em; font-weight: 800; color: var(--edu-navy); line-height: 1.25; }
+.iconrow__num { font-size: 1.9em; font-weight: 800; color: var(--edu-point); line-height: 1; margin-top: -0.3em; }
+.iconrow__num small { font-size: 0.55em; font-weight: 800; margin-left: 0.1em; }
+/* kpi — 아이콘 줄 아래 둥근 브래킷 + 큰 결론 문장 */
+.brace { height: 1.1em; margin: 1.1em 1.5em 0.9em; border: 0.18em solid #C3CAD6; border-top: 0; border-radius: 0 0 1.1em 1.1em; }
+.big-say { text-align: center; font-size: 1.85em; font-weight: 800; color: var(--edu-navy); line-height: 1.35; }
+.big-say .n { color: var(--edu-point); font-size: 1.25em; }
+.big-say .n small { font-size: 0.55em; }
+.src-paren { text-align: right; font-size: 0.85em; color: var(--edu-ink2); margin-top: 0.4em; }
+
+/* 빈칸 채우기 — ( 정답 ) 이 본문보다 1.6배 크고 굵고 MAIN색. 정답에 data-step 을 달면 → 키로 공개 */
+.fill { font-size: 1.4em; line-height: 1.75; color: var(--edu-ink2); font-weight: 500; }
+.fill p + p { margin-top: 0.35em; }
+.blank { display: inline-flex; align-items: baseline; white-space: nowrap; color: var(--edu-ink2); }
+.blank::before { content: '('; margin-right: 0.35em; }
+.blank::after  { content: ')'; margin-left: 0.35em; }
+.blank__ans { display: inline-block; min-width: 2.6em; text-align: center; font-size: 1.6em; font-weight: 800; color: var(--edu-main); line-height: 1; }
+@media print { .print-blanks .blank__ans { color: transparent !important; } }
+/* 대괄호 콜아웃 — 노란 [ ] 프레임 안에 한 문장 */
+.bracket { position: relative; padding: 0.7em 2em; margin: 0.4em 0 1.2em; text-align: center; font-size: 1.35em; font-weight: 600; color: var(--edu-ink2); line-height: 1.5; }
+.bracket::before, .bracket::after { content: ''; position: absolute; top: 0; bottom: 0; width: 0.9em; border: 0.22em solid var(--edu-yellow-dark); }
+.bracket::before { left: 0; border-right: 0; }
+.bracket::after { right: 0; border-left: 0; }
+.bracket .blank__ans { font-size: 1.4em; }
+
+/* 틴트 패널 — 연한 색 판 + 우상단 접힌 귀퉁이 */
+.panel { position: relative; background: var(--panel, var(--edu-green-soft)); border-radius: 0.3em; padding: 1.5em 2em; --fold: 1.7em; }
+.panel::before { content: ''; position: absolute; top: 0; right: 0; border-top: var(--fold) solid #fff; border-left: var(--fold) solid transparent; }
+.panel::after  { content: ''; position: absolute; top: 0; right: 0; border-bottom: var(--fold) solid var(--panel-dark, var(--edu-green)); border-right: var(--fold) solid transparent; }
+.panel--yellow { --panel: var(--edu-yellow-soft); --panel-dark: var(--edu-yellow-dark); }
+.panel--blue { --panel: var(--edu-sky-soft); --panel-dark: var(--edu-sky); }
+
+/* 금지 — 코랄 알약 라벨 + 옆으로 뻗는 선 + 흰 박스에 큰 볼드 문장 */
+.warn { margin-top: 1em; }
+.warn__label { display: flex; align-items: center; gap: 0; }
+.warn__label > span { background: var(--edu-point); color: #fff; font-size: 1.05em; font-weight: 800; padding: 0.45em 1.3em; border-radius: 2em; white-space: nowrap; }
+.warn__label::after { content: ''; flex: 1; height: 0.16em; background: var(--edu-point); }
+.warn__box { background: #fff; border-radius: 0.3em; padding: 1.1em 1.6em; margin-top: 0.7em; font-size: 1.25em; color: var(--edu-ink2); line-height: 1.5; }
+.warn__box b { font-size: 1.35em; color: var(--edu-main); }
+/* "이렇게 말하지 마세요" — 코랄 헤드라인 + 노란 원 3개 + 라벨 */
+.say-no { text-align: center; font-size: 2em; font-weight: 800; color: var(--edu-point); margin-bottom: 1.4em; }
+.circles { display: flex; justify-content: center; gap: 2.2em; }
+.circle { display: flex; flex-direction: column; align-items: center; gap: 0.9em; }
+.circle__ball { width: 10.5em; height: 10.5em; border-radius: 50%; background: var(--edu-yellow-soft); display: flex; align-items: center; justify-content: center; text-align: center; padding: 1em; font-size: 1em; font-weight: 800; color: var(--edu-ink); line-height: 1.3; }
+.circle__ball > span { font-size: 1.45em; }
+.circle:nth-child(2) .circle__ball { background: #FFE6B0; }
+.circle__label { font-size: 1.25em; font-weight: 800; color: var(--edu-main); }
+/* 좋은 예 vs 나쁜 예 — 라운드 컬러 블록 2개 */
+.vs { display: grid; grid-template-columns: 1fr 1fr; gap: 1.6em; align-items: stretch; }
+.vs__col { display: flex; flex-direction: column; }
+.vs__head { font-size: 1.6em; font-weight: 500; color: var(--edu-ink); line-height: 1.3; margin-bottom: 0.5em; padding: 0 0.4em; }
+.vs__head b { font-size: 1.45em; }
+.vs__box { flex: 1; border-radius: 0 0 1.4em 1.4em; padding: 1.6em 1.8em; font-size: 1.4em; font-weight: 700; line-height: 1.5; display: flex; flex-direction: column; justify-content: center; gap: 0.5em; }
+.vs__col--good .vs__box { background: var(--edu-lime); color: var(--edu-ink); }
+.vs__col--bad .vs__box { background: var(--edu-green); color: #fff; text-align: center; }
+
+/* 정리해 보아요 — 링 노트 + 리본 배너 + 큰 불릿 3줄 */
+.note { position: relative; background: #fff; border-radius: 0.5em; padding: 2.2em 2.4em 1.6em; margin-top: 1.6em; flex: 1; display: flex; flex-direction: column; }
+.note__rings { position: absolute; top: -1.15em; left: 1.5em; right: 1.5em; display: flex; justify-content: space-around; }
+.note__rings i { width: 0.85em; height: 2.4em; border-radius: 0.45em; background: linear-gradient(180deg, #C9BBA6, #DACFBC); box-shadow: inset 0 -0.35em 0 #B8A88F; }
+.ribbon { position: relative; display: inline-block; align-self: flex-start; margin: 0 0 1.4em -4em; padding: 0.55em 2.6em 0.55em 2.6em; background: var(--edu-brown); color: var(--edu-yellow); font-size: 1.6em; font-weight: 800; clip-path: polygon(0 0, 100% 0, calc(100% - 0.9em) 50%, 100% 100%, 0 100%); }
+.ribbon::after { content: ''; position: absolute; left: 0; top: 100%; border-top: 0.6em solid #7A5A3E; border-left: 0.9em solid transparent; }
+.note__list { list-style: none; }
+.note__list li { position: relative; padding: 0.7em 0 0.7em 1.3em; border-bottom: 0.1em solid #E3E6EA; font-size: 1.7em; font-weight: 700; color: var(--edu-navy); line-height: 1.3; }
+.note__list li::before { content: ''; position: absolute; left: 0; top: 1.1em; width: 0.5em; height: 0.5em; border-radius: 50%; background: var(--edu-yellow); }
+.note__list li small { font-size: 0.65em; font-weight: 500; color: var(--edu-ink2); margin-left: 0.3em; }
+
+/* 활동지·서약서 — 액자형 프레임(진한 테두리 + 안쪽 금선) */
+.cert { font-size: 1.22em;
+  width: 60%; margin: 0 auto; background: var(--edu-cream);
+  border: 0.7em solid var(--edu-navy); outline: 0.12em solid #C9A84C; outline-offset: -1.2em;
+  padding: 2em 2.6em 1.6em; text-align: center; display: flex; flex-direction: column;
+}
+.cert__sub { font-size: 1.05em; color: var(--edu-ink2); }
+.cert__title { font-size: 1.9em; font-weight: 800; color: var(--edu-ink); margin: 0.1em 0 0.9em; }
+.cert__list { list-style: none; text-align: left; display: flex; flex-direction: column; gap: 0.7em; margin: 0 0.6em; }
+.cert__list li { font-size: 1.05em; line-height: 1.5; color: var(--edu-ink); padding-left: 1.2em; position: relative; }
+.cert__list li::before { content: '●'; position: absolute; left: 0; top: 0; font-size: 0.75em; line-height: 2; }
+.cert__sign { margin-top: 1.4em; font-size: 1.1em; text-align: left; padding-left: 0.6em; }
+.cert__sign .line { display: inline-block; width: 7em; border-bottom: 0.1em solid var(--edu-ink2); margin: 0 0.4em; vertical-align: -0.1em; }
+.cert__sign b { font-size: 1.35em; }
+.cert__date { margin-top: 1em; font-size: 1.05em; text-align: right; letter-spacing: 0.5em; }
+/* 활동지(질문형) — 노란 라운드 배지 번호 + 질문 + 쓰는 줄 */
+.sheet { border: 0.28em solid var(--edu-yellow); border-radius: 1em; padding: 1.4em 2em; flex: 1; display: flex; flex-direction: column; gap: 0.6em; }
+.sheet__meta { display: flex; gap: 2.5em; font-size: 1.05em; font-weight: 700; margin-bottom: 0.2em; }
+.sheet__meta span { flex: 1; display: flex; align-items: baseline; gap: 0.6em; }
+.sheet__meta span::after { content: ''; flex: 1; border-bottom: 0.12em solid var(--edu-ink2); }
+.sheet__q { display: flex; align-items: center; gap: 0.7em; font-size: 1.3em; font-weight: 700; color: var(--edu-ink); }
+.sheet__q i { font-style: normal; width: 1.6em; height: 1.6em; border-radius: 50%; background: var(--edu-yellow); display: inline-flex; align-items: center; justify-content: center; font-size: 0.85em; color: var(--edu-ink); }
+.sheet__line { flex: 1; border-bottom: 0.1em dashed #B9C0CB; min-height: 2.2em; }
+
+/* 사례 — 노란 알약 라벨 + 선 + 문장 (여러 개 세로) */
+.cases { display: flex; flex-direction: column; gap: 0.7em; }
+.case__label { display: flex; align-items: center; }
+.case__label > span { background: var(--edu-yellow); color: var(--edu-main); font-weight: 800; font-size: 0.95em; padding: 0.35em 1.3em; border-radius: 2em; }
+.case__label::after { content: ''; flex: 1; height: 0.12em; background: var(--edu-yellow); }
+.case__body { position: relative; padding: 0.4em 0 0 2.2em; font-size: 1.3em; line-height: 1.45; color: var(--edu-ink); }
+.case__body::before { content: ''; position: absolute; left: 1.2em; top: 0.95em; width: 0.45em; height: 0.45em; border-radius: 50%; background: var(--edu-yellow); }
+/* 리본 태그 — 컬러 리본 라벨 + 밑 설명 (약속하기 형) */
+.tags { display: flex; flex-direction: column; gap: 1.2em; }
+.tag { padding-left: 0.4em; }
+.tag__ribbon { display: inline-block; background: var(--c, var(--edu-green-soft)); color: var(--edu-main); font-size: 1.6em; font-weight: 800; padding: 0.3em 1.2em 0.3em 0.9em; clip-path: polygon(0 0, 100% 0, calc(100% - 0.7em) 50%, 100% 100%, 0 100%); }
+.tag__desc { font-size: 1em; color: var(--edu-ink2); margin: 0.4em 0 0 1em; line-height: 1.45; }
+
+/* 목차 — 작은 박스 "목 차" + 3열 번호 배지 + 구어체 제목 3색 */
+.toc-label { align-self: center; border: 0.1em solid var(--edu-navy); padding: 0.35em 1.6em; font-size: 1.1em; font-weight: 800; color: var(--edu-navy); letter-spacing: 0.4em; margin-bottom: 2.2em; }
+.toc3 { display: grid; grid-template-columns: repeat(var(--n, 3), 1fr); gap: 1.5em; text-align: center; }
+.toc3__item { display: flex; flex-direction: column; align-items: center; gap: 0.9em; }
+.toc3__no { background: var(--c, var(--edu-sky-soft)); color: var(--edu-navy); font-weight: 800; font-size: 1.15em; padding: 0.5em 1.4em; border-radius: 2em 2em 2em 2em; }
+.toc3__no b { font-size: 1.35em; }
+.toc3__word { font-size: 1.6em; color: var(--edu-ink2); font-weight: 500; }
+.toc3__title { font-size: 1.7em; font-weight: 800; color: var(--c-text, var(--edu-main)); line-height: 1.25; }
+.toc3__item[data-ch="1"] { --c: var(--ch1-bg); --c-text: var(--ch1); }
+.toc3__item[data-ch="2"] { --c: var(--ch2-bg); --c-text: var(--ch2); }
+.toc3__item[data-ch="3"] { --c: var(--ch3-bg); --c-text: var(--ch3); }
+.toc3__item[data-ch="4"] { --c: var(--ch4-bg); --c-text: var(--ch4); }
+.mnemonic-word { text-align: center; font-size: 1.2em; color: var(--edu-ink2); margin-top: 2.2em; }
+.mnemonic-word b { color: var(--edu-main); letter-spacing: 0.15em; font-size: 1.2em; }
+
+/* 표지·간지·마무리 — 파스텔 풀블리드, 큰 문장 중앙, 아래 일러스트 자리, 하단 흰 띠 */
+.slide.edu.edu--cover { display: flex; flex-direction: column; align-items: center; justify-content: flex-start; padding-top: 3.6em; text-align: center; }
+.edu--cover::after { content: ''; position: absolute; left: 0; right: 0; bottom: 0; height: 14%; background: #fff; }
+.cover__kicker { font-size: 1.3em; color: var(--edu-ink); margin-bottom: 0.5em; }
+.cover__kicker b { color: var(--edu-point); }
+.cover__title { font-size: 3.6em; font-weight: 800; color: var(--edu-main); line-height: 1.2; letter-spacing: -0.02em; }
+.cover__fig { position: absolute; bottom: 8%; left: 50%; transform: translateX(-50%); z-index: 1; font-size: 1em; line-height: 1; }
+.cover__fig > span { font-size: 9em; font-family: 'Apple Color Emoji','Segoe UI Emoji','Noto Color Emoji',sans-serif; }
+.cover__fig img { max-height: 22em; display: block; }
+.cover__meta { position: absolute; bottom: 12%; left: 3em; font-size: 0.9em; color: var(--edu-ink2); z-index: 1; }
+#slideCounter { display: none; }   /* 페이지 번호는 .pgno 원 배지가 맡는다 */
+/* 간지(챕터 시작) — 종이 카드 안 큰 문장 + 색 선 + 일러스트 */
+.divider__big { text-align: center; font-size: 2.6em; font-weight: 800; color: var(--edu-green); line-height: 1.3; }
+.divider__line { width: 70%; height: 0.18em; background: var(--edu-point-soft); margin: 0.9em auto 1.2em; }
+.divider__fig { display: flex; justify-content: center; gap: 1em; font-size: 1em; }
+.divider__fig > span { font-size: 6.5em; line-height: 1; font-family: 'Apple Color Emoji','Segoe UI Emoji','Noto Color Emoji',sans-serif; }
+
+/* 서브 라벨 — 아이콘 + 초록 알약 + 옆 문장 (사례 장 등) */
+.sublabel { display: flex; align-items: center; gap: 1em; margin-bottom: 1.2em; }
+.sublabel__pill { display: inline-flex; align-items: center; gap: 0.5em; background: var(--edu-green); color: #fff; font-weight: 800; font-size: 1.15em; padding: 0.35em 1.2em 0.35em 0.5em; border-radius: 2em; }
+.sublabel__pill i { width: 1.7em; height: 1.7em; border-radius: 50%; background: var(--edu-yellow); display: inline-flex; align-items: center; justify-content: center; font-style: normal; font-size: 0.9em; }
+.sublabel__text { font-size: 1.5em; font-weight: 700; color: var(--edu-green); }
+
+/* 사진 2장 + 인용 — 사례 장 */
+.shots { display: grid; grid-template-columns: 1fr 1fr; gap: 1.6em; flex: 1; min-height: 0; }
+.shot { display: flex; flex-direction: column; gap: 0.6em; min-height: 0; }
+.shot__img { flex: 1; min-height: 8em; background: #4A4A4A; border-radius: 0.2em; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 0.9em; overflow: hidden; }
+.shot__img img { width: 100%; height: 100%; object-fit: cover; }
+.shot__cap { font-size: 0.95em; color: var(--edu-green); font-weight: 700; }
+.shot__quote { text-align: center; font-size: 1.25em; font-weight: 700; color: var(--edu-ink); line-height: 1.4; }
 
 /* ---------- 빌드 효과 ---------- */
 [data-step] {
@@ -285,9 +590,9 @@ body.is-presenter #presenterMode {
   color: #fff; z-index: 1000;
 }
 .pm-header { display: flex; justify-content: space-between; align-items: center; padding-bottom: 12px; border-bottom: 1px solid rgba(255,255,255,.12); margin-bottom: 14px; }
-.pm-title { font: 700 0.85rem 'Inter', sans-serif; letter-spacing: 2px; text-transform: uppercase; color: var(--accent); }
+.pm-title { font: 700 0.85rem 'Inter', sans-serif; letter-spacing: 2px; text-transform: uppercase; color: var(--point); }
 .pm-counter { font: 700 1.4rem 'Inter', sans-serif; }
-.pm-timer { font: 700 1.8rem 'Inter', sans-serif; color: var(--accent); font-variant-numeric: tabular-nums; }
+.pm-timer { font: 700 1.8rem 'Inter', sans-serif; color: var(--point); font-variant-numeric: tabular-nums; }
 .pm-timer-reset { margin-left: 10px; background: rgba(255,255,255,.1); border: 1px solid rgba(255,255,255,.2); color: #fff; border-radius: 6px; padding: 4px 10px; font-size: 0.75rem; cursor: pointer; }
 .pm-timer-reset:hover { background: rgba(255,255,255,.2); }
 .pm-body { flex: 1; display: grid; grid-template-columns: 1.15fr 1fr; gap: 18px; min-height: 0; }
@@ -295,14 +600,14 @@ body.is-presenter #presenterMode {
 .pm-stage { position: relative; width: 100%; aspect-ratio: 16/9; background: var(--bg); border-radius: 10px; overflow: hidden; border: 1px solid rgba(255,255,255,.18); flex-shrink: 0; }
 .pm-stage--next { width: 52%; }
 .pm-scale { position: absolute; top: 0; left: 0; width: 1280px; height: 720px; transform-origin: top left; }
-.pm-scale .slide { position: absolute !important; inset: 0; transform: none !important; transition: none !important; }
+.pm-scale .slide { position: absolute !important; inset: 0; transform: none !important; transition: none !important; color: var(--text-primary); }   /* 발표자 창 흰 글자 상속 차단 */
 .pm-scale .slide * { transition: none !important; animation: none !important; }
 .pm-scale [data-step] { opacity: 1 !important; transform: translateY(0) !important; }
 .pm-scale .notes { display: none !important; }
 .pm-next-row { display: flex; align-items: flex-start; gap: 14px; flex: 1 1 auto; min-height: 0; overflow: hidden; }
 .pm-next-label { font-size: 0.85rem; color: rgba(255,255,255,.6); padding-bottom: 6px; }
 .pm-panel { background: rgba(255,255,255,.04); border: 1px solid rgba(255,255,255,.08); border-radius: 12px; padding: 24px 28px; display: flex; flex-direction: column; min-height: 0; }
-.pm-panel__label { font: 700 0.78rem 'Inter', sans-serif; letter-spacing: 2px; text-transform: uppercase; color: var(--accent); margin-bottom: 14px; flex-shrink: 0; }
+.pm-panel__label { font: 700 0.78rem 'Inter', sans-serif; letter-spacing: 2px; text-transform: uppercase; color: var(--point); margin-bottom: 14px; flex-shrink: 0; }
 .pm-current-title { font-size: 1.4rem; font-weight: 700; margin-bottom: 16px; padding-bottom: 12px; border-bottom: 1px solid rgba(255,255,255,.1); flex-shrink: 0; }
 .pm-notes-content { flex: 1; overflow-y: auto; font-size: 1.35rem; line-height: 1.8; color: rgba(255,255,255,.95); padding-right: 10px; }
 .pm-notes-content::-webkit-scrollbar { width: 6px; }
@@ -310,7 +615,7 @@ body.is-presenter #presenterMode {
 .pm-footer { display: flex; justify-content: space-between; align-items: center; padding-top: 12px; margin-top: 14px; border-top: 1px solid rgba(255,255,255,.12); font-size: 0.85rem; color: rgba(255,255,255,.55); }
 .pm-kbd { display: inline-flex; gap: 10px; }
 .pm-kbd span { display: inline-flex; align-items: center; gap: 4px; }
-.pm-kbd kbd { display: inline-block; background: rgba(255,255,255,.1); border: 1px solid rgba(255,255,255,.2); border-bottom-width: 2px; border-radius: 4px; padding: 2px 7px; font: 700 0.72rem 'Inter', sans-serif; color: var(--accent); min-width: 14px; text-align: center; }
+.pm-kbd kbd { display: inline-block; background: rgba(255,255,255,.1); border: 1px solid rgba(255,255,255,.2); border-bottom-width: 2px; border-radius: 4px; padding: 2px 7px; font: 700 0.72rem 'Inter', sans-serif; color: var(--point); min-width: 14px; text-align: center; }
 
 /* ---------- 인쇄(PDF 배포) — 전 장표가 각 1페이지 ---------- */
 @page { size: 1280px 720px; margin: 0; }
@@ -338,7 +643,7 @@ body.is-presenter #presenterMode {
 @media (prefers-reduced-motion: reduce) {
   .slide, [data-step] { transition-duration: 0.01s; }
 }
-@media (max-width: 768px) {
+@media screen and (max-width: 768px) {
   .slide { padding: 0 28px; }
   #notesPanel { padding: 14px 28px 18px; }
 }
@@ -349,85 +654,212 @@ body.is-presenter #presenterMode {
 <!-- ================================================================
      ✏️ 슬라이드 영역 — 이 블록 안의 <section>만 교체/추가/삭제한다.
      규칙:
-       · 각 <section class="slide">에 id="slide-N"(1부터)과 data-title 부여
+       · 각 <section class="slide edu">에 id="slide-N"(1부터)과 data-title 부여
+       · data-chapter="1~4" → 파스텔 배경색이 챕터별로 바뀐다 (색 = 위치 기억)
+       · 본문 장 = .paper(흰 종이 카드) 안에 .course(과정명) + .hd(제목) + 내용. 페이지 번호 원 배지는 아래 헬퍼가 자동으로 붙인다
+       · 제목 3종: .hd(아이콘 원 + 제목 + 짧은 밑줄) / .edu--plain + .hd-box(번호 + 노란 상자) / .edu--band + .band(다크 밴드)
+       · 일러스트 자리 .fig 에는 <img> 또는 이모지 — 실제 덱에서는 가능한 한 이미지로 교체한다
        · 화자 노트는 <aside class="notes">메모 텍스트</aside> (레이블 불필요)
-       · 순차 등장 요소에 data-step="1", "2", ...
+       · 순차 등장 요소에 data-step="1", "2", ... (빈칸 정답 공개에 주로 쓴다)
+       · 아래 내용은 전부 예시다. 실제 덱에서는 반드시 교체한다
      ================================================================ -->
 
-<section class="slide" id="slide-1" data-title="타이틀">
-  <div class="slide__content">
-    <p class="slide__tag">Vanilla Slide</p>
-    <h1 class="slide__title">발표 제목이 들어가는 자리</h1>
-    <p class="slide__subtitle">부제목 또는 한 줄 소개가 들어가는 자리</p>
-    <p class="slide__meta">발표자 이름 · 2026. 00. 00.</p>
-  </div>
-  <aside class="notes">여는 멘트: "안녕하세요, 오늘 발표를 맡은 ○○○입니다." 오늘 다룰 주제를 한 문장으로 예고한다.<br>강조: 청중이 오늘 얻어갈 것 한 가지를 콕 집어 말한다.<br>전환: "그럼 첫 번째 이야기부터 시작하겠습니다."</aside>
+<section class="slide edu edu--cover" id="slide-1" data-title="표지" data-chapter="1">
+  <p class="cover__kicker">고객을 <b>3초 만에</b> 내 편으로 만드는</p>
+  <h1 class="cover__title">마음열기 대화법</h1>
+  <div class="cover__fig"><span>🤝</span></div>
+  <p class="cover__meta">고객 응대 기본 과정 · 두 번째 시간 · 강사 이름</p>
+  <aside class="notes">여는 멘트: "오늘은 두 번째 시간입니다. 지난 시간에 배운 인사, 기억나시죠?"<br>강조: 오늘 배울 것은 결국 '마음열기' 네 글자 — 과정명이 곧 암기법이다.<br>전환: "네 글자가 각각 무엇인지 먼저 한 장으로 보겠습니다."</aside>
 </section>
 
-<section class="slide" id="slide-2" data-title="불릿 + 빌드 효과">
-  <div class="slide__content">
-    <p class="slide__tag">Section 01</p>
-    <h1 class="slide__title">불릿 슬라이드 예시</h1>
-    <ul class="slide__list">
-      <li data-step="1">→ 키를 누를 때마다 항목이 하나씩 나타난다</li>
-      <li data-step="2">뒤로 이동해 돌아오면 전부 표시된 상태로 나온다</li>
-      <li data-step="3">불릿 dot은 align-items: center로 정렬되어 있다</li>
-    </ul>
+<section class="slide edu" id="slide-2" data-title="목차 — 마·음·열·기" data-chapter="1">
+  <div class="paper">
+    <span class="course">마음열기 대화법</span>
+    <div class="grow">
+      <div class="toc-label">목 차</div>
+      <div class="toc3" style="--n:4">
+        <div class="toc3__item" data-ch="1"><span class="toc3__no"><b>1</b>부</span><span class="toc3__word">'마'</span><span class="toc3__title">마음 먼저<br>읽어요</span></div>
+        <div class="toc3__item" data-ch="2"><span class="toc3__no"><b>2</b>부</span><span class="toc3__word">'음'</span><span class="toc3__title">음성 톤을<br>맞춰요</span></div>
+        <div class="toc3__item" data-ch="3"><span class="toc3__no"><b>3</b>부</span><span class="toc3__word">'열'</span><span class="toc3__title">열린 질문을<br>던져요</span></div>
+        <div class="toc3__item" data-ch="4"><span class="toc3__no"><b>4</b>부</span><span class="toc3__word">'기'</span><span class="toc3__title">기록으로<br>남겨요</span></div>
+      </div>
+      <p class="mnemonic-word">첫 글자만 모으면 <b>마 · 음 · 열 · 기</b> — 과정 이름이 곧 암기법입니다</p>
+    </div>
   </div>
-  <aside class="notes">각 항목이 뜰 때마다 한 문장씩 부연한다 — 한꺼번에 읽지 않는다.<br>강조: 두 번째 항목이 오늘의 핵심 메시지.<br>전환: "이 기능들을 쓰는 단축키를 정리하면 이렇습니다."</aside>
+  <aside class="notes">멘트: "네 글자만 기억하시면 됩니다. 마, 음, 열, 기."<br>강조: 배경색이 챕터마다 바뀐다 — "화면 색이 바뀌면 다음 글자로 넘어간 겁니다."<br>전환: "첫 글자, '마'부터 시작합니다."</aside>
 </section>
 
-<section class="slide" id="slide-3" data-title="카드 레이아웃">
-  <div class="slide__content">
-    <p class="slide__tag">Section 02</p>
-    <h1 class="slide__title">단축키 4종은 표준이다</h1>
-    <div class="cards">
-      <div class="card" data-step="1">
-        <div class="card__icon">⛶</div>
-        <div class="card__title">F — 전체화면</div>
-        <div class="card__body">발표 시작 시 전체화면으로 전환한다.</div>
-      </div>
-      <div class="card" data-step="2">
-        <div class="card__icon">☰</div>
-        <div class="card__title">I — 목차</div>
-        <div class="card__body">목차 오버레이를 열고 원하는 슬라이드로 점프한다.</div>
-      </div>
-      <div class="card" data-step="3">
-        <div class="card__icon">✎</div>
-        <div class="card__title">N — 화자 노트</div>
-        <div class="card__body">하단에 발표자 메모를 띄운다.</div>
-      </div>
-      <div class="card" data-step="4">
-        <div class="card__icon">🖥</div>
-        <div class="card__title">S — 발표자 모드</div>
-        <div class="card__body">별도 창에 현재·다음 슬라이드와 노트, 타이머를 띄운다.</div>
+<section class="slide edu" id="slide-3" data-title="마음 먼저 읽기 — 고객의 신호" data-chapter="1">
+  <div class="paper">
+    <span class="course">마음열기 대화법</span>
+    <div class="hd"><div class="hd__icon"><span>👁️</span></div><h2 class="hd__title">마음 먼저 읽어요</h2></div>
+    <div class="pair">
+      <div class="fig"><span>😶‍🌫️</span></div>
+      <ul class="biglist biglist--2col">
+        <li>짧아지는 대답</li><li>시계를 보는 손</li>
+        <li>팔짱과 한 걸음 뒤</li><li>같은 질문 반복</li>
+        <li>한숨 섞인 말투</li><li>휴대폰만 보는 눈</li>
+        <li>"그냥 좀 볼게요"</li><li>문 쪽으로 향한 발</li>
+      </ul>
+    </div>
+  </div>
+  <aside class="notes">멘트: "말보다 먼저 오는 신호가 있습니다. 여덟 가지 중 오늘 매장에서 본 것 있으세요?"<br>강조: 왼쪽 그림처럼 표정이 닫힌 고객 — 이때 상품 얘기부터 꺼내면 끝이다.<br>전환: "이 신호를 놓치지 않으려면 첫 3초에 할 일이 있습니다."</aside>
+</section>
+
+<section class="slide edu edu--band" id="slide-4" data-title="감정 반영이란?" data-chapter="1">
+  <div class="band"><div class="band__no"><span>1</span></div><div class="band__title">감정 반영이란?</div><div class="band__crumb">Ⅰ. 마음 먼저 읽어요</div></div>
+  <div class="grow">
+    <p class="fill" style="text-align:center; margin-bottom:1.2em">고객이 말한 <b>사실</b>과 그 뒤의 <b>감정</b>을 함께 되돌려 주는 것</p>
+    <div class="panel panel--blue">
+      <ul class="biglist biglist--plain">
+        <li>사실만 되돌리기 — "환불 원하시는군요"</li>
+        <li>감정까지 되돌리기 — "많이 기다리셔서 <b>답답하셨겠어요</b>, 환불 도와드릴게요"</li>
+        <li>첫 3초에 감정 한 마디가 들어가면 뒤의 대화가 부드러워집니다</li>
+      </ul>
+    </div>
+  </div>
+  <aside class="notes">멘트: "정의부터 잡고 갑니다. 감정 반영은 사실과 감정을 같이 돌려주는 겁니다."<br>강조: 두 번째 줄 — 감정 한 마디의 차이를 실제 문장으로 읽어준다.<br>전환: "그럼 빈칸으로 확인해 볼까요?"</aside>
+</section>
+
+<section class="slide edu" id="slide-5" data-title="빈칸 채우기" data-chapter="1">
+  <div class="badge-char"><span>마</span></div>
+  <div class="paper has-badge">
+    <span class="course">마음열기 대화법</span>
+    <div class="hd"><h2 class="hd__title">빈칸을 채워 볼까요?</h2></div>
+    <div class="grow">
+      <p class="bracket">고객이 말한 사실과 그 뒤의 감정을 함께 되돌려 주는 것을<br>이를 <span class="blank"><span class="blank__ans" data-step="1">감정 반영</span></span> 이라고 부릅니다.</p>
+      <div class="panel">
+        <div class="fill">
+          <p>감정 반영의 첫 단계는 말보다 <span class="blank"><span class="blank__ans" data-step="2">표정과 목소리</span></span> 를 먼저 살피는 것입니다.</p>
+          <p>불만 고객에게 우리가 해야 할 일은 <span class="blank"><span class="blank__ans" data-step="3">끝까지 듣는 것</span></span> 입니다.</p>
+        </div>
+        <div class="warn">
+          <div class="warn__label"><span>절대 하지 말아야 하는 자세</span></div>
+          <div class="warn__box">고객 말 중간에 <b>해결책</b>부터 꺼내기, <b>규정</b>부터 읽어주기</div>
+        </div>
       </div>
     </div>
   </div>
-  <aside class="notes">F/I/N/S 4키는 어떤 덱에서도 빠지면 안 되는 표준 기능이다.<br>시연: 여기서 S를 눌러 발표자 창을 직접 열어 보여준다.<br>전환: "실제 코드 블록은 어떻게 보이는지 보겠습니다."</aside>
+  <aside class="notes">멘트: "받아 적어 보세요. 괄호 안에 뭐가 들어갈까요?" → 키를 눌러 정답을 하나씩 연다.<br>강조: 세 번째 빈칸 '끝까지 듣는 것' — 오늘 가장 많이 틀리는 답.<br>전환: "다음 글자 '음'으로 넘어갑니다. 화면 색이 바뀝니다."</aside>
 </section>
 
-<section class="slide" id="slide-4" data-title="코드 블록">
-  <div class="slide__content">
-    <p class="slide__tag">Section 03</p>
-    <h1 class="slide__title">코드 블록 예시</h1>
-    <p class="slide__body">모노스페이스 폰트와 다크 배경을 쓴다.</p>
-    <pre class="code-block"><code><span class="cm">// 이 템플릿을 쓰는 방법</span>
-1. 슬라이드 영역의 &lt;section&gt;들만 교체한다
-2. :root 변수로 팔레트를 바꾼다
-3. 엔진 CSS/JS는 건드리지 않는다</code></pre>
+<section class="slide edu" id="slide-6" data-title="이렇게 말하지 마세요" data-chapter="2">
+  <div class="badge-char"><span>음</span></div>
+  <div class="paper has-badge">
+    <span class="course">마음열기 대화법</span>
+    <div class="hd"><h2 class="hd__title">음성 톤을 맞춰요</h2></div>
+    <div class="grow">
+      <p class="say-no">이렇게 말하지 마세요</p>
+      <div class="circles">
+        <div class="circle"><div class="circle__ball"><span>다들<br>그러세요,<br>괜찮아요</span></div><span class="circle__label">무성의한 위로</span></div>
+        <div class="circle"><div class="circle__ball"><span>그럼<br>환불해<br>드리면 되죠?</span></div><span class="circle__label">성급한 해결</span></div>
+        <div class="circle"><div class="circle__ball"><span>그건 그렇고<br>이번 신상품이<br>…</span></div><span class="circle__label">화제 돌리기</span></div>
+      </div>
+    </div>
   </div>
-  <aside class="notes">멘트: "쓰는 방법은 세 줄이 전부입니다." 코드를 위에서부터 한 줄씩 짚는다.<br>강조: 엔진은 건드리지 않는다는 규칙.<br>전환: "마지막으로 정리하겠습니다."</aside>
+  <aside class="notes">멘트: "세 문장 다 어디선가 들어보셨죠? 문제는 말투가 아니라 이름입니다."<br>강조: 오답에 이름을 붙이면 다음에 스스로 잡아낸다 — 무성의한 위로, 성급한 해결, 화제 돌리기.<br>전환: "왜 하필 첫 3초를 강조하는지, 숫자로 보겠습니다."</aside>
 </section>
 
-<section class="slide" id="slide-5" data-title="클로징">
-  <div class="slide__content">
-    <p class="slide__tag">Closing</p>
-    <h1 class="slide__title">감사합니다</h1>
-    <p class="slide__subtitle">질문은 지금, 또는 hello@example.com</p>
+<section class="slide edu" id="slide-7" data-title="왜 첫 3초인가 — 숫자" data-chapter="2">
+  <div class="paper">
+    <span class="course">마음열기 대화법</span>
+    <div class="hd"><div class="hd__icon"><span>⏱️</span></div><h2 class="hd__title">왜 첫 3초일까요?</h2></div>
+    <div class="grow">
+      <div class="iconrow">
+        <div class="iconrow__item"><div class="iconrow__icon"><span>⏳</span></div><span class="iconrow__label">첫인상 결정</span><span class="iconrow__num">3<small>초</small></span></div>
+        <div class="iconrow__item"><div class="iconrow__icon"><span>😤</span></div><span class="iconrow__label">불만 고객 중<br>재방문 포기</span><span class="iconrow__num">7<small>명 / 10명</small></span></div>
+        <div class="iconrow__item"><div class="iconrow__icon"><span>💬</span></div><span class="iconrow__label">감정 반영 한 마디로<br>대화 시간</span><span class="iconrow__num">40<small>% 단축</small></span></div>
+      </div>
+      <div class="brace"></div>
+      <p class="big-say">첫 3초의 한 마디가<br>이후 <span class="n">10<small>분</small></span>의 대화를 결정합니다</p>
+      <p class="src-paren">( 사내 고객 응대 만족도 조사, 2026 — 예시 수치 )</p>
+    </div>
   </div>
-  <aside class="notes">마무리 멘트: 오늘 핵심 한 문장 요약 → "질문 있으시면 편하게 해주세요."<br>Q&amp;A 후 연락처를 다시 안내하고 마친다.</aside>
+  <aside class="notes">멘트: "숫자 세 개만 보겠습니다. 3초, 열 명 중 일곱, 40%."<br>강조: 아래 결론 문장 — 3초가 10분을 결정한다.<br>전환: "여기까지 두 글자 배웠습니다. 정리하고 갈게요."</aside>
 </section>
+
+<section class="slide edu" id="slide-8" data-title="정리해 보아요" data-chapter="4">
+  <div class="paper" style="background: transparent; padding-top: 0.8em;">
+    <div class="note">
+      <div class="note__rings"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+      <div class="ribbon">정리해 보아요</div>
+      <ul class="note__list">
+        <li>말보다 먼저 오는 <b>신호</b>를 읽는다</li>
+        <li>사실 + 감정을 함께 돌려주는 <b>감정 반영</b> <small>(첫 3초)</small></li>
+        <li>무성의한 위로 · 성급한 해결 · 화제 돌리기는 <b>금지</b></li>
+      </ul>
+    </div>
+  </div>
+  <aside class="notes">멘트: "세 줄만 남기겠습니다." 한 줄씩 소리 내어 읽게 한다.<br>강조: 두 번째 줄 — 사실 + 감정. 이 공식만 가져가면 된다.<br>전환: "이제 세 번째 글자, '열'입니다."</aside>
+</section>
+
+<section class="slide edu" id="slide-9" data-title="3부 열린 질문" data-chapter="3">
+  <div class="paper">
+    <span class="course">마음열기 대화법</span>
+    <div class="grow">
+      <p class="divider__big">당신이<br>열린 질문을 던져주세요</p>
+      <div class="divider__line"></div>
+      <div class="divider__fig"><span>🙋</span><span>💭</span><span>🙆</span></div>
+    </div>
+  </div>
+  <aside class="notes">멘트: "3부는 질문입니다. 예·아니오로 끝나지 않는 질문."<br>전환: 간지에서 오래 머물지 않는다 — 바로 사례로.</aside>
+</section>
+
+<section class="slide edu edu--plain" id="slide-10" data-title="열린 질문 사례" data-chapter="3">
+  <div class="session"><span class="session__dots"><i></i><i class="is-on"></i><i></i><i></i></span>두 번째 시간 . 고객 응대 실전</div>
+  <div class="hd-box"><span class="hd-box__no">06</span><h2 class="hd-box__title">열린 질문, 이렇게 바꿔요</h2></div>
+  <div class="pair pair--even">
+    <div class="fig fig--blob"><span>🗣️</span></div>
+    <div class="cases">
+      <div><div class="case__label"><span>사례1</span></div><p class="case__body">"환불이세요?" → "<b>어떤 점</b>이 불편하셨는지 말씀해 주시겠어요?"</p></div>
+      <div><div class="case__label"><span>사례2</span></div><p class="case__body">"이거 사실 거예요?" → "<b>어디에</b> 쓰실 건지 여쭤봐도 될까요?"</p></div>
+      <div><div class="case__label"><span>사례3</span></div><p class="case__body">"괜찮으세요?" → "오늘 <b>어떤 게</b> 제일 급하세요?"</p></div>
+    </div>
+  </div>
+  <div class="course-rail">고객 응대 기본 과정 · 마음열기 대화법</div>
+  <aside class="notes">멘트: "왼쪽이 닫힌 질문, 화살표 뒤가 열린 질문입니다. 차이는 의문사 하나."<br>강조: 어떤·어디·무엇 — 의문사가 들어가면 열린 질문이 된다.<br>전환: "이제 여러분 차례입니다. 다짐을 적어 볼게요."</aside>
+</section>
+
+<section class="slide edu" id="slide-11" data-title="나의 대화 다짐 서약서" data-chapter="3">
+  <div class="paper" style="background: transparent; padding: 0.4em 0 0;">
+    <div class="cert">
+      <p class="cert__sub">소중한 고객을 위한 약속</p>
+      <p class="cert__title">마음열기 서약서</p>
+      <ul class="cert__list">
+        <li>나는 고객의 말을 <b>끝까지 듣고</b>, 중간에 해결책부터 꺼내지 않겠습니다.</li>
+        <li>나는 첫 3초에 <b>감정 한 마디</b>를 먼저 건네겠습니다.</li>
+        <li>나는 예·아니오로 끝나는 질문 대신 <b>열린 질문</b>을 하겠습니다.</li>
+      </ul>
+      <p class="cert__sign">나 <span class="line"></span> 은(는) 위 약속에 <b>동참</b>합니다.</p>
+      <p class="cert__date">20 년 월 일</p>
+    </div>
+  </div>
+  <aside class="notes">멘트: "읽는 자료가 아니라 쓰는 자료입니다. 이름부터 적어 주세요."<br>강조: 세 문장 중 본인이 가장 안 되는 것 하나에 동그라미.<br>전환: "적으신 걸 옆 분과 30초만 나눠 보세요." → 마무리.</aside>
+</section>
+
+<section class="slide edu edu--cover" id="slide-12" data-title="마무리" data-chapter="1">
+  <h2 class="cover__title" style="margin-top:0.6em">감사합니다</h2>
+  <div class="cover__fig"><span>👨‍👩‍👧‍👦</span></div>
+  <aside class="notes">마무리: "마·음·열·기, 네 글자만 기억하세요." 다음 차시 예고 후 마친다.</aside>
+</section>
+
+<script>
+/* ================================================================
+   🔧 교육 헬퍼 — 수정하지 않는다.
+   표지(.edu--cover)를 뺀 모든 .slide.edu 에 페이지 번호 원 배지(.pgno)를 붙인다.
+   ================================================================ */
+(function () {
+  'use strict';
+  var slides = Array.prototype.slice.call(document.querySelectorAll('body > .slide.edu'));
+  slides.forEach(function (s, i) {
+    if (s.classList.contains('edu--cover')) return;
+    var p = document.createElement('div');
+    p.className = 'pgno';
+    p.textContent = i + 1;
+    s.appendChild(p);
+  });
+})();
+</script>
 
 <!-- ================================================================
      ⛔ 여기부터 엔진 — 수정하지 않는다.
