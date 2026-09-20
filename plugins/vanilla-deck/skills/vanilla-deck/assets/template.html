@@ -353,17 +353,19 @@ body { font-family: 'Pretendard', 'Noto Sans KR', -apple-system, 'Apple SD Gothi
 .unit { font-size: 0.62em; color: var(--muted); }
 
 /* 결론 밴드 — 장 하단 큰 문장 (「」 안이 POINT) */
-.conclusion { margin-top: 1.2em; padding: 0.9em 1em; text-align: center; font-size: 1.35em; font-weight: 800; line-height: 1.4; letter-spacing: -0.02em; background: linear-gradient(180deg, transparent, #F3F4F6); }
+.conclusion { flex: 0 1 auto; min-height: 3.4em; max-height: 7.5em; margin-top: auto; padding: 0.6em 1em; display: flex; align-items: center; justify-content: center; text-align: center; font-size: 1.6em; font-weight: 800; line-height: 1.35; letter-spacing: -0.02em; background: linear-gradient(180deg, transparent, #F3F4F6); }
+.body:not(:has(> .grow)) > .conclusion { flex: 1; }   /* 앵커가 .grow 로 채우지 않는 장에서만 밴드가 남은 높이를 맡는다 */
 .conclusion q { quotes: '「' '」'; color: var(--point); }
 .conclusion q::before, .conclusion q::after { color: var(--point); }
 .lead-band { background: var(--dark); color: #fff; padding: 0.8em 1.2em; font-size: 1.05em; font-weight: 700; line-height: 1.45; border-radius: 0.3em; }
+.body > .lead-band:last-child { margin-top: auto; }
 .lead-band b { color: var(--point-on-dark); }
 
 /* ---------- 차트 박스 (다크 헤더 스트립 + 연회색 바탕) ---------- */
 .chart { background: #F1F2F3; display: flex; flex-direction: column; }
 .chart__head { background: var(--dark-soft); color: #fff; font-weight: 700; text-align: center; padding: 0.55em; font-size: 0.85em; }
 .chart__body { padding: 0.9em 1em 0.8em; flex: 1; display: flex; flex-direction: column; }
-.chart__legend { display: flex; gap: 1.2em; font-size: 0.65em; color: var(--ink2); margin-bottom: 0.8em; align-items: center; }
+.chart__legend { display: flex; gap: 1.2em; font-size: 0.7em; color: var(--ink2); margin-bottom: 0.8em; align-items: center; }
 .chart__legend i { display: inline-block; width: 1.4em; height: 0.18em; background: var(--bar); margin-right: 0.4em; vertical-align: middle; }
 .chart__legend i.on { background: var(--point); }
 .chart__legend .unit { margin-left: auto; }
@@ -384,10 +386,10 @@ body { font-family: 'Pretendard', 'Noto Sans KR', -apple-system, 'Apple SD Gothi
 .tri__head { text-align: center; font-size: 0.9em; font-weight: 700; line-height: 1.4; padding: 0.7em 0 0.8em; border-top: 2px solid var(--ink2); margin-bottom: 0.2em; }
 .tri__col--pt .tri__head { border-top-color: var(--point); }
 .factors { display: flex; flex-direction: column; gap: 0.5em; flex: 1; }
-.factor { background: #F1F2F3; padding: 1.5em 1em 1em; text-align: center; font-size: 0.78em; line-height: 1.5; color: var(--ink2); position: relative; flex: 1; display: flex; align-items: center; justify-content: center; }
+.factor { background: #F1F2F3; padding: 1.5em 1em 1em; text-align: center; font-size: 0.86em; line-height: 1.5; color: var(--ink2); position: relative; flex: 1; display: flex; align-items: center; justify-content: center; }
 .factor::before { content: attr(data-n); position: absolute; top: 0; left: 50%; transform: translateX(-50%); background: #A9ADB3; color: #fff; font-weight: 700; font-size: 0.85em; padding: 0.1em 0.9em 0.2em; clip-path: polygon(0 0, 100% 0, 85% 100%, 15% 100%); }
 .impacts { display: flex; flex-direction: column; gap: 0.5em; flex: 1; }
-.impact { background: var(--point-tint); color: var(--point); font-weight: 700; text-align: center; font-size: 0.82em; padding: 1em 0.6em; flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0.3em; line-height: 1.4; }
+.impact { background: var(--point-tint); color: var(--point); font-weight: 700; text-align: center; font-size: 0.9em; padding: 1em 0.6em; flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0.3em; line-height: 1.4; }
 .impact::before { content: '✓'; font-size: 1.3em; opacity: .55; }
 
 /* ---------- 카드 격자 (컬러 헤더 + 번호 + 큰 제목) ---------- */
@@ -399,12 +401,15 @@ body { font-family: 'Pretendard', 'Noto Sans KR', -apple-system, 'Apple SD Gothi
 .ccard--2 { border-color: var(--c2); } .ccard--2 .ccard__title { background: var(--c2); } .ccard--2 .ccard__title i { color: var(--c2); } .ccard--2 .ccard__kicker { color: var(--c2); }
 .ccard--3 { border-color: var(--c3); } .ccard--3 .ccard__title { background: var(--c3); } .ccard--3 .ccard__title i { color: var(--c3); } .ccard--3 .ccard__kicker { color: var(--c3); }
 .ccard--1 { border-color: var(--c1); } .ccard--1 .ccard__kicker { color: var(--c1); }
-.ccard__body { padding: 0.8em 0.95em 0.9em; font-size: 0.74em; line-height: 1.55; color: var(--ink2); flex: 1; }
+.ccard__body { padding: 0.8em 0.95em 0.9em; font-size: 0.78em; line-height: 1.55; color: var(--ink2); flex: 1; min-height: 4.6em; }
 
 /* ---------- 큰 숫자 3열 (목표 알약 → 번호 → 기대효과) ---------- */
+.goals__lead { display: flex; align-items: baseline; justify-content: center; gap: 1em; margin: 0.2em 0 0.9em; }
+.goals__lead small { font-size: 0.85em; color: var(--muted); font-weight: 500; }
+.goals__lead b { font-size: 1.9em; font-weight: 800; letter-spacing: -0.02em; line-height: 1.2; }
 .goals { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.2em; text-align: center; }
-.goal { position: relative; padding-bottom: 1em; }
-.goal::before { content: ''; position: absolute; left: 50%; top: 4.2em; transform: translateX(-50%); width: 15em; height: 15em; max-width: 100%; border-radius: 50%; background: radial-gradient(circle, var(--point-tint) 0%, rgba(255,255,255,0) 72%); z-index: 0; }
+.goal { position: relative; padding-bottom: 1em; min-height: 22em; }
+.goal::before { content: ''; position: absolute; left: 50%; top: 5.2em; transform: translateX(-50%); width: 17em; height: 17em; max-width: 100%; border-radius: 50%; background: linear-gradient(180deg, var(--point-tint) 0%, rgba(255,255,255,0) 92%); z-index: 0; }
 .goal > * { position: relative; }
 .goal__pill { background: var(--c1); color: #fff; border-radius: 3em; padding: 1.2em 1em 1.3em; font-size: 0.95em; font-weight: 700; line-height: 1.45; }
 .goal--2 .goal__pill { background: var(--c2); } .goal--3 .goal__pill { background: var(--c3); }
@@ -413,7 +418,7 @@ body { font-family: 'Pretendard', 'Noto Sans KR', -apple-system, 'Apple SD Gothi
 .goal__n { width: 2.2em; height: 2.2em; margin: -1.1em auto 0.3em; background: var(--c1); color: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 0.85em; border: 3px solid #fff; position: relative; }
 .goal--2 .goal__n { background: var(--c2); } .goal--3 .goal__n { background: var(--c3); }
 .goal__label { font-size: 0.72em; color: var(--muted); }
-.goal__title { font-size: 1.2em; font-weight: 800; color: var(--c1); line-height: 1.35; margin: 0.25em 0 0.4em; }
+.goal__title { font-size: 1.35em; font-weight: 800; color: var(--c1); line-height: 1.35; margin: 0.25em 0 0.4em; }
 .goal--2 .goal__title { color: var(--c2); } .goal--3 .goal__title { color: var(--c3); }
 .goal__desc { font-size: 0.78em; color: var(--ink2); line-height: 1.5; }
 
@@ -423,7 +428,7 @@ body { font-family: 'Pretendard', 'Noto Sans KR', -apple-system, 'Apple SD Gothi
 .tl-years span:first-child { border-left: 0; }
 .tl-row { display: grid; grid-template-columns: 8.5em 1fr; gap: 0.4em; margin-bottom: 0.5em; }
 .tl-row__label { background: var(--dark-soft); color: #fff; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0.3em; padding: 1em 0.6em; font-weight: 700; font-size: 0.85em; text-align: center; }
-.tl-row__label i { font-style: normal; font-size: 1.6em; opacity: .85; }
+.tl-row__label i { font-style: normal; font-size: 1.6em; opacity: .9; filter: grayscale(1) brightness(1.7); }
 .tl-row__track { background: #F1F2F3; position: relative; min-height: 5.2em; }
 .tl-row__track::before { content: ''; position: absolute; left: 0; right: 3%; top: 50%; height: 1px; background: var(--ink2); }
 .tl-row__track::after { content: ''; position: absolute; right: 2.4%; top: 50%; transform: translateY(-50%); border: 0.28em solid transparent; border-left-color: var(--ink2); }
@@ -451,6 +456,7 @@ body { font-family: 'Pretendard', 'Noto Sans KR', -apple-system, 'Apple SD Gothi
 
 /* ---------- KPI 큰 숫자 줄 ---------- */
 .kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(9em, 1fr)); gap: 1em; }
+.kpis--2 { grid-template-columns: 1fr 1fr; }
 .kpi { border-top: 3px solid var(--point); padding: 0.7em 0.9em 0.8em; background: #F7F7F8; }
 .kpi__label { font-size: 0.72em; color: var(--muted); }
 .kpi__value { font-size: 2em; font-weight: 800; line-height: 1.15; letter-spacing: -0.02em; }
@@ -458,30 +464,30 @@ body { font-family: 'Pretendard', 'Noto Sans KR', -apple-system, 'Apple SD Gothi
 .kpi__delta { font-size: 0.72em; font-weight: 700; color: var(--point); margin-top: 0.15em; }
 
 /* ---------- 표 (헤더 틴트 · 세로선 없음) ---------- */
-.tbl { width: 100%; border-collapse: collapse; font-size: 0.74em; }
+.tbl { width: 100%; border-collapse: collapse; font-size: 0.8em; }
 .tbl caption { text-align: left; font-weight: 800; color: var(--ink); font-size: 1.05em; padding-bottom: 0.5em; }
 .tbl caption::before { content: ''; display: inline-block; width: 0.25em; height: 0.9em; background: var(--point); margin-right: 0.5em; vertical-align: -0.1em; }
-.tbl th { background: var(--point-tint); color: var(--ink); font-weight: 700; padding: 0.55em 0.8em; text-align: center; }
-.tbl td { padding: 0.55em 0.8em; border-bottom: 1px solid var(--line); text-align: center; color: var(--ink2); }
+.tbl th { background: var(--point-tint); color: var(--ink); font-weight: 700; padding: 0.6em 0.8em; text-align: center; white-space: nowrap; }
+.tbl td { padding: 0.6em 0.8em; border-bottom: 1px solid var(--line); text-align: center; color: var(--ink2); }
 .tbl td:first-child { text-align: left; font-weight: 700; color: var(--ink); }
 .tbl .num { text-align: right; font-variant-numeric: tabular-nums; }
 .tbl .pct { color: var(--muted); font-size: 0.9em; }
 .tbl tr.hi td { background: var(--point-tint); color: var(--ink); font-weight: 700; }
-.kv { width: 100%; border-collapse: collapse; font-size: 0.78em; }
-.kv th { width: 22%; text-align: left; font-weight: 500; color: var(--muted); background: #F3F4F6; padding: 0.55em 0.9em; border-bottom: 2px solid #fff; vertical-align: top; }
+.kv { width: 100%; border-collapse: collapse; font-size: 0.85em; }
+.kv th { width: 20%; white-space: nowrap; text-align: left; font-weight: 500; color: var(--muted); background: #F3F4F6; padding: 0.55em 0.9em; border-bottom: 2px solid #fff; vertical-align: top; }
 .kv td { padding: 0.55em 0.9em; border-bottom: 1px solid var(--line); color: var(--ink2); line-height: 1.5; }
 .kv td li { list-style: none; }
 .kv td li::before { content: '· '; }
 
 /* ---------- 60/40 · 2단 · 세로 큰 제목 ---------- */
-.split { display: grid; grid-template-columns: 1.4fr 1fr; gap: 1.6em; align-items: start; }
+.split { display: grid; grid-template-columns: 1.4fr 1fr; gap: 1.6em; align-items: stretch; }
 .split--even { grid-template-columns: 1fr 1fr; }
 .stack { display: flex; flex-direction: column; gap: 0.9em; }
 .sub { font-size: 0.95em; font-weight: 800; display: flex; align-items: center; gap: 0.45em; margin-bottom: 0.45em; }
 .sub::before { content: '›'; width: 1.1em; height: 1.1em; background: var(--point); color: #fff; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-size: 0.85em; }
 .vtitle { font-size: 2.2em; font-weight: 800; line-height: 1.15; letter-spacing: -0.02em; color: var(--point); padding-left: 0.45em; border-left: 0.14em solid var(--point); }
 .vtitle small { display: block; font-size: 0.42em; color: var(--muted); font-weight: 500; margin-top: 0.5em; letter-spacing: 0; }
-.visual { background: var(--img, radial-gradient(circle at 50% 45%, #DDE7F3, #F3F5F8 70%)) center/cover; border-radius: 50%; aspect-ratio: 1; width: min(100%, 15em); margin: 0 auto; display: flex; align-items: center; justify-content: center; font-size: 0.75em; color: var(--muted); }
+.visual { background: var(--img, radial-gradient(circle at 50% 45%, #DDE7F3, #F3F5F8 70%)) center/cover; border-radius: 50%; aspect-ratio: 1; width: min(100%, 20em); margin: 0 auto; display: flex; align-items: center; justify-content: center; font-size: 0.75em; color: var(--muted); }
 
 /* ---------- 프로세스 · 불릿 ---------- */
 .steps { display: grid; grid-template-columns: repeat(var(--n, 4), 1fr); gap: 0.8em; }
@@ -511,17 +517,26 @@ body { font-family: 'Pretendard', 'Noto Sans KR', -apple-system, 'Apple SD Gothi
 .divider__title { font-size: 2.9em; font-weight: 800; line-height: 1.12; letter-spacing: -0.02em; }
 .divider__sub { font-size: 1.05em; margin-top: 1.6em; color: rgba(255,255,255,.85); }
 .slide--toc { padding: 0; background: #fff; }
-.toc__deco { position: absolute; left: 0; top: 0; bottom: 0; width: 34%; background:
-  radial-gradient(circle at 25% 18%, var(--point) 0 6.5em, transparent 6.6em),
-  repeating-linear-gradient(135deg, var(--point) 0 0.14em, transparent 0.14em 0.6em) 0 0 / 40% 30% no-repeat,
-  linear-gradient(var(--point), var(--point)) 0 62% / 55% 22% no-repeat,
-  radial-gradient(circle at 20% 92%, var(--point-tint) 0 5em, transparent 5.1em); }
-.toc__deco::after { content: ''; position: absolute; right: 12%; top: 34%; width: 6em; height: 6em; background: var(--point-tint); border-radius: 50%; }
-.toc__head { position: absolute; left: 38%; top: 9%; }
+.toc__deco { position: absolute; left: 3.6%; top: 6%; bottom: 6%; width: 21%; --t: 50% 25%; background:
+  radial-gradient(circle at 50% 50%, var(--point) 0 46%, transparent 47%) 0 0 / var(--t) no-repeat,
+  repeating-linear-gradient(135deg, var(--point) 0 0.15em, transparent 0.15em 0.65em) 100% 0 / var(--t) no-repeat,
+  linear-gradient(var(--point), var(--point)) 0 33.333% / var(--t) no-repeat,
+  radial-gradient(circle at 50% 50%, #fff 0 22%, var(--point) 23% 60%, transparent 61%) 100% 33.333% / var(--t) no-repeat,
+  repeating-radial-gradient(circle at 0 100%, var(--point) 0 0.3em, transparent 0.3em 0.9em) 0 66.667% / var(--t) no-repeat,
+  linear-gradient(var(--point-tint), var(--point-tint)) 100% 66.667% / var(--t) no-repeat,
+  repeating-linear-gradient(0deg, var(--point) 0 0.5em, transparent 0.5em 1.1em) 0 100% / var(--t) no-repeat,
+  linear-gradient(var(--point), var(--point)) 100% 100% / var(--t) no-repeat; }
+.toc__deco::before { content: ''; position: absolute; inset: 0; background:
+  linear-gradient(#fff, #fff) 50% 0 / 0.6em 100% no-repeat,
+  linear-gradient(#fff, #fff) 0 calc(25% - 0.15em) / 100% 0.6em no-repeat,
+  linear-gradient(#fff, #fff) 0 50% / 100% 0.6em no-repeat,
+  linear-gradient(#fff, #fff) 0 calc(75% + 0.15em) / 100% 0.6em no-repeat; }   /* 타일 사이 흰 간격 */
+.toc__deco::after { content: ''; position: absolute; left: 100%; bottom: 2%; margin-left: 2.6em; width: 7em; height: 7em; background: var(--point-tint); border-radius: 50%; }
+.toc__head { position: absolute; left: 30%; top: 12%; }
 .toc__head h2 { font-size: 2em; font-weight: 800; letter-spacing: -0.02em; }
 .toc__head small { display: block; font-size: 0.7em; color: var(--muted); letter-spacing: 0.35em; margin-top: 0.4em; }
-.toc__list { position: absolute; left: 50%; top: 27%; list-style: none; }
-.toc__list li { display: flex; align-items: baseline; gap: 1.2em; font-size: 1.05em; font-weight: 700; margin-bottom: 0.75em; }
+.toc__list { position: absolute; left: 50%; top: 50%; transform: translateY(-46%); list-style: none; }
+.toc__list li { display: flex; align-items: baseline; gap: 1.2em; font-size: 1.15em; font-weight: 700; margin-bottom: 1.1em; }
 .toc__list li span { color: var(--point); font-weight: 400; min-width: 1.2em; }
 .toc__list li small { display: block; font-weight: 400; color: var(--ink2); font-size: 0.82em; margin-top: 0.35em; }
 .slide--closing .cover__title { font-size: 2.6em; }
@@ -641,7 +656,7 @@ body { font-family: 'Pretendard', 'Noto Sans KR', -apple-system, 'Apple SD Gothi
     <div class="head__meta"><span class="head__nav"></span></div>
   </div>
   <div class="body">
-    <div class="cards3 grow">
+    <div class="cards3">
       <div class="ccard ccard--1"><div class="ccard__kicker">실습형 2개 과정은 목표를 넘겼으나</div><div class="ccard__title"><i>1</i>강의형 이수율 79.5%</div><div class="ccard__body">보고서 작성·리더십 기초 2개 과정의 이수율이 80% 아래로 떨어져 전체 이수율(86.8%)이 목표 90%에 3.2%p 미달</div></div>
       <div class="ccard ccard--2"><div class="ccard__kicker">중도 이탈자 94명 설문 결과</div><div class="ccard__title"><i>2</i>이탈 사유 1위 "업무 호출"</div><div class="ccard__body">응답의 62%가 업무 호출을 꼽았고 내용 불만은 8%에 그침. 오전 4시간 연속 편성이 월말 마감 주간과 겹친 것이 원인</div></div>
       <div class="ccard ccard--3"><div class="ccard__kicker">실습형 과정 시범 운영에서</div><div class="ccard__title"><i>3</i>분할 편성 시 이수율 +11%p</div><div class="ccard__body">오후 2시간 × 2회로 나눈 시범 회차에서 이수율이 11%p 상승. 같은 강사·같은 강의장으로 추가 비용 없이 검증</div></div>
@@ -674,7 +689,12 @@ body { font-family: 'Pretendard', 'Noto Sans KR', -apple-system, 'Apple SD Gothi
     <div class="split">
       <div>
         <div class="vtitle">4개 과정<br>1,240명<small>2026년 3분기 · 62회차 운영</small></div>
-        <div class="visual" style="margin-top:1.2em">지도 · 사진 · 도식 자리</div>
+        <div class="kpis kpis--2" style="margin-top:1.4em">
+          <div class="kpi"><div class="kpi__label">교육 만족도</div><div class="kpi__value">4.6<small>/5</small></div><div class="kpi__delta">▲ 0.3 (목표 4.3)</div></div>
+          <div class="kpi"><div class="kpi__label">추천 의향 NPS</div><div class="kpi__value">+52</div><div class="kpi__delta">▲ 9 (목표 +40)</div></div>
+          <div class="kpi"><div class="kpi__label">전체 이수율</div><div class="kpi__value">86.8<small>%</small></div><div class="kpi__delta" style="color:var(--muted)">▼ 3.2%p (목표 90%)</div></div>
+          <div class="kpi"><div class="kpi__label">교육 인원</div><div class="kpi__value">1,240<small>명</small></div><div class="kpi__delta">▲ 18%</div></div>
+        </div>
       </div>
       <div class="stack">
         <div>
@@ -699,12 +719,7 @@ body { font-family: 'Pretendard', 'Noto Sans KR', -apple-system, 'Apple SD Gothi
         </div>
       </div>
     </div>
-    <div class="kpis">
-      <div class="kpi"><div class="kpi__label">교육 만족도</div><div class="kpi__value">4.6<small>/5</small></div><div class="kpi__delta">▲ 0.3 (목표 4.3)</div></div>
-      <div class="kpi"><div class="kpi__label">추천 의향 NPS</div><div class="kpi__value">+52</div><div class="kpi__delta">▲ 9 (목표 +40)</div></div>
-      <div class="kpi"><div class="kpi__label">전체 이수율</div><div class="kpi__value">86.8<small>%</small></div><div class="kpi__delta" style="color:var(--muted)">▼ 3.2%p (목표 90%)</div></div>
-      <div class="kpi"><div class="kpi__label">교육 인원</div><div class="kpi__value">1,240<small>명</small></div><div class="kpi__delta">▲ 18%</div></div>
-    </div>
+    <p class="lead-band">실습형 2개 과정이 이수율·만족도 모두 상위 — 격차는 내용이 아니라 <b>편성 시간</b>에서 났다</p>
   </div>
   <div class="foot"><span class="foot__src">Source: 학습관리시스템 · 이수 = 출석 80% 이상 + 과제 제출</span><span class="foot__pg"></span><span class="foot__logo"></span></div>
 </section>
@@ -716,6 +731,7 @@ body { font-family: 'Pretendard', 'Noto Sans KR', -apple-system, 'Apple SD Gothi
     <div class="head__meta"><span class="head__nav"></span></div>
   </div>
   <div class="body">
+    <div class="goals__lead"><small>추진목표</small><b>4분기 전 과정 <span class="pt">실습형 전환</span>으로 이수율 90% 회복</b></div>
     <div class="goals">
       <div class="goal goal--1">
         <div class="goal__pill">실습형 설계<br>전 과정 확대<b>이수율 <strong>90</strong>%</b></div>
@@ -735,12 +751,6 @@ body { font-family: 'Pretendard', 'Noto Sans KR', -apple-system, 'Apple SD Gothi
         <div class="goal__title">교육 후에도<br>쓰이는 자료</div>
         <div class="goal__desc">교육 다음 날부터 복사해 쓰는<br>카드로 현업 적용률 측정</div>
       </div>
-    </div>
-    <div class="steps" style="--n:4">
-      <div class="step" data-n="1"><h4>편성 승인</h4><p>강의형 2개 과정 오후 분할 편성 확정</p></div>
-      <div class="step" data-n="2"><h4>사전 과제 배포</h4><p>개강 1주 전 표준 과제 발송</p></div>
-      <div class="step" data-n="3"><h4>운영·측정</h4><p>회차별 이수율·만족도 주간 집계</p></div>
-      <div class="step" data-n="4"><h4>카드 배포</h4><p>수료자 전원에게 프롬프트 카드 10장</p></div>
     </div>
   </div>
   <div class="foot"><span class="foot__src">기준: 3분기 시범 운영 결과 · 추가 이수자 = 강의형 인원 510명 × 이수율 개선폭</span><span class="foot__pg"></span><span class="foot__logo"></span></div>

@@ -13,7 +13,7 @@ Claude Code 플러그인/스킬 배포 채널(강의용 배포 통일 채널) + 
 
 - GitHub: `studiodotdot/dotdot-skills` (Public) — 구 `aible-edu/aible-skills`(260715 rename). 커밋에 Co-Author 트레일러 안 붙임(개인 프로젝트)
 - 수강생 설치: `/plugin marketplace add studiodotdot/dotdot-skills` → `/plugin install <스킬>@dotdot-skills`
-- **수정 절차: 원본 고침 → 검증 → `rsync -a --delete ~/.claude/skills/<스킬>/ plugins/<스킬>/skills/<스킬>/` → plugin.json·marketplace.json 버전 bump → README → 커밋·push(push는 한민님 확인)**
+- **수정 절차: 원본 고침 → 검증 → `rsync -a --delete ~/.claude/skills/<스킬>/ plugins/<스킬>/skills/<스킬>/` → `plugins/<스킬>/.claude-plugin/plugin.json` 버전 bump(marketplace.json엔 버전 필드 없음) → README → 커밋·push(push는 한민님 확인)**
 - 🚨 공개 레포다. 업체·고객·직장 실명, `/Users/hanmin` 개인 경로, 회사 자료가 SKILL.md·템플릿에 들어가면 안 된다. push 전 grep
 
 ## 보유 스킬
@@ -21,7 +21,7 @@ Claude Code 플러그인/스킬 배포 채널(강의용 배포 통일 채널) + 
 | 스킬 | 버전 | 용도 | 비고 |
 |---|---|---|---|
 | vanilla-slide | 1.3.0 | 강의 교안·교육자료 HTML 슬라이드 | F·I·N·S 4키 엔진 원본 |
-| vanilla-deck | 1.0.0 | 사내 보고·제안·공모전·IR 발표 덱 | vanilla-slide 엔진에서 노트(N)·발표자(S) 뺀 F·I 2키 파생. 흐름 3종 `references/flows.md` |
+| vanilla-deck | 1.0.1 | 사내 보고·제안·공모전·IR 발표 덱 | vanilla-slide 엔진에서 노트(N)·발표자(S) 뺀 F·I 2키 파생. 흐름 3종 `references/flows.md` |
 | edu-designer | 1.0.0 | ADDIE·딕앤케리·메릴 기반 커리큘럼 설계 | |
 | (buildlog) | — | 제작 과정 빌드로그 | 개인용, 마켓 미등재 |
 
@@ -37,7 +37,7 @@ Claude Code 플러그인/스킬 배포 채널(강의용 배포 통일 채널) + 
 
 ## `_work/` (gitignore, 로컬 작업물)
 
-- `samples/` — 현재 템플릿으로 렌더한 샘플 덱 2개(260920). 브라우저로 열어 확인용
+- `samples/` — 현재 템플릿으로 렌더한 샘플(deck 260921 = 1.0.1 템플릿 그대로 · slide 260920). 브라우저로 열어 확인용. deck 260920은 1.0.0 판(비교용)
 - `test-decks/` — 260919 실험: 서브에이전트가 **옛 템플릿**으로 만든 공모전·교육 제안서 덱 2개(가짜 수치)
 - `backup/` — vanilla-deck 이전 판 2개(v1 글규칙판 · v2 챔피언 단색 시트형 — 회사 양식 1장 보고서엔 이게 맞을 수 있음)
 
@@ -61,6 +61,7 @@ C="/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
 ## 남은 작업
 - [x] vanilla-slide v1.2.0 배포·push (260715) · edu-designer v1.0.0 등재 (260715) · 계정·레포 rename (260715)
 - [x] vanilla-slide v1.3.0 교육 레이어 재작성 + vanilla-deck v1.0.0 신규 등재 · push (260920)
-- [ ] vanilla-deck 레이아웃 재점검 (260920 한민님: "레이아웃이 너무 별로, 표 사이즈가 안 맞는 게 많다") — ▶ 한민님: 어떤 파일 기준인지 확인(`_work/test-decks/` 옛 템플릿 실험 덱 / `_work/samples/vanilla-deck_샘플`). 표·부품 크기 정합부터, 레퍼런스 장과 나란히 비교 후 수정 → 1.0.1 bump
+- [x] vanilla-deck 1.0.1 레이아웃 재점검 (260921) — 샘플 10장 전부 캡처해 레퍼런스(GC IR 02·04·10, 충남 02, SBA 02·03·07)와 나란히 비교. 목차 장식 2×4 타일 격자 재작성 · 카드 격자 자연 높이 + 결론 밴드 채움 · 60/40 표 글자 키우고 빈 `.visual` 대신 `.kpis--2` · 목표 장 `.goals__lead` 목표 문장 + 원형 배경 · 타임라인 이모지 흰 글리프 필터. 옛 실험 덱의 "표 사이즈" 문제(자연 높이·열 폭 쏠림)는 v1 템플릿 것 — 현 템플릿엔 `.split` stretch + `th nowrap`로 대응
+- [ ] ▶ 한민님: 1.0.1 샘플(`_work/samples/vanilla-deck_샘플_260921.html`) 브라우저로 열어 확인 → OK면 push
 - [ ] vanilla-slide 아이콘·이미지 보강 방법 찾기 (전반은 OK. 표지·3장 개념·12장 마무리의 이모지 아이콘이 위치·크기 엉뚱) — 이모지 대체(SVG 아이콘 세트·일러스트 소스) 검토, `.fig`/`.cover__fig`/`.hd__icon` 슬롯 크기·위치 규칙 정리 → 1.3.1 bump
 - [ ] 레퍼런스 라이브러리 미완분 — 발표 10건 99장 태그 미부여, 나머지 55건 미수집(`99_진행상황.txt`). 필요해지면 Aside에 이어서 지시(지시문 `~/Downloads/Aside지시문_레퍼런스_슬라이드_수집_260919.txt`)
