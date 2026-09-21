@@ -38,6 +38,7 @@ Claude Code 플러그인/스킬 배포 채널(강의용 배포 통일 채널) + 
 ## `_work/` (gitignore, 로컬 작업물)
 
 - `samples/` — 현재 템플릿 그대로인 샘플 = `vanilla-deck_샘플_260921`(1.0.1) · `vanilla-slide_교육샘플_260921`(1.3.1). 260920 판 2개는 이전 버전 비교용
+- `samples/vanilla-slide_사진샘플_첫인상3초_260921.html` + `samples/img/` — **실사진 10장 샘플**(Pexels 무료 라이선스 8장, 출처 표기 불요·레포 재배포 금지). 표지·개념 원·4장 원형 격자(`.pgrid`, 덱 전용 스타일)·사례 블롭·마무리에 사진. 픽토그램 판과 비교용
 - `test-decks/` — 260919 실험: 서브에이전트가 **옛 템플릿**으로 만든 공모전·교육 제안서 덱 2개(가짜 수치)
 - `backup/` — vanilla-deck 이전 판 2개(v1 글규칙판 · v2 챔피언 단색 시트형 — 회사 양식 1장 보고서엔 이게 맞을 수 있음)
 
@@ -49,6 +50,8 @@ C="/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
 "$C" --headless=new --no-pdf-header-footer --virtual-time-budget=3000 --print-to-pdf=덱.pdf "file://$PWD/덱.html"   # 페이지 수 = 슬라이드 수
 ```
 - 캡처를 Read로 직접 보고 레퍼런스와 비교. data-step 요소는 복사본에 `[data-step]{opacity:1!important;transform:none!important}` 넣어 확인
+- **PDF 페이지 수는 `grep '/Type /Page'`로 세면 틀린다**(객체 스트림 압축·Pages 트리 중첩). 스트림을 zlib로 풀어 `/Type /Page`(Pages 제외)를 센다 — 260921 이 오차 때문에 잉여 페이지(본문에 남은 텍스트 조각)를 놓칠 뻔함
+- 슬라이드 영역을 파이썬으로 잘라 넣을 땐 `<title>` 등 문자열 치환을 **인덱스 계산보다 먼저** 한다(길이가 바뀌면 슬라이스가 어긋나 주석이 안 닫힘 — 260921 재발)
 - 스킬 자체 테스트는 맥락 없는 서브에이전트에게 가짜 요청을 주고 "헷갈린 점"을 보고받는 방식이 효과적이었음(260919, 지적 20여 건 반영)
 
 ## 한민님 취향·결정 (되돌리지 말 것)
@@ -64,6 +67,6 @@ C="/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
 - [x] vanilla-deck 1.0.1 레이아웃 재점검 (260921) — 샘플 10장 전부 캡처해 레퍼런스(GC IR 02·04·10, 충남 02, SBA 02·03·07)와 나란히 비교. 목차 장식 2×4 타일 격자 재작성 · 카드 격자 자연 높이 + 결론 밴드 채움 · 60/40 표 글자 키우고 빈 `.visual` 대신 `.kpis--2` · 목표 장 `.goals__lead` 목표 문장 + 원형 배경 · 타임라인 이모지 흰 글리프 필터. 옛 실험 덱의 "표 사이즈" 문제(자연 높이·열 폭 쏠림)는 v1 템플릿 것 — 현 템플릿엔 `.split` stretch + `th nowrap`로 대응
 - [ ] ▶ 한민님: 1.0.1 샘플(`_work/samples/vanilla-deck_샘플_260921.html`) 브라우저로 열어 확인 → OK면 push
 - [x] vanilla-slide 1.3.1 아이콘·이미지 보강 (260921) — 교육 레퍼런스(67 표지·04 개념·21 마무리, 39 표지·마무리, 70 개념) 확인: 큰 슬롯은 일러스트가 꽉 차고 제목 아이콘은 노란 원 안 라인 아이콘. 템플릿에 직접 그린 라인 아이콘 SVG 스프라이트 26종 동봉 + `.ico`·`.pictos/.picto` 부품 추가, 샘플 이모지 전부 교체(표지·마무리는 픽토그램 3개가 하단 흰 띠 위에 서고, 개념 원은 아이콘 약 50%). SKILL.md에 "아이콘·일러스트" 절(우선순위 이미지>픽토그램>이모지, 슬롯별 규칙, unDraw·Open Peeps·Storyset·OpenMoji 소스와 라이선스 주의) 추가
-- [ ] ▶ 한민님: 1.3.1 샘플(`_work/samples/vanilla-slide_교육샘플_260921.html`) 확인 → deck 1.0.1과 함께 push
+- [ ] ▶ 한민님: vanilla-deck 1.0.1은 며칠 써보고 판단(260921 결정). vanilla-slide 1.3.1 픽토그램은 "여전히 아이콘이 문제" → 실사진 샘플(`_work/samples/vanilla-slide_사진샘플_첫인상3초_260921.html`)로 비교 후 방향 결정. 커밋 2건 push 대기
 - [ ] vanilla-deck 타임라인 라벨 아이콘도 이모지(필터 임시) → slide 스프라이트 방식으로 교체 (1.0.2)
 - [ ] 레퍼런스 라이브러리 미완분 — 발표 10건 99장 태그 미부여, 나머지 55건 미수집(`99_진행상황.txt`). 필요해지면 Aside에 이어서 지시(지시문 `~/Downloads/Aside지시문_레퍼런스_슬라이드_수집_260919.txt`)
