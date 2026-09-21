@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <!-- ✏️ 교체: 문서 제목 -->
-<title>마음열기 대화법 — 교육 템플릿</title>
+<title>AI 보고서 초안 만들기 — 다크 온보딩 템플릿</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
@@ -685,6 +685,99 @@ body.is-presenter #presenterMode {
   .slide { padding: 0 28px; }
   #notesPanel { padding: 14px 28px 18px; }
 }
+/* ================================================================
+   🌑 테마 B — 다크 온보딩 레이어 (교육 레퍼런스 30_LG_AI연구원 실측, 260921)
+   클래스는 전부 dk- 접두어. 파스텔 레이어(.edu)와 같은 파일에 공존해도 충돌하지 않는다.
+   토큰: --navy(바탕) --pink(강조·CTA) --sky(보조) 를 :root 대신 .dk 에서 정의 — CI 색이 오면 여기만 바꾼다
+   ================================================================ */
+.dk { --navy: #1E2660; --navy2: #2B3480; --pink: #E6127D; --pink-soft: #FBD3E5; --sky: #7FB2E5; --ink: #1E2660; --muted: #8A90A8;
+      font-size: min(1.5vw, 2.6667vh); background: var(--navy); color: #fff; padding: 0; display: block; }
+.dk b { font-weight: 800; }
+.dk .dk-corner { position: absolute; left: 0; top: 0; width: 3.2em; height: 3.2em; background: var(--pink); clip-path: polygon(0 0, 100% 0, 0 100%); }
+.dk .dk-rail { position: absolute; right: 1em; top: 50%; transform: translateY(-50%); writing-mode: vertical-rl; font-size: 0.66em; letter-spacing: 0.18em; color: var(--muted); }
+.dk .dk-pg { position: absolute; left: 50%; bottom: 0.9em; transform: translateX(-50%); font-size: 0.8em; color: var(--muted); }
+.dk .dk-logo { position: absolute; right: 2.4em; bottom: 0.9em; font-size: 0.85em; font-weight: 800; color: #fff; letter-spacing: -0.01em; }
+.dk .dk-logo::before { content: ''; display: inline-block; width: 1.1em; height: 1.1em; border-radius: 50%; background: var(--pink); vertical-align: -0.2em; margin-right: 0.4em; }
+/* 표지·마무리 — 마젠타→네이비 + 점 네트워크 + 거대한 흰 아치 */
+.dk--cover { overflow: hidden; background: radial-gradient(circle at 12% 88%, rgba(255,255,255,.18) 0 0.12em, transparent 0.13em), radial-gradient(circle at 30% 70%, rgba(255,255,255,.14) 0 0.1em, transparent 0.11em), radial-gradient(circle at 78% 86%, rgba(255,255,255,.16) 0 0.11em, transparent 0.12em), radial-gradient(circle at 90% 72%, rgba(255,255,255,.12) 0 0.1em, transparent 0.11em), radial-gradient(circle at 55% 92%, rgba(255,255,255,.12) 0 0.1em, transparent 0.11em), linear-gradient(160deg, #E6127D 0%, #B21B7C 35%, #4A2C88 70%, #1E2660 100%); }
+.dk--cover::before { content: ''; position: absolute; left: 50%; top: -62%; width: 132%; height: 154%; transform: translateX(-50%); background: #fff; border-radius: 50%; }
+.dk--cover .dk-cv { position: absolute; left: 0; right: 0; top: 30%; text-align: center; color: var(--navy); }
+.dk--cover .dk-cv__t { font-size: 3.4em; font-weight: 800; letter-spacing: -0.03em; line-height: 1.1; }
+.dk--cover .dk-cv__t i { font-style: normal; display: inline-flex; align-items: center; justify-content: center; width: 1em; height: 1em; border-radius: 50%; background: radial-gradient(circle, #fff 38%, #E4E6EE 40%, #E4E6EE 62%, transparent 64%); vertical-align: -0.12em; margin: 0 0.05em; }
+.dk--cover .dk-cv__s { font-size: 1.35em; color: var(--pink); margin-top: 0.9em; font-weight: 500; }
+.dk--cover .dk-cv__meta { position: absolute; right: 2.4em; top: 1.2em; font-size: 0.7em; letter-spacing: 0.15em; color: var(--muted); }
+.dk--cover .dk-cv__logo { position: absolute; left: 50%; bottom: 13%; transform: translateX(-50%); color: var(--navy); font-weight: 800; font-size: 1.05em; }
+.dk--cover .dk-cv__logo::before { content: ''; display: inline-block; width: 1.3em; height: 1.3em; border-radius: 50%; background: var(--pink); vertical-align: -0.28em; margin-right: 0.45em; }
+/* 제목 블록 — 흰 큰 제목 | 핑크 세로선 | 설명 */
+.dk .dk-hdr { position: absolute; left: 3.2em; top: 2.6em; right: 4em; display: flex; align-items: flex-start; gap: 1.4em; }
+.dk .dk-hdr__t { font-size: 1.9em; font-weight: 800; letter-spacing: -0.02em; line-height: 1.15; white-space: nowrap; }
+.dk .dk-hdr__d { border-left: 0.16em solid var(--pink); padding-left: 1.1em; font-size: 0.82em; line-height: 1.6; color: #D9DCEA; margin-top: 0.25em; }
+.dk .dk-hdr__d b { color: #fff; }
+/* 흰 테두리 원 3개 (오늘의 흐름·정리) */
+.dk-ring3 { position: absolute; left: 3.2em; right: 4em; top: 9.5em; display: grid; grid-template-columns: repeat(3, 1fr); gap: 2em; }
+.dk-ring { display: flex; flex-direction: column; align-items: center; text-align: center; }
+.dk-ring__c { width: 9.6em; height: 9.6em; border-radius: 50%; border: 2px solid #fff; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0.2em; position: relative; }
+.dk-ring__c small { font-size: 0.8em; color: var(--sky); letter-spacing: 0.1em; }
+.dk-ring__c b { font-size: 1.35em; line-height: 1.2; }
+.dk-ring__c::after { content: ''; position: absolute; right: -0.45em; top: 50%; width: 0.7em; height: 0.7em; background: var(--sky); transform: translateY(-50%) rotate(45deg); }
+.dk-ring__d { margin-top: 1.1em; font-size: 0.88em; line-height: 1.55; color: #D9DCEA; }
+.dk-ring--fill .dk-ring__c { background: #fff; border-color: #fff; color: var(--navy); }
+.dk-ring--fill .dk-ring__c::after { display: none; }
+/* 좌 네이비 + 우 흰 패널 (개념) */
+.dk .dk-panel { position: absolute; right: 0; top: 0; bottom: 0; width: 33%; background: #fff; color: var(--ink); padding: 3.2em 2.4em 3em 2.2em; display: flex; flex-direction: column; justify-content: center; gap: 1.3em; }
+.dk .dk-panel h3 { color: var(--pink); font-size: 1.15em; font-weight: 800; }
+.dk .dk-panel p { font-size: 0.86em; line-height: 1.65; color: #3A4060; }
+.dk .dk-panel .dk-q { font-size: 0.86em; line-height: 1.65; color: #3A4060; }
+.dk .dk-panel .dk-q b { color: var(--ink); }
+.dk-rows { position: absolute; left: 3.2em; top: 7.6em; width: 60%; display: flex; flex-direction: column; gap: 0.7em; }
+.dk-row { display: grid; grid-template-columns: 5.6em 1fr; gap: 1.6em; align-items: center; }
+.dk-row__c { width: 5.6em; height: 5.6em; border-radius: 50%; border: 2px solid #fff; display: flex; align-items: center; justify-content: center; font-size: 1.05em; font-weight: 800; position: relative; }
+.dk-row__c::after { content: ''; position: absolute; right: -0.4em; top: 50%; width: 0.55em; height: 0.55em; background: var(--sky); transform: translateY(-50%) rotate(45deg); }
+.dk-row__t { font-size: 0.92em; line-height: 1.55; color: #D9DCEA; }
+.dk-row__t b { color: #fff; }
+.dk-row__t small { display: block; font-size: 0.86em; color: var(--sky); margin-top: 0.15em; }
+/* 파스텔 원 격자 (흔한 실수) + 상태 알약 + 하단 핑크 밴드 */
+.dk-bub6 { position: absolute; left: 3.2em; right: 3.2em; top: 6.6em; display: grid; grid-template-columns: repeat(3, 1fr); gap: 1em 2.4em; justify-items: center; }
+.dk-bb { width: 11.6em; height: 11.6em; border-radius: 50%; color: var(--navy); display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 0 1.2em; gap: 0.35em; }
+.dk-bb b { font-size: 1.05em; } .dk-bb p { font-size: 0.78em; line-height: 1.4; color: #3A4060; }
+.dk-bb .dk-pill { margin-top: 0.3em; background: var(--pink); color: #fff; font-size: 0.72em; font-weight: 800; padding: 0.3em 1.1em; border-radius: 2em; }
+.dk-bb .dk-pill--w { background: #fff; color: var(--navy); border: 1px solid #C9CCD8; }
+.dk-bb--1 { background: #EBDCB8; } .dk-bb--2 { background: #C9DBF3; } .dk-bb--3 { background: #CFE8CB; } .dk-bb--4 { background: #F6D5DC; } .dk-bb--5 { background: #F8F0B5; } .dk-bb--6 { background: #D9CFEA; }
+.dk-cta { position: absolute; left: 50%; transform: translateX(-50%); bottom: 2.2em; max-width: 58%; background: var(--pink); color: #fff; border-radius: 2.4em; padding: 0.75em 2.4em; font-size: 1.05em; font-weight: 800; text-align: center; line-height: 1.35; }   /* 58% = #kbdHint 와 안 겹치는 폭 */
+.dk-cta small { display: block; font-size: 0.78em; font-weight: 500; opacity: .9; }
+/* 빈칸 (네이비 위 흰 대괄호) */
+.dk .dk-brk { position: absolute; left: 6em; right: 6em; top: 46%; transform: translateY(-50%); text-align: center; font-size: 1.55em; line-height: 1.7; padding: 1.2em 1.6em; border-left: 0.14em solid #fff; border-right: 0.14em solid #fff; }
+.dk .dk-brk::before, .dk .dk-brk::after { content: ''; position: absolute; top: 0; width: 1.6em; height: 0.14em; background: #fff; } .dk .dk-brk::before { left: 0; } .dk .dk-brk::after { right: 0; }
+.dk .dk-brk .dk-b2::before, .dk .dk-brk .dk-b2::after { content: ''; position: absolute; bottom: 0; width: 1.6em; height: 0.14em; background: #fff; } .dk .dk-brk .dk-b2::before { left: 0; } .dk .dk-brk .dk-b2::after { right: 0; }
+.dk .dk-blank { display: inline-block; min-width: 5.5em; border-bottom: 0.12em solid var(--pink); margin: 0 0.25em; color: var(--pink); font-weight: 800; }
+.dk .dk-blank span { display: inline-block; }
+/* 사진 원 3개 (실습) */
+.dk-ph3 { position: absolute; left: 3.2em; right: 4em; top: 8.8em; display: grid; grid-template-columns: repeat(3, 1fr); gap: 2em; }
+.dk-ph { display: flex; flex-direction: column; align-items: center; text-align: center; }
+.dk-ph__c { width: 12em; height: 12em; border-radius: 50%; overflow: hidden; border: 0.35em solid #fff; position: relative; }
+.dk-ph__c img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.dk-ph__n { position: absolute; left: 50%; top: 11em; transform: translateX(-50%); width: 2.4em; height: 2.4em; border-radius: 50%; background: var(--pink); color: #fff; font-weight: 800; display: flex; align-items: center; justify-content: center; border: 0.2em solid var(--navy); }
+.dk-ph { position: relative; }
+.dk-ph__t { margin-top: 1.6em; font-size: 1.15em; font-weight: 800; }
+.dk-ph__d { margin-top: 0.4em; font-size: 0.85em; line-height: 1.55; color: #D9DCEA; }
+/* 전후 비교 (프롬프트) */
+.dk-ba { position: absolute; left: 3.2em; right: 4em; top: 8.4em; display: grid; grid-template-columns: 1fr 1.25fr; gap: 1.6em; align-items: stretch; }
+.dk-ba__box { background: #fff; color: var(--ink); border-radius: 0.6em; padding: 1.6em 1.6em; position: relative; font-size: 1.05em; line-height: 1.75; min-height: 20em; }
+.dk-ba__box--bad { background: #E9EAF1; color: #5A6080; }
+.dk-ba__box--good { border: 0.2em solid var(--pink); }
+.dk-ba__lab { position: absolute; top: -1em; left: 1.2em; background: var(--navy2); color: #fff; font-size: 0.78em; font-weight: 800; padding: 0.25em 1em; border-radius: 1em; }
+.dk-ba__box--good .dk-ba__lab { background: var(--pink); }
+.dk-ba__box mark { background: var(--pink-soft); color: var(--ink); padding: 0 0.2em; border-radius: 0.2em; }
+.dk-ba__box .dk-tag { display: inline-block; background: var(--navy); color: #fff; font-size: 0.68em; font-weight: 800; padding: 0.1em 0.55em; border-radius: 0.3em; margin-right: 0.35em; vertical-align: 0.1em; }
+.dk-ba__arrow { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); width: 0; height: 0; }
+/* 체크리스트 (흰 패널 넓게) */
+.dk-chk4 { position: absolute; left: 3.2em; right: 4em; top: 8.4em; display: grid; grid-template-columns: 1fr 1fr; gap: 1.4em 1.6em; }
+.dk-ck { background: #fff; color: var(--ink); border-radius: 0.6em; padding: 1.4em 1.4em 1.4em 3.8em; position: relative; font-size: 1.1em; line-height: 1.5; }
+.dk-ck::before { content: ''; position: absolute; left: 1.2em; top: 1.45em; width: 1.5em; height: 1.5em; border-radius: 50%; background: var(--pink); }
+.dk-ck::after { content: ''; position: absolute; left: 1.72em; top: 1.72em; width: 0.4em; height: 0.7em; border: solid #fff; border-width: 0 0.18em 0.18em 0; transform: rotate(45deg); }
+.dk-ck b { display: block; font-size: 1.05em; margin-bottom: 0.2em; }
+.dk-ck small { color: #5A6080; font-size: 0.88em; }
+
 </style>
 </head>
 <body>
@@ -727,7 +820,8 @@ body.is-presenter #presenterMode {
 <!-- ================================================================
      ✏️ 슬라이드 영역 — 이 블록 안의 <section>만 교체/추가/삭제한다.
      규칙:
-       · 각 <section class="slide edu">에 id="slide-N"(1부터)과 data-title 부여
+       · 테마 B(다크): <section class="slide dk"> / 표지·마무리 <section class="slide dk dk--cover">. 파스텔 부품이 필요하면 .edu 장을 섞어 써도 된다
+       · 각 <section>에 id="slide-N"(1부터)과 data-title 부여
        · data-chapter="1~4" → 파스텔 배경색이 챕터별로 바뀐다 (색 = 위치 기억)
        · 본문 장 = .paper(흰 종이 카드) 안에 .course(과정명) + .hd(제목) + 내용. 페이지 번호 원 배지는 아래 헬퍼가 자동으로 붙인다
        · 제목 3종: .hd(아이콘 원 + 제목 + 짧은 밑줄) / .edu--plain + .hd-box(번호 + 노란 상자) / .edu--band + .band(다크 밴드)
@@ -737,183 +831,121 @@ body.is-presenter #presenterMode {
        · 아래 내용은 전부 예시다. 실제 덱에서는 반드시 교체한다
      ================================================================ -->
 
-<section class="slide edu edu--cover" id="slide-1" data-title="표지" data-chapter="1">
-  <p class="cover__kicker">고객을 <b>3초 만에</b> 내 편으로 만드는</p>
-  <h1 class="cover__title">마음열기 대화법</h1>
-  <div class="cover__fig"><div class="pictos"><div class="picto"><svg class="ico"><use href="#i-ear"/></svg></div><div class="picto picto--accent"><svg class="ico"><use href="#i-heart"/></svg></div><div class="picto"><svg class="ico"><use href="#i-chat"/></svg></div></div></div>
-  <p class="cover__meta">고객 응대 기본 과정 · 두 번째 시간 · 강사 이름</p>
-  <aside class="notes">여는 멘트: "오늘은 두 번째 시간입니다. 지난 시간에 배운 인사, 기억나시죠?"<br>강조: 오늘 배울 것은 결국 '마음열기' 네 글자 — 과정명이 곧 암기법이다.<br>전환: "네 글자가 각각 무엇인지 먼저 한 장으로 보겠습니다."</aside>
+<section class="slide dk dk--cover" id="slide-1" data-title="표지">
+  <div class="dk-cv__meta">AI WORK SKILLS · 1</div>
+  <div class="dk-cv"><div class="dk-cv__t">AI 보고서 초안 만들기</div><p class="dk-cv__s">생성형 AI 업무 활용 1차시 · 30분이면 초안이 나옵니다</p></div>
+  <div class="dk-cv__logo">EDU TEAM</div>
+  <aside class="notes">여는 멘트: "오늘은 1차시, 보고서 초안입니다. 목표는 하나 — 30분 안에 초안 한 장을 받아 내는 것."<br>강조: 도구 설명이 아니라 '요청하는 법' 수업이다.<br>전환: "오늘 흐름 세 단계를 먼저 보겠습니다."</aside>
 </section>
 
-<section class="slide edu" id="slide-2" data-title="목차 — 마·음·열·기" data-chapter="1">
-  <div class="paper">
-    <span class="course">마음열기 대화법</span>
-    <div class="grow">
-      <div class="toc-label">목 차</div>
-      <div class="toc3" style="--n:4">
-        <div class="toc3__item" data-ch="1"><span class="toc3__no"><b>1</b>부</span><span class="toc3__word">'마'</span><span class="toc3__title">마음 먼저<br>읽어요</span></div>
-        <div class="toc3__item" data-ch="2"><span class="toc3__no"><b>2</b>부</span><span class="toc3__word">'음'</span><span class="toc3__title">음성 톤을<br>맞춰요</span></div>
-        <div class="toc3__item" data-ch="3"><span class="toc3__no"><b>3</b>부</span><span class="toc3__word">'열'</span><span class="toc3__title">열린 질문을<br>던져요</span></div>
-        <div class="toc3__item" data-ch="4"><span class="toc3__no"><b>4</b>부</span><span class="toc3__word">'기'</span><span class="toc3__title">기록으로<br>남겨요</span></div>
-      </div>
-      <p class="mnemonic-word">첫 글자만 모으면 <b>마 · 음 · 열 · 기</b> — 과정 이름이 곧 암기법입니다</p>
-    </div>
+<section class="slide dk" id="slide-2" data-title="오늘의 흐름">
+  <div class="dk-corner"></div>
+  <div class="dk-hdr"><h2 class="dk-hdr__t">오늘의 흐름</h2><p class="dk-hdr__d">보고서 초안을 AI에게 받는 과정은 세 단계입니다.<br><b>요청 → 초안 → 검토</b>, 오늘은 이 순서대로 한 바퀴 돕니다.</p></div>
+  <div class="dk-ring3">
+    <div class="dk-ring"><div class="dk-ring__c"><small>STEP 1</small><b>프롬프트<br>4요소</b></div><p class="dk-ring__d">역할·맥락·과제·형식<br>네 칸을 채우면 요청이 됩니다</p></div>
+    <div class="dk-ring"><div class="dk-ring__c"><small>STEP 2</small><b>초안<br>받기</b></div><p class="dk-ring__d">한 번에 끝내지 않고<br>두 번 나눠 요청합니다</p></div>
+    <div class="dk-ring dk-ring--fill"><div class="dk-ring__c"><small>STEP 3</small><b>검토·<br>수정</b></div><p class="dk-ring__d">숫자·출처·톤·개인정보<br>네 가지를 사람이 확인합니다</p></div>
   </div>
-  <aside class="notes">멘트: "네 글자만 기억하시면 됩니다. 마, 음, 열, 기."<br>강조: 배경색이 챕터마다 바뀐다 — "화면 색이 바뀌면 다음 글자로 넘어간 겁니다."<br>전환: "첫 글자, '마'부터 시작합니다."</aside>
+  <div class="dk-rail">AI WORK SKILLS · 1</div><span class="dk-pg">2</span><span class="dk-logo">EDU TEAM</span>
+  <aside class="notes">멘트: "세 단계입니다. 요청, 초안, 검토. 마지막 원만 흰색으로 채운 이유 — 검토는 AI가 아니라 사람 몫이기 때문입니다."<br>전환: "첫 단계, 요청부터. 좋은 요청에는 네 칸이 있습니다."</aside>
 </section>
 
-<section class="slide edu" id="slide-3" data-title="마음 먼저 읽기 — 고객의 신호" data-chapter="1">
-  <div class="paper">
-    <span class="course">마음열기 대화법</span>
-    <div class="hd"><div class="hd__icon"><svg class="ico"><use href="#i-eye"/></svg></div><h2 class="hd__title">마음 먼저 읽어요</h2></div>
-    <div class="pair">
-      <div class="fig"><svg class="ico"><use href="#i-frown"/></svg></div>
-      <ul class="biglist biglist--2col">
-        <li>짧아지는 대답</li><li>시계를 보는 손</li>
-        <li>팔짱과 한 걸음 뒤</li><li>같은 질문 반복</li>
-        <li>한숨 섞인 말투</li><li>휴대폰만 보는 눈</li>
-        <li>"그냥 좀 볼게요"</li><li>문 쪽으로 향한 발</li>
-      </ul>
-    </div>
+<section class="slide dk" id="slide-3" data-title="프롬프트 4요소">
+  <div class="dk-corner"></div>
+  <div class="dk-hdr"><h2 class="dk-hdr__t">프롬프트 4요소</h2><p class="dk-hdr__d">AI가 엉뚱한 초안을 주는 이유는 대부분 <b>빠진 칸</b> 때문입니다.<br>네 칸을 채우면 결과의 절반은 요청 단계에서 정해집니다.</p></div>
+  <div class="dk-rows">
+    <div class="dk-row"><div class="dk-row__c">역할</div><p class="dk-row__t"><b>누가 쓰는 글인지</b><small>"영업팀 주간 보고를 쓰는 대리 역할로"</small></p></div>
+    <div class="dk-row"><div class="dk-row__c">맥락</div><p class="dk-row__t"><b>읽는 사람과 상황</b><small>"팀장 보고용, 월요일 오전 회의 전 배포"</small></p></div>
+    <div class="dk-row"><div class="dk-row__c">과제</div><p class="dk-row__t"><b>정확히 무엇을 할지</b><small>"아래 메모를 3개 항목으로 요약해"</small></p></div>
+    <div class="dk-row"><div class="dk-row__c">형식</div><p class="dk-row__t"><b>결과물의 모양</b><small>"항목당 2문장, 존댓말, 표 없이"</small></p></div>
   </div>
-  <aside class="notes">멘트: "말보다 먼저 오는 신호가 있습니다. 여덟 가지 중 오늘 매장에서 본 것 있으세요?"<br>강조: 왼쪽 그림처럼 표정이 닫힌 고객 — 이때 상품 얘기부터 꺼내면 끝이다.<br>전환: "이 신호를 놓치지 않으려면 첫 3초에 할 일이 있습니다."</aside>
-</section>
-
-<section class="slide edu edu--band" id="slide-4" data-title="감정 반영이란?" data-chapter="1">
-  <div class="band"><div class="band__no"><span>1</span></div><div class="band__title">감정 반영이란?</div><div class="band__crumb">Ⅰ. 마음 먼저 읽어요</div></div>
-  <div class="grow">
-    <p class="fill" style="text-align:center; margin-bottom:1.2em">고객이 말한 <b>사실</b>과 그 뒤의 <b>감정</b>을 함께 되돌려 주는 것</p>
-    <div class="panel panel--blue">
-      <ul class="biglist biglist--plain">
-        <li>사실만 되돌리기 — "환불 원하시는군요"</li>
-        <li>감정까지 되돌리기 — "많이 기다리셔서 <b>답답하셨겠어요</b>, 환불 도와드릴게요"</li>
-        <li>첫 3초에 감정 한 마디가 들어가면 뒤의 대화가 부드러워집니다</li>
-      </ul>
-    </div>
+  <div class="dk-panel">
+    <h3>Ask like a brief.</h3>
+    <p>사람에게 일을 맡길 때 쓰는 업무 지시서와 같습니다. 누구에게, 왜, 무엇을, 어떤 모양으로.</p>
+    <p class="dk-q">네 칸 중 하나라도 비면 AI는 <b>가장 흔한 답</b>을 채워 넣습니다. 그게 우리 회사 답이 아닐 뿐입니다.</p>
   </div>
-  <aside class="notes">멘트: "정의부터 잡고 갑니다. 감정 반영은 사실과 감정을 같이 돌려주는 겁니다."<br>강조: 두 번째 줄 — 감정 한 마디의 차이를 실제 문장으로 읽어준다.<br>전환: "그럼 빈칸으로 확인해 볼까요?"</aside>
+  <span class="dk-pg">3</span>
+  <aside class="notes">멘트: "역할, 맥락, 과제, 형식. 이 네 칸이 다 있으면 초안이 반은 됩니다."<br>강조: 오른쪽 패널 — 빈 칸을 AI가 '가장 흔한 답'으로 채운다는 것.<br>전환: "그럼 우리가 평소에 어떻게 요청하는지 볼까요."</aside>
 </section>
 
-<section class="slide edu" id="slide-5" data-title="빈칸 채우기" data-chapter="1">
-  <div class="badge-char"><span>마</span></div>
-  <div class="paper has-badge">
-    <span class="course">마음열기 대화법</span>
-    <div class="hd"><h2 class="hd__title">빈칸을 채워 볼까요?</h2></div>
-    <div class="grow">
-      <p class="bracket">고객이 말한 사실과 그 뒤의 감정을 함께 되돌려 주는 것을<br>이를 <span class="blank"><span class="blank__ans" data-step="1">감정 반영</span></span> 이라고 부릅니다.</p>
-      <div class="panel">
-        <div class="fill">
-          <p>감정 반영의 첫 단계는 말보다 <span class="blank"><span class="blank__ans" data-step="2">표정과 목소리</span></span> 를 먼저 살피는 것입니다.</p>
-          <p>불만 고객에게 우리가 해야 할 일은 <span class="blank"><span class="blank__ans" data-step="3">끝까지 듣는 것</span></span> 입니다.</p>
-        </div>
-        <div class="warn">
-          <div class="warn__label"><span>절대 하지 말아야 하는 자세</span></div>
-          <div class="warn__box">고객 말 중간에 <b>해결책</b>부터 꺼내기, <b>규정</b>부터 읽어주기</div>
-        </div>
-      </div>
-    </div>
+<section class="slide dk" id="slide-4" data-title="흔한 실수 6가지">
+  <div class="dk-corner"></div>
+  <div class="dk-hdr"><h2 class="dk-hdr__t">흔히 하는 요청</h2><p class="dk-hdr__d">실제 사내 요청문에서 자주 보이는 여섯 가지입니다.<br>각 실수에 <b>이름</b>을 붙여 두면 다음에 바로 알아챕니다.</p></div>
+  <div class="dk-bub6">
+    <div class="dk-bb dk-bb--1"><b>"보고서 써줘"</b><p>무엇에 대한, 누구에게 줄 보고서인지 없음</p><span class="dk-pill">막연한 요청</span></div>
+    <div class="dk-bb dk-bb--2"><b>"이거 정리해줘"</b><p>붙여 넣은 메모만 있고 용도가 없음</p><span class="dk-pill">맥락 없음</span></div>
+    <div class="dk-bb dk-bb--3"><b>"길게 자세히"</b><p>분량만 있고 형식·항목 수가 없음</p><span class="dk-pill">형식 없음</span></div>
+    <div class="dk-bb dk-bb--4"><b>한 번에 끝내기</b><p>한 문장으로 모든 걸 요구</p><span class="dk-pill">한 방 요청</span></div>
+    <div class="dk-bb dk-bb--5"><b>결과 그대로 제출</b><p>숫자·출처 확인 없이 복사</p><span class="dk-pill">검토 생략</span></div>
+    <div class="dk-bb dk-bb--6"><b>고객 정보 그대로</b><p>이름·연락처를 지우지 않고 입력</p><span class="dk-pill">개인정보</span></div>
   </div>
-  <aside class="notes">멘트: "받아 적어 보세요. 괄호 안에 뭐가 들어갈까요?" → 키를 눌러 정답을 하나씩 연다.<br>강조: 세 번째 빈칸 '끝까지 듣는 것' — 오늘 가장 많이 틀리는 답.<br>전환: "다음 글자 '음'으로 넘어갑니다. 화면 색이 바뀝니다."</aside>
+  <div class="dk-cta">여섯 개 중 <u>하나만</u> 고쳐도 초안 품질이 달라집니다<small>오늘 실습에서 본인 요청문의 실수 이름을 하나 찾아 보세요</small></div>
+  <span class="dk-pg">4</span><span class="dk-logo">EDU TEAM</span>
+  <aside class="notes">멘트: "여섯 개 중 오늘 아침 내가 한 게 있나요? 이름을 하나 골라 두세요."<br>강조: 5번·6번은 품질이 아니라 사고의 문제 — 검토 생략, 개인정보.<br>전환: "핵심 문장 하나를 빈칸으로 정리하겠습니다."</aside>
 </section>
 
-<section class="slide edu" id="slide-6" data-title="이렇게 말하지 마세요" data-chapter="2">
-  <div class="badge-char"><span>음</span></div>
-  <div class="paper has-badge">
-    <span class="course">마음열기 대화법</span>
-    <div class="hd"><h2 class="hd__title">음성 톤을 맞춰요</h2></div>
-    <div class="grow">
-      <p class="say-no">이렇게 말하지 마세요</p>
-      <div class="circles">
-        <div class="circle"><div class="circle__ball"><span>다들<br>그러세요,<br>괜찮아요</span></div><span class="circle__label">무성의한 위로</span></div>
-        <div class="circle"><div class="circle__ball"><span>그럼<br>환불해<br>드리면 되죠?</span></div><span class="circle__label">성급한 해결</span></div>
-        <div class="circle"><div class="circle__ball"><span>그건 그렇고<br>이번 신상품이<br>…</span></div><span class="circle__label">화제 돌리기</span></div>
-      </div>
-    </div>
+<section class="slide dk" id="slide-5" data-title="빈칸 채우기">
+  <div class="dk-corner"></div>
+  <div class="dk-hdr"><h2 class="dk-hdr__t">빈칸을 채워 볼까요?</h2></div>
+  <p class="dk-brk"><span class="dk-b2"></span>AI에게 일을 맡길 때는 <span class="dk-blank"><span data-step="1">역할 · 맥락 · 과제 · 형식</span></span> 네 칸을 채우고,<br>결과는 반드시 <span class="dk-blank"><span data-step="2">사람이 검토</span></span>한 뒤에 씁니다.<br>고객 이름과 연락처는 입력 전에 <span class="dk-blank"><span data-step="3">지웁니다</span></span>.</p>
+  <span class="dk-pg">5</span><span class="dk-logo">EDU TEAM</span>
+  <aside class="notes">멘트: "받아 적어 주세요. 정답은 화살표로 하나씩 엽니다."<br>강조: 세 번째 빈칸이 가장 중요 — 개인정보는 요청 전에 지운다.<br>전환: "이제 실제로 해 봅니다. 세 단계."</aside>
+</section>
+
+<section class="slide dk" id="slide-6" data-title="실습 3단계">
+  <div class="dk-corner"></div>
+  <div class="dk-hdr"><h2 class="dk-hdr__t">실습 3단계</h2><p class="dk-hdr__d">본인이 이번 주에 써야 하는 보고서 하나로 진행합니다.<br>제한 시간 <b>15분</b>, 결과는 옆 사람과 바꿔 검토합니다.</p></div>
+  <div class="dk-ph3">
+    <div class="dk-ph"><div class="dk-ph__c"><img src="img/lg_typing.jpg" alt=""></div><span class="dk-ph__n">1</span><p class="dk-ph__t">네 칸 채워 요청</p><p class="dk-ph__d">역할·맥락·과제·형식을<br>한 줄씩 적어 보냅니다</p></div>
+    <div class="dk-ph"><div class="dk-ph__c"><img src="img/lg_review.jpg" alt=""></div><span class="dk-ph__n">2</span><p class="dk-ph__t">초안 읽고 되묻기</p><p class="dk-ph__d">틀린 곳을 고치라고 하지 말고<br>"어디가 근거 없나?"를 묻습니다</p></div>
+    <div class="dk-ph"><div class="dk-ph__c"><img src="img/lg_share.jpg" alt=""></div><span class="dk-ph__n">3</span><p class="dk-ph__t">옆 사람과 교차 검토</p><p class="dk-ph__d">숫자·출처·톤·개인정보<br>네 가지만 봅니다</p></div>
   </div>
-  <aside class="notes">멘트: "세 문장 다 어디선가 들어보셨죠? 문제는 말투가 아니라 이름입니다."<br>강조: 오답에 이름을 붙이면 다음에 스스로 잡아낸다 — 무성의한 위로, 성급한 해결, 화제 돌리기.<br>전환: "왜 하필 첫 3초를 강조하는지, 숫자로 보겠습니다."</aside>
+  <span class="dk-pg">6</span><span class="dk-logo">EDU TEAM</span>
+  <aside class="notes">멘트: "15분 드립니다. 1단계 5분, 2단계 5분, 3단계 5분."<br>강조: 2단계 — 고치라고 시키는 게 아니라 근거 없는 곳을 묻는다.<br>전환: "요청문이 어떻게 달라지는지 예시로 보겠습니다."</aside>
 </section>
 
-<section class="slide edu" id="slide-7" data-title="왜 첫 3초인가 — 숫자" data-chapter="2">
-  <div class="paper">
-    <span class="course">마음열기 대화법</span>
-    <div class="hd"><div class="hd__icon"><svg class="ico"><use href="#i-clock"/></svg></div><h2 class="hd__title">왜 첫 3초일까요?</h2></div>
-    <div class="grow">
-      <div class="iconrow">
-        <div class="iconrow__item"><div class="iconrow__icon"><svg class="ico"><use href="#i-hourglass"/></svg></div><span class="iconrow__label">첫인상 결정</span><span class="iconrow__num">3<small>초</small></span></div>
-        <div class="iconrow__item"><div class="iconrow__icon"><svg class="ico"><use href="#i-frown"/></svg></div><span class="iconrow__label">불만 고객 중<br>재방문 포기</span><span class="iconrow__num">7<small>명 / 10명</small></span></div>
-        <div class="iconrow__item"><div class="iconrow__icon"><svg class="ico"><use href="#i-chat"/></svg></div><span class="iconrow__label">감정 반영 한 마디로<br>대화 시간</span><span class="iconrow__num">40<small>% 단축</small></span></div>
-      </div>
-      <div class="brace"></div>
-      <p class="big-say">첫 3초의 한 마디가<br>이후 <span class="n">10<small>분</small></span>의 대화를 결정합니다</p>
-      <p class="src-paren">( 사내 고객 응대 만족도 조사, 2026 — 예시 수치 )</p>
-    </div>
+<section class="slide dk" id="slide-7" data-title="요청문 전·후">
+  <div class="dk-corner"></div>
+  <div class="dk-hdr"><h2 class="dk-hdr__t">요청문, 이렇게 바꿔요</h2><p class="dk-hdr__d">같은 메모, 같은 AI. 요청문만 바꿨습니다.<br>오른쪽 네 개 태그가 <b>4요소</b>입니다.</p></div>
+  <div class="dk-ba">
+    <div class="dk-ba__box dk-ba__box--bad"><span class="dk-ba__lab">이렇게 쓰면</span>이거 보고서로 정리해줘. 길게 자세히.<br><br>(아래 회의 메모 붙여 넣음)</div>
+    <div class="dk-ba__box dk-ba__box--good"><span class="dk-ba__lab">이렇게 바꾸면</span><span class="dk-tag">역할</span>영업팀 주간 보고를 쓰는 대리 역할로,<br><span class="dk-tag">맥락</span>팀장 보고용이고 월요일 회의 전에 배포합니다.<br><span class="dk-tag">과제</span>아래 회의 메모를 <mark>진행 · 이슈 · 다음 주 계획</mark> 3개 항목으로 요약해 주세요.<br><span class="dk-tag">형식</span>항목당 2문장, 존댓말, 표 없이. 근거가 없는 문장은 <mark>[확인 필요]</mark>로 표시해 주세요.</div>
   </div>
-  <aside class="notes">멘트: "숫자 세 개만 보겠습니다. 3초, 열 명 중 일곱, 40%."<br>강조: 아래 결론 문장 — 3초가 10분을 결정한다.<br>전환: "여기까지 두 글자 배웠습니다. 정리하고 갈게요."</aside>
+  <span class="dk-pg">7</span><span class="dk-logo">EDU TEAM</span>
+  <aside class="notes">멘트: "왼쪽이 우리가 쓰던 말, 오른쪽이 오늘 배운 말. 마지막 줄을 보세요 — 근거 없는 문장을 표시하라고 미리 시킵니다."<br>전환: "받은 초안은 이 네 가지로 검토합니다."</aside>
 </section>
 
-<section class="slide edu" id="slide-8" data-title="정리해 보아요" data-chapter="4">
-  <div class="paper" style="background: transparent; padding-top: 0.8em;">
-    <div class="note">
-      <div class="note__rings"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
-      <div class="ribbon">정리해 보아요</div>
-      <ul class="note__list">
-        <li>말보다 먼저 오는 <b>신호</b>를 읽는다</li>
-        <li>사실 + 감정을 함께 돌려주는 <b>감정 반영</b> <small>(첫 3초)</small></li>
-        <li>무성의한 위로 · 성급한 해결 · 화제 돌리기는 <b>금지</b></li>
-      </ul>
-    </div>
+<section class="slide dk" id="slide-8" data-title="검토 체크리스트">
+  <div class="dk-corner"></div>
+  <div class="dk-hdr"><h2 class="dk-hdr__t">검토 체크리스트</h2><p class="dk-hdr__d">초안을 받은 뒤 사람이 반드시 보는 네 가지입니다.<br>하나라도 못 지키면 <b>제출하지 않습니다</b>.</p></div>
+  <div class="dk-chk4">
+    <div class="dk-ck"><b>숫자</b><small>원본 메모와 대조. AI가 계산한 합계·비율은 다시 계산</small></div>
+    <div class="dk-ck"><b>출처</b><small>"~에 따르면"이 붙은 문장은 실제 문서가 있는지 확인</small></div>
+    <div class="dk-ck"><b>톤</b><small>우리 팀 보고서 말투로. 과장 표현·감탄사 삭제</small></div>
+    <div class="dk-ck"><b>개인정보</b><small>고객 이름·연락처·계약 금액이 남아 있으면 삭제</small></div>
   </div>
-  <aside class="notes">멘트: "세 줄만 남기겠습니다." 한 줄씩 소리 내어 읽게 한다.<br>강조: 두 번째 줄 — 사실 + 감정. 이 공식만 가져가면 된다.<br>전환: "이제 세 번째 글자, '열'입니다."</aside>
+  <div class="dk-cta">검토는 5분, 사고 수습은 5일</div>
+  <span class="dk-pg">8</span><span class="dk-logo">EDU TEAM</span>
+  <aside class="notes">멘트: "네 가지, 5분이면 됩니다. 아래 문장 그대로 — 검토는 5분, 수습은 5일."<br>전환: "오늘 배운 걸 세 문장으로 정리합니다."</aside>
 </section>
 
-<section class="slide edu" id="slide-9" data-title="3부 열린 질문" data-chapter="3">
-  <div class="paper">
-    <span class="course">마음열기 대화법</span>
-    <div class="grow">
-      <p class="divider__big">당신이<br>열린 질문을 던져주세요</p>
-      <div class="divider__line"></div>
-      <div class="divider__fig pictos pictos--sm"><div class="picto"><svg class="ico"><use href="#i-hand"/></svg></div><div class="picto picto--accent"><svg class="ico"><use href="#i-help"/></svg></div><div class="picto"><svg class="ico"><use href="#i-smile"/></svg></div></div>
-    </div>
+<section class="slide dk" id="slide-9" data-title="정리">
+  <div class="dk-corner"></div>
+  <div class="dk-hdr"><h2 class="dk-hdr__t">오늘의 정리</h2><p class="dk-hdr__d">세 문장만 가져가세요.</p></div>
+  <div class="dk-ring3" style="top: 9.8em">
+    <div class="dk-ring dk-ring--fill"><div class="dk-ring__c"><small>1</small><b>네 칸을<br>채운다</b></div><p class="dk-ring__d">역할 · 맥락 · 과제 · 형식</p></div>
+    <div class="dk-ring dk-ring--fill"><div class="dk-ring__c"><small>2</small><b>두 번에<br>나눠 받는다</b></div><p class="dk-ring__d">초안 → 근거 없는 곳 되묻기</p></div>
+    <div class="dk-ring dk-ring--fill"><div class="dk-ring__c"><small>3</small><b>사람이<br>검토한다</b></div><p class="dk-ring__d">숫자 · 출처 · 톤 · 개인정보</p></div>
   </div>
-  <aside class="notes">멘트: "3부는 질문입니다. 예·아니오로 끝나지 않는 질문."<br>전환: 간지에서 오래 머물지 않는다 — 바로 사례로.</aside>
+  <div class="dk-cta">다음 시간 — 표 데이터를 AI로 요약하기<small>2차시 · 엑셀 표 붙여 넣고 3줄 요약 받기</small></div>
+  <span class="dk-pg">9</span><span class="dk-logo">EDU TEAM</span>
+  <aside class="notes">멘트: "세 문장. 네 칸, 두 번, 사람." 다음 차시 예고.</aside>
 </section>
 
-<section class="slide edu edu--plain" id="slide-10" data-title="열린 질문 사례" data-chapter="3">
-  <div class="session"><span class="session__dots"><i></i><i class="is-on"></i><i></i><i></i></span>두 번째 시간 . 고객 응대 실전</div>
-  <div class="hd-box"><span class="hd-box__no">06</span><h2 class="hd-box__title">열린 질문, 이렇게 바꿔요</h2></div>
-  <div class="pair pair--even">
-    <div class="fig fig--blob"><svg class="ico"><use href="#i-mic"/></svg></div>
-    <div class="cases">
-      <div><div class="case__label"><span>사례1</span></div><p class="case__body">"환불이세요?" → "<b>어떤 점</b>이 불편하셨는지 말씀해 주시겠어요?"</p></div>
-      <div><div class="case__label"><span>사례2</span></div><p class="case__body">"이거 사실 거예요?" → "<b>어디에</b> 쓰실 건지 여쭤봐도 될까요?"</p></div>
-      <div><div class="case__label"><span>사례3</span></div><p class="case__body">"괜찮으세요?" → "오늘 <b>어떤 게</b> 제일 급하세요?"</p></div>
-    </div>
-  </div>
-  <div class="course-rail">고객 응대 기본 과정 · 마음열기 대화법</div>
-  <aside class="notes">멘트: "왼쪽이 닫힌 질문, 화살표 뒤가 열린 질문입니다. 차이는 의문사 하나."<br>강조: 어떤·어디·무엇 — 의문사가 들어가면 열린 질문이 된다.<br>전환: "이제 여러분 차례입니다. 다짐을 적어 볼게요."</aside>
-</section>
-
-<section class="slide edu" id="slide-11" data-title="나의 대화 다짐 서약서" data-chapter="3">
-  <div class="paper" style="background: transparent; padding: 0.4em 0 0;">
-    <div class="cert">
-      <p class="cert__sub">소중한 고객을 위한 약속</p>
-      <p class="cert__title">마음열기 서약서</p>
-      <ul class="cert__list">
-        <li>나는 고객의 말을 <b>끝까지 듣고</b>, 중간에 해결책부터 꺼내지 않겠습니다.</li>
-        <li>나는 첫 3초에 <b>감정 한 마디</b>를 먼저 건네겠습니다.</li>
-        <li>나는 예·아니오로 끝나는 질문 대신 <b>열린 질문</b>을 하겠습니다.</li>
-      </ul>
-      <p class="cert__sign">나 <span class="line"></span> 은(는) 위 약속에 <b>동참</b>합니다.</p>
-      <p class="cert__date">20 년 월 일</p>
-    </div>
-  </div>
-  <aside class="notes">멘트: "읽는 자료가 아니라 쓰는 자료입니다. 이름부터 적어 주세요."<br>강조: 세 문장 중 본인이 가장 안 되는 것 하나에 동그라미.<br>전환: "적으신 걸 옆 분과 30초만 나눠 보세요." → 마무리.</aside>
-</section>
-
-<section class="slide edu edu--cover" id="slide-12" data-title="마무리" data-chapter="1">
-  <h2 class="cover__title" style="margin-top:0.6em">감사합니다</h2>
-  <div class="cover__fig"><div class="pictos"><div class="picto"><svg class="ico"><use href="#i-users"/></svg></div><div class="picto picto--accent"><svg class="ico"><use href="#i-heart"/></svg></div><div class="picto"><svg class="ico"><use href="#i-check"/></svg></div></div></div>
-  <aside class="notes">마무리: "마·음·열·기, 네 글자만 기억하세요." 다음 차시 예고 후 마친다.</aside>
+<section class="slide dk dk--cover" id="slide-10" data-title="마무리">
+  <div class="dk-cv"><div class="dk-cv__t">감사합니다</div><p class="dk-cv__s">질문은 언제든 — 교육팀 메신저 채널</p></div>
+  <div class="dk-cv__logo">EDU TEAM</div>
+  <aside class="notes">마무리: 질문 채널 안내 후 마친다.</aside>
 </section>
 
 <script>
