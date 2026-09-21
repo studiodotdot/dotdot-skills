@@ -231,7 +231,7 @@ body { word-break: keep-all; overflow-wrap: break-word; }  /* 단어 중간 끊�
   MAIN 1 + POINT 1의 발표자료 컬러 규칙을 교육자료에 가져오지 않는다
 - **글자가 적고 크다.** 불릿은 본문의 1.5배(`.biglist`), 결론 문장은 2배(`.big-say`), 빈칸 정답은 1.6배(`.blank__ans`). 한 장에 문장 3~6개
 - **제목은 학습자 쪽 말투** — 질문형("감정 반영이란?"), 청유형("빈칸을 채워 볼까요?"), 동사형("다짐 적기"). 발표자료의 주장 완결 문장과 다르다
-- **일러스트가 한 축.** 좌측 원형/블롭 슬롯(`.fig`)에 이미지 또는 큰 이모지, 우측에 큰 불릿 — 실제 덱에서는 가능한 한 이미지로 교체한다
+- **일러스트가 한 축.** 좌측 원형/블롭 슬롯(`.fig`)에 이미지, 우측에 큰 불릿. 이미지가 없으면 동봉 라인 아이콘(픽토그램) — 규칙은 아래 "아이콘·일러스트"
 - **번호는 CSS로 `1 2 3`** — 원문자(①②③) 금지. 페이지 번호는 카드 밖 하단 중앙 **색 원 배지**(`.pgno`, 헬퍼가 자동으로 붙임)
 - **과정명을 계속 노출** — 우상단 작게 굵게(`.course`) 또는 우측 세로(`.course-rail`)
 
@@ -239,7 +239,7 @@ body { word-break: keep-all; overflow-wrap: break-word; }  /* 단어 중간 끊�
 
 | 클래스 | 생김새 | 언제 |
 |---|---|---|
-| `.hd` (기본) | 노란 원 안 아이콘(`.hd__icon`, 이모지 가능) + 큰 색 제목 + **짧은 코랄 밑줄**(제목 폭만큼, 전폭 아님) | 개념·설명 장 |
+| `.hd` (기본) | 노란 원 안 라인 아이콘(`.hd__icon > svg.ico`) + 큰 색 제목 + **짧은 코랄 밑줄**(제목 폭만큼, 전폭 아님) | 개념·설명 장 |
 | `.edu--plain` + `.hd-box` | 큰 번호(`.hd-box__no`) + 노란 라운드 상자 안 제목 + 우상단 차시 점(`.session`) + 우측 세로 과정명(`.course-rail`) | 차시제 과정, 사례 장 |
 | `.edu--band` + `.band` | 좌측 오렌지 번호 박스(`.band__no`) + 다크 밴드 안 노란 제목 + 우측 breadcrumb(`.band__crumb`) | 매뉴얼·법령·정의 장 |
 
@@ -247,9 +247,9 @@ body { word-break: keep-all; overflow-wrap: break-word; }  /* 단어 중간 끊�
 
 | 장 유형 | 클래스 | 생김새 |
 |---|---|---|
-| 표지 | `.edu--cover` + `.cover__kicker` `.cover__title` `.cover__fig` `.cover__meta` | 파스텔 풀블리드 + 작은 한 줄 + 큰 제목 + 하단 일러스트 슬롯 |
+| 표지 | `.edu--cover` + `.cover__kicker` `.cover__title` `.cover__fig` `.cover__meta` | 파스텔 풀블리드 + 작은 한 줄 + 큰 제목 + 하단 일러스트 슬롯(`<img>` 또는 `.pictos` 픽토그램 3개가 흰 띠 위에 선다) |
 | 니모닉 목차 | `.toc-label` + `.toc3 > .toc3__item`(`__no` `__word` `__title`) + `.mnemonic-word` | 작은 "목 차" 상자 + N열 번호 배지 + 두문자 + 구어체 부 제목(열마다 색) + 두문자 모은 문장 |
-| 개념 (일러스트 + 불릿) | `.pair > .fig + .biglist(.biglist--2col)` | 좌 원형 슬롯, 우 큰 불릿(회색 점) |
+| 개념 (일러스트 + 불릿) | `.pair > .fig + .biglist(.biglist--2col)` | 좌 원형 슬롯(`<img>` 꽉 채움 또는 `svg.ico` 픽토그램), 우 큰 불릿(회색 점) |
 | 빈칸 채우기 | `.bracket`(노란 대괄호 콜아웃) + `.panel.panel--blue/--yellow`(접힌 귀퉁이 틴트 패널) + `.fill > p > .blank > .blank__ans[data-step]` | 문장 속 `( 정답 )` — 정답이 크고 굵고 MAIN색, → 키로 공개 |
 | 금지 예시 | `.warn > .warn__label > span`(코랄 알약 "절대 하지 말아야 하는 자세" + 옆으로 뻗는 선) + `.warn__box` | 흰 박스 안 큰 볼드 키워드 문장 |
 | 금지 예시 (라벨형) | `.say-no` + `.circles > .circle > .circle__ball + .circle__label` | 노란 원 안 오답 문장 + 아래 오답 이름 |
@@ -257,8 +257,28 @@ body { word-break: keep-all; overflow-wrap: break-word; }  /* 단어 중간 끊�
 | 정리해 보아요 | `.note > .note__rings + .ribbon + .note__list` | 링 구멍 12개 노트 종이 + 갈색 리본 배너 + 큰 불릿 3줄(줄 사이 가는 선). 배경 베이지 |
 | 사례 | `.cases > div > .case__label + .case__body` | 노란 알약 "사례N" + 선 + 문장 (핵심어 `<b>`) |
 | 활동지·서약서 | `.cert > .cert__sub .cert__title .cert__list .cert__sign .cert__date` | 진한 테두리 + 안쪽 금선 액자, 제목 두 줄, ● 불릿, 이름·날짜 기입란 |
-| 간지·마무리 | `.divider__big` + `.divider__line` + `.divider__fig` | 카드 가득 큰 문장 중앙 + 짧은 코랄 선 + 일러스트 슬롯 |
+| 간지·마무리 | `.divider__big` + `.divider__line` + `.divider__fig(.pictos.pictos--sm)` | 카드 가득 큰 문장 중앙 + 짧은 코랄 선 + 일러스트 슬롯(작은 픽토그램 3개) |
 | 챕터 두문자 배지 | `.paper.has-badge` + `.badge-char` | 좌상단 코랄 원 안 두문자 한 글자 |
+
+### 아이콘·일러스트 (260921, 레퍼런스 실측: 표지·마무리는 일러스트가 아래 절반을 채우고, 개념 장 원은 그림이 꽉 찬다. 제목 옆은 노란 원 안 **라인 아이콘**)
+
+**우선순위: 실제 이미지 > 동봉 라인 아이콘(픽토그램) > 이모지.** 이모지는 컬러·입체라 파스텔 종이 카드와 어긋나고, 큰 슬롯에선 원의 1/3밖에 못 채워 "엉뚱하게 떠 있는" 모양이 된다. 큰 슬롯(`.fig` `.cover__fig` `.divider__fig`)에 이모지 금지.
+
+| 슬롯 | 이미지가 있을 때 | 없을 때 |
+|---|---|---|
+| 제목 아이콘 `.hd__icon` · 아이콘 줄 `.iconrow__icon` | — | `<svg class="ico"><use href="#i-eye"/></svg>` (원의 60% · 50%) |
+| 개념 원 `.fig` / 블롭 `.fig--blob` | `<img src>` — `object-fit: cover`로 원을 꽉 채움 | `svg.ico` 하나 (원의 약 50%, MAIN색 선. `.fig--sm`은 45%) |
+| 표지·마무리 `.cover__fig` | `<img>` 높이 최대 24em, 하단 흰 띠 위에 서게 | `<div class="pictos">` 흰 원 3개(가운데 `.picto--accent` 노랑) — 자동으로 띠 위에 선다 |
+| 간지 `.divider__fig` | `<img>` | `.divider__fig.pictos.pictos--sm` 작은 원 3개 |
+
+**동봉 스프라이트 26종** (`<body>` 바로 아래, `#i-…`): eye · clock · hourglass · chat · mic · ear · bulb · check · star · target · users · user · heart · hand · book · pen · clipboard · list · chart · help · alert · flag · smile · frown · home · grad.
+부족하면 `<symbol id="i-이름" viewBox="0 0 24 24">`을 추가한다 — Lucide(ISC)·Tabler(MIT) 같은 오픈 라이선스 아이콘의 path를 붙여 넣어도 된다(파일 상단 주석에 출처·라이선스 한 줄).
+
+**이미지 소스** (무료·상업 이용 가능한 것만. 사용 전 각 사이트 라이선스 페이지를 한 번 더 확인한다):
+- 사람·장면 일러스트: **unDraw**(undraw.co — 출처 표기 불필요, 사이트에서 MAIN색 지정 후 SVG 다운로드 → 레퍼런스 풍 플랫 일러스트에 가장 가깝다), **Open Peeps**(openpeeps.com — CC0), Storyset(storyset.com — Freepik, **출처 표기 필요**)
+- 플랫 이모지 SVG: OpenMoji(openmoji.org — CC BY-SA, 표기 필요)
+- 파일은 덱 HTML 옆 `img/` 폴더에 두고 상대 경로로. 단일 파일이 꼭 필요하면 `data:` URI로 인라인(용량 주의)
+- 사용자가 준 사진은 `.fig`(원형)·`.pcard`형 세로 카드만 — 어중간한 사각 사진 금지
 
 ### 기억·행동 장치 (내용 규칙)
 
