@@ -205,26 +205,26 @@ body.is-animating { pointer-events: none; }   /* 전환 중 클릭 차단 */
 
 /* ================================================================
    ✏️ 덱 전용 스타일 — 이 덱의 그림·부품은 전부 여기서 그린다.
-   규칙: 클래스는 접두어(예: x-)를 붙인다 · 장 자체의 display·padding·배경을 바꾸는 규칙은 .slide.edu.x-… 로 써야 기본 규칙(.slide.edu, 0-2-0)을 이긴다 ·
+   규칙: 클래스는 이 덱의 약칭 접두어(예: 고객응대 → cs-)를 붙인다. 아래 예시의 ex- 는 예시 전용이라 지우고 새로 쓴다 · 장 자체의 display·padding·배경을 바꾸는 규칙은 .slide.edu.cs-… 로 써야 기본 규칙(.slide.edu, 0-2-0)을 이긴다 ·
         위치·높이는 em을 자기 글자 크기에 곱하지 말 것(%·부모 기준) ·
         슬라이드 밖으로 나가는 장식이 있는 장은 overflow: hidden · 같은 그림 3장 연속 금지
    아래는 검증용 예시(타임라인 + 점선 실루엣 + 하단 결론 띠). 실제 덱에서는 지우고 새로 그린다.
    ================================================================ */
-.x-title { position: absolute; left: 6%; top: 8%; right: 6%; }
-.x-title small { display: block; font-size: 0.8em; color: var(--tone-muted); font-weight: 700; margin-bottom: 0.3em; }
-.x-title h2 { font-size: 2.2em; font-weight: 800; letter-spacing: -0.03em; line-height: 1.15; }
-.x-tl { position: absolute; left: 6%; right: 6%; top: 40%; height: 2px; background: var(--tone-ink2); }
-.x-tl__pt { position: absolute; top: 50%; width: 0.7em; height: 0.7em; border-radius: 50%; background: var(--tone-accent); transform: translate(-50%, -50%); }
-.x-tl__pt.is-off { background: #fff; border: 2px solid var(--tone-muted); }
-.x-obj { position: absolute; bottom: 1.4em; left: 50%; transform: translateX(-50%); width: 4.2em; height: 7.4em; border-radius: 0.9em; background: var(--tone-accent); }
-.x-obj.is-off { background: transparent; border: 0.16em dashed var(--tone-muted); color: var(--tone-muted); font-size: 1em; display: flex; align-items: center; justify-content: center; font-weight: 800; }
-.x-obj.is-off::after { content: '?'; font-size: 2.2em; }
-.x-lab { position: absolute; top: 1.2em; left: 50%; transform: translateX(-50%); text-align: center; white-space: nowrap; font-size: 0.85em; color: var(--tone-ink2); }
-.x-lab b { display: block; font-size: 1.15em; color: var(--tone-ink); }
-.x-band { position: absolute; left: 50%; transform: translateX(-50%); bottom: 2.6em; max-width: 58%; background: var(--tone-ink); color: #fff; border-radius: 2.4em; padding: 0.7em 2.2em; font-size: 1.05em; font-weight: 800; text-align: center; }
-.slide.edu.x-cover { display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 0 8%; }
-.slide.edu.x-cover h1 { font-size: 3.2em; font-weight: 800; letter-spacing: -0.03em; line-height: 1.15; }
-.slide.edu.x-cover p { font-size: 1.15em; color: var(--tone-ink2); margin-top: 1em; }
+.ex-title { position: absolute; left: 6%; top: 8%; right: 6%; }
+.ex-title small { display: block; font-size: 0.8em; color: var(--tone-muted); font-weight: 700; margin-bottom: 0.3em; }
+.ex-title h2 { font-size: 2.2em; font-weight: 800; letter-spacing: -0.03em; line-height: 1.15; }
+.ex-tl { position: absolute; left: 6%; right: 6%; top: 40%; height: 2px; background: var(--tone-ink2); }
+.ex-tl__pt { position: absolute; top: 50%; width: 0.7em; height: 0.7em; border-radius: 50%; background: var(--tone-accent); transform: translate(-50%, -50%); }
+.ex-tl__pt.is-off { background: #fff; border: 2px solid var(--tone-muted); }
+.ex-obj { position: absolute; bottom: 1.4em; left: 50%; transform: translateX(-50%); width: 4.2em; height: 7.4em; border-radius: 0.9em; background: var(--tone-accent); }
+.ex-obj.is-off { background: transparent; border: 0.16em dashed var(--tone-muted); color: var(--tone-muted); font-size: 1em; display: flex; align-items: center; justify-content: center; font-weight: 800; }
+.ex-obj.is-off::after { content: '?'; font-size: 2.2em; }
+.ex-lab { position: absolute; top: 1.2em; left: 50%; transform: translateX(-50%); text-align: center; white-space: nowrap; font-size: 0.85em; color: var(--tone-ink2); }
+.ex-lab b { display: block; font-size: 1.15em; color: var(--tone-ink); }
+.ex-band { position: absolute; left: 50%; transform: translateX(-50%); bottom: 2.6em; max-width: 58%; background: var(--tone-ink); color: #fff; border-radius: 2.4em; padding: 0.7em 2.2em; font-size: 1.05em; font-weight: 800; text-align: center; }
+.slide.edu.ex-cover { display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 0 8%; }
+.slide.edu.ex-cover h1 { font-size: 3.2em; font-weight: 800; letter-spacing: -0.03em; line-height: 1.15; }
+.slide.edu.ex-cover p { font-size: 1.15em; color: var(--tone-ink2); margin-top: 1em; }
 
 /* ---------- 빌드 효과 ---------- */
 [data-step] {
@@ -472,24 +472,24 @@ body.is-presenter #presenterMode {
        · 아래 3장은 엔진 검증용 예시다. 실제 덱에서는 전부 교체한다
      ================================================================ -->
 
-<section class="slide edu edu--cover x-cover" id="slide-1" data-title="표지">
+<section class="slide edu edu--cover ex-cover" id="slide-1" data-title="표지">
   <h1>교안 제목</h1>
   <p>과정명 · 차시 · 강사 이름</p>
   <aside class="notes">여는 멘트: "…" <br>강조: … <br>전환: "…"</aside>
 </section>
 
 <section class="slide edu" id="slide-2" data-title="예시 — 시간·순서는 타임라인 위 실루엣">
-  <div class="x-title"><small>Q1</small><h2>다음 모델도 나왔죠?</h2></div>
-  <div class="x-tl">
-    <div class="x-tl__pt" style="left:18%"><div class="x-obj"></div><div class="x-lab"><b>모델 A</b>출시</div></div>
-    <div class="x-tl__pt" style="left:50%"><div class="x-obj"></div><div class="x-lab"><b>모델 B</b>출시 예정</div></div>
-    <div class="x-tl__pt is-off" style="left:82%"><div class="x-obj is-off"></div><div class="x-lab"><b>모델 C</b>발표 없음</div></div>
+  <div class="ex-title"><small>Q1</small><h2>다음 모델도 나왔죠?</h2></div>
+  <div class="ex-tl">
+    <div class="ex-tl__pt" style="left:18%"><div class="ex-obj"></div><div class="ex-lab"><b>모델 A</b>출시</div></div>
+    <div class="ex-tl__pt" style="left:50%"><div class="ex-obj"></div><div class="ex-lab"><b>모델 B</b>출시 예정</div></div>
+    <div class="ex-tl__pt is-off" style="left:82%"><div class="ex-obj is-off"></div><div class="ex-lab"><b>모델 C</b>발표 없음</div></div>
   </div>
-  <div class="x-band" data-step="1">정답 X — 없는 모델은 점선으로</div>
+  <div class="ex-band" data-step="1">정답 X — 없는 모델은 점선으로</div>
   <aside class="notes">이 장의 그림: 타임라인 위 실루엣, 미발표는 점선 + "?". 글을 가려도 "셋 중 하나는 없다"가 보여야 한다.</aside>
 </section>
 
-<section class="slide edu edu--cover x-cover" id="slide-3" data-title="마무리">
+<section class="slide edu edu--cover ex-cover" id="slide-3" data-title="마무리">
   <h1>감사합니다</h1>
   <p>질문 채널 · 다음 차시 예고</p>
   <aside class="notes">마무리 멘트.</aside>
