@@ -723,12 +723,12 @@ body.is-presenter #presenterMode {
     if (e.metaKey || e.ctrlKey || e.altKey) return;   // 브라우저 단축키(Cmd+P 인쇄 등) 보존
     var code = e.code;
 
-    if (IS_PRESENTER) {   // 발표자 창: 슬라이드 단위 이동 + Esc로 창 닫기
+    if (IS_PRESENTER) {   // 발표자 창: 화살표는 청중 창의 advance/retreat 를 그대로 실행(빌드 스텝 포함) + Esc로 창 닫기
       switch (code) {
         case 'ArrowRight': case 'Space': case 'PageDown':
-          e.preventDefault(); pmSet(current + 1); break;
+          e.preventDefault(); pmStep('advance'); break;
         case 'ArrowLeft': case 'PageUp':
-          e.preventDefault(); pmSet(current - 1); break;
+          e.preventDefault(); pmStep('retreat'); break;
         case 'Home': pmSet(0); break;
         case 'End':  pmSet(total - 1); break;
         case 'Escape': window.close(); break;
@@ -813,7 +813,15 @@ body.is-presenter #presenterMode {
       (notes && notes.innerHTML.trim()) ? notes.innerHTML : '(노트 없음)';
     fitPreviewStages();
   }
-  function pmSet(idx) {   // 발표자 창 전용 이동 (슬라이드 단위)
+  var pmAcked = false;
+  function pmStep(cmd) {   // 발표자 창 화살표: 청중 창에 스텝 단위 명령. 청중 창은 항상 goto 로 답한다
+    var fallback = cmd === 'advance' ? current + 1 : current - 1;
+    if (!bc) { pmSet(fallback); return; }
+    pmAcked = false;
+    bc.postMessage({ type: cmd });
+    setTimeout(function () { if (!pmAcked) pmSet(fallback); }, 300);   // 청중 창이 없거나 옛 엔진이면 슬라이드 단위로 자체 이동
+  }
+  function pmSet(idx) {   // 발표자 창 전용 이동 (슬라이드 단위 — Home/End·청중 창 없을 때)
     idx = Math.min(Math.max(idx, 0), total - 1);
     if (idx === current) return;
     current = idx;
@@ -840,6 +848,7 @@ body.is-presenter #presenterMode {
   if (bc) bc.onmessage = function (ev) {
     var msg = ev.data || {};
     if (IS_PRESENTER) {
+      if (msg.type === 'goto') pmAcked = true;
       if (msg.type === 'goto' && typeof msg.index === 'number' && msg.index !== current) {
         current = msg.index;
         updatePresenterUI();
@@ -847,6 +856,10 @@ body.is-presenter #presenterMode {
     } else {
       if (msg.type === 'goto' && typeof msg.index === 'number' && msg.index !== current) {
         goTo(msg.index, msg.index > current ? 'next' : 'prev');
+      }
+      if (msg.type === 'advance' || msg.type === 'retreat') {   // 발표자 창 화살표 — 빌드 스텝을 청중 창과 똑같이 하나씩
+        if (msg.type === 'advance') advance(); else retreat();
+        bc.postMessage({ type: 'goto', index: current });   // 스텝만 바뀌어도 항상 답신(발표자 창 폴백 억제)
       }
       if (msg.type === 'request-state') bc.postMessage({ type: 'goto', index: current });
     }

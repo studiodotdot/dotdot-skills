@@ -438,9 +438,9 @@ body { word-break: keep-all; overflow-wrap: break-word; }  /* 단어 중간 끊�
     1280×720 기준 `transform: scale()` 축소 렌더 — `data-step` 전부 표시 상태)
   - 화자 노트(대형 폰트) + 현재 슬라이드 제목 + 카운터
   - 경과 타이머(리셋 버튼) — 발표 시간 관리용
-  - 방향키로 슬라이드 단위 이동 → 관객 창도 함께 이동. `Esc`로 창 닫기
-- 동기화 프로토콜: 이동 시 `{type:'goto', index}` 발신, 발표자 창 최초 로드 시
-  `{type:'request-state'}`로 메인 창의 현재 위치를 받아 온다
+  - 방향키는 관객 창의 `advance()`/`retreat()`를 그대로 실행 — **빌드 스텝(`data-step`)도 관객 창과 똑같이 하나씩** 공개된다. `Home`/`End`만 슬라이드 단위. `Esc`로 창 닫기
+- 동기화 프로토콜: 발표자 창 화살표 → `{type:'advance'|'retreat'}` 발신 → 메인 창이 실행하고 슬라이드가 바뀌면 `{type:'goto', index}`로 답신. 발표자 창 최초 로드 시
+  `{type:'request-state'}`로 메인 창의 현재 위치를 받아 온다. 메인 창 없이 발표자 창만 열렸으면 슬라이드 단위로 자체 이동
 - 팝업 차단 시 허용 안내 alert 표시
 
 ---
@@ -525,6 +525,7 @@ body { word-break: keep-all; overflow-wrap: break-word; }  /* 단어 중간 끊�
   (특히 슬라이드 배경이 반투명이면 그대로 노출)
 - `.slide`에 불투명 `background` 누락 금지 — 뒤에서 정리되는 슬라이드가 비쳐 보임
 - URL 해시는 `location.hash` 직접 대입 대신 `history.replaceState` 사용 — 히스토리 오염 + `hashchange` 루프 방지
+- **발표자 창 화살표가 슬라이드 단위(`pmSet`)로 가면 빌드 스텝이 통째로 건너뛰어진다** — 관객 창의 `advance()`/`retreat()`를 메시지로 호출해야 한다(1.6.1, 260928. 한민님: "발표자 모드로 넘기면 순차 애니메이션이 생략된 채로 다음 장으로")
 - 발표자 모드 단축키는 **S** — P를 쓰면 `Cmd+P` 인쇄와 충돌한 전례가 있다. 키 핸들러 첫 줄에서
   meta/ctrl/alt 조합을 반드시 무시할 것
 - 발표자 미리보기 클론(`.pm-scale .slide`)에는 `color: var(--text-primary)` 필수 — 없으면 발표자 창의 흰 글자색을
