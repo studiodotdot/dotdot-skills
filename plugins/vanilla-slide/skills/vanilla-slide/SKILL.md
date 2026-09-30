@@ -9,12 +9,15 @@ description: |
   템플릿에는 디자인이 없다(엔진 + 톤 토큰 자리 + 아이콘 스프라이트) — 톤과 그림은 덱마다 시안에서 새로 정하고 덱 전용 스타일로 그린다.
   핵심 절차는 "보여줄 그림 먼저" — 부품을 고르기 전에 장마다 메시지를 그림으로 번역한 한 줄을 적고, 메시지 유형별 그림 사전으로 시각 앵커를 정한다.
   장수와 무관하게 전 장 제작 전 톤 시안(사용자가 톤을 안 줬으면 2~3개, 줬으면 그 톤 + 대안 1개) 비교, 같은 그림 유형 3장 연속 금지, "글을 가리고 봐도 메시지가 보이나" 검수.
+  이벤트 모드(1.7.0): 행사·시상식·시연 영상용 화려한 연출 덱 — 같은 엔진의 assets/template-event.html(무대·디졸브·글자/단어 등장·레터박스·입자·패럴랙스 메커니즘 + 녹화용 UI 숨김)과
+  "연출 사전"(배경·등장·전환·재질·타이포 기법을 덱마다 다르게 조합)으로 만든다. 요청에 모드가 드러나지 않으면 호출 직후 실무용/이벤트용을 묻는다.
 
   다음 요청에 반드시 사용:
   - "교안 만들어줘", "강의 슬라이드", "교육자료 HTML로", "워크숍 자료", "강의용 웹 PPT"
   - 교육·강의용 자료를 HTML 파일 하나로 내보내달라는 요청
   - PPT/Google Slides 없이 브라우저에서 바로 강의하고 싶다는 요청
   - 기존 vanilla-slide 산출물을 기반으로 새 교안을 만들어달라는 요청
+  - 행사·시상식·오프닝·시연 영상용 슬라이드, "화려하게", "영상처럼 움직이는" 슬라이드 요청(이벤트 모드)
   경계: 사내 보고·제안서·공모전·IR 같은 발표자료 덱은 vanilla-deck 스킬 대상이다.
   (.pptx 등 실제 오피스 파일을 요구하는 경우는 이 스킬 대상이 아님)
 ---
@@ -28,6 +31,15 @@ description: |
 외부 라이브러리 없이 CSS `translateX` 전환 + 키보드·터치 입력으로 동작한다.
 
 **표준 4키 = F(전체화면) · I(목차) · N(화자 노트) · S(발표자 모드).** 어떤 덱에서도 이 4가지가 빠지면 안 된다.
+
+## 모드 인터뷰 — 스킬 호출 직후, 파일을 읽기 전에
+
+두 모드가 있다. **실무용**(강의·교안·인쇄 배포, 가독성·가벼움 우선 — 이 문서의 본문)과 **이벤트용**(행사·시상식·오프닝·시연 영상, 연출 우선 — 아래 "이벤트 모드" 절). 톤·그림·절차는 같은 원칙이고, 이벤트 모드는 템플릿과 연출 사전만 다르다.
+
+1. 요청에 모드가 드러나면 묻지 않는다 — "교안·강의·워크숍·배포용 PDF" → 실무용, "행사·시상식·오프닝·시연 영상·화려하게·영상처럼" → 이벤트용
+2. 드러나지 않으면 `AskUserQuestion` 도구(화면 아래 선택 창 — 보기 2~4개, 사용자가 직접 적는 "Other" 칸이 자동으로 붙는다)로 한 번 묻는다. 질문 "이 슬라이드는 어디에 쓰나요?" · 보기 ① 실무용 — 강의·교안·인쇄 배포 ② 이벤트용 — 행사·시상식·시연 영상. 채팅으로 길게 묻지 않는다
+3. 이벤트용이면 같은 도구로 분위기를 이어서 묻는다. 질문 "어떤 분위기로 갈까요?" · 보기 ① 어둡고 극적(검정 바탕 + 빛) ② 밝고 대담(흰 바탕 + 초대형 글자) ③ 몽환·유리(오로라 + 반투명 카드) — "Other"로 직접 적을 수 있다. 답은 톤 시안(2~3개)의 출발점일 뿐, 그대로 고정 템플릿을 꺼내는 게 아니다. **색은 묻고 받는다**(CI·좋아하는 색·행사 포스터) — 없으면 시안에서 예시 값으로 출발하되 클로드가 색 조합을 새로 제안하지 않는다
+4. 도구를 쓸 수 없는 환경(자동 실행)이면 실무용으로 가정하고 산출물 첫 줄에 그 가정을 적는다
 
 ## 파일 생성 절차 — 템플릿 우선
 
@@ -48,6 +60,7 @@ description: |
 - 순차 등장 요소에 `data-step="1"`, `"2"`, … (빈칸 정답 공개·단계 공개)
 - `<title>`, 표지·마무리 내용 교체
 - 파일명: `{주제}_슬라이드_{YYMMDD}.html`, 위치는 지정 없으면 현재 작업 디렉토리. 시안·설계 메모는 같은 폴더의 `tone_samples/`·`설계_{YYMMDD}.md`
+- **이벤트 모드는 `assets/template-event.html`을 복사한다** — 엔진(`⛔` 이후)은 `template.html`과 바이트 단위로 같고, 그 앞에 연출 메커니즘(무대·디졸브·쪼개기·레터박스·입자·패럴랙스·녹화용 UI 숨김)만 더 있다. 편집 규칙은 위와 같다(`✏️` 세 곳 + `<body>`의 스위치 클래스). 실무용 덱에 이 템플릿을 쓰지 않는다
 
 템플릿 파일을 읽을 수 없는 환경에서만 아래 엔진 스펙대로 직접 구현한다.
 
@@ -368,6 +381,160 @@ C="/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
 
 ---
 
+## 이벤트 모드 — 행사·시상식·시연 영상 (1.7.0)
+
+**언제**: 무대 화면·시상식·오프닝·시연 영상처럼 **한 번 보고 지나가는 자료**. 학습자가 나중에 혼자 다시 보는 교안·인쇄 배포물엔 쓰지 않는다(실무 교안에 이 모드 금지 — 화려함은 가독성과 인쇄를 깎는다). 실무용 덱의 동작·속도는 이 모드와 무관하게 그대로다(`assets/template.html`은 손대지 않는다).
+
+**원칙은 같다.** 템플릿에 디자인을 싣지 않는다 — 이벤트 템플릿에도 톤(색·글꼴 굵기·카드)은 없고 **연출 메커니즘**만 있다. 시안 A/B/C(`references/event_examples/`)는 고정 테마가 아니라 **기법을 뽑아낸 원본**이다. 덱마다 아래 연출 사전에서 기법을 **다르게 조합**한다 — 세 예시 중 하나를 통째로 쓰면 반려 대상이다.
+
+### 이벤트 템플릿에 실린 것 (`assets/template-event.html`)
+
+| 구분 | 스위치·마크업 | 하는 일 |
+|---|---|---|
+| 엔진 | `⛔` 이후 | `template.html`과 바이트 동일(F·I·N·S, 인쇄, 발표자 스텝 동기화) |
+| 무대 | `<body class="ev-stage">` + `<div id="ev-stage">`(첫 장 앞) | 장이 투명해지고 고정 무대가 전 장 뒤에 계속 비친다 — 배경 연출(빛 번짐·오로라·입자)은 여기 그린다. 전환 때 배경이 끊기지 않는다 |
+| 디졸브 전환 | `<body class="ev-dissolve">` + `:root { --ev-xf-in; --ev-xf-out; --ev-xfade }` | 밀기 대신 디졸브+줌. **장은 transform만, 페이드는 자식이**(헬퍼가 `.ev-fade`를 붙인다) — 유리 카드 흐림이 전환 중 꺼지지 않는다. `--ev-xfade`는 .6s 이하(엔진 워치독 650ms) |
+| 글자·단어 등장 | `data-split`(글자) / `data-split="word"` | `.ev-ch` / `.ev-m > .ev-w`로 쪼개고 순번 `--i`, 개수 `--n`. **애니메이션은 덱 전용 스타일에서 정의** — `animation-delay: calc(var(--d,0s) + var(--i) * 45ms)` |
+| 스텝 연동 | `data-step="N"` + `ev-gate` | 상자를 중립으로(이동·전환 없음) → 안쪽 요소의 애니메이션을 `.visible` 뒤에 시작시키는 패턴(`.x.visible .child { animation: … both }`) |
+| 레터박스 | 장에 `data-letterbox` | 그 장이 활성일 때 위·아래 띠(`--ev-bar` 7.5% · `--ev-bar-time` 1s · `--ev-bar-color`) |
+| 패럴랙스 | `<body class="ev-parallax">` + 요소에 `.ev-par` `--z` | `:root`에 `--px --py`(마우스 + 자동 흔들림 — 녹화 중 마우스가 없어도 움직인다). `--z` 음수 = 뒤층 |
+| 입자 | 무대 안 `<canvas class="ev-dust" data-count data-color="r,g,b" data-size data-speed>` | 스프라이트 1장을 찍어 그린다(입자마다 그라데이션 X) |
+| 녹화용 UI 숨김 | `H` 키 · `?clean=1` | 진행바·카운터·네비·힌트·페이지 번호 숨김. 발표자 창엔 영향 없음 |
+| 계측·정지 | `?fps=1` · `?still=1` | 우상단 fps(5초마다 콘솔 `[ev-fps]`) · rAF 루프 정지(헤드리스 캡처·PDF용) |
+| 자동 | — | 화면에 없는 장의 애니메이션 정지 · `prefers-reduced-motion`이면 연출 0.01s · 인쇄 때 무대 숨김·투명 장에 `--tone-bg` 채움 |
+| 예시 3장 | `ex-` | 글자별 흐림→선명 + 레터박스 / 잘린 거대 숫자 + 단어별 등장 + 스텝 / 마무리. 실제 덱에서 전부 교체 |
+
+### 절차 — 실무용 6단계 그대로, 다른 점만
+
+1. **재료**: 행사 큐시트·수상 부문·시연 순서·로고·CI색·포스터. **인물 실명·회사명·수치는 사용자가 준 재료에서만** — 없으면 묻거나 `확인 필요`. 공개 레포·샘플에는 넣지 않는다
+2. **장별 한 줄 두 개**: "이 장의 그림"(그림 사전 그대로 적용 — 시상 = 이름 하나가 화면 전체, 부문 소개 = 번호 원 사진, 시연 순서 = 타임라인) + **"이 장의 연출"**(연출 사전에서 **1~2개**). 노트 첫 두 줄에 적는다. **같은 연출 3장 연속 금지**(글자별 등장이 이어지면 하나는 단어별·타이핑·조립으로)
+3. **레퍼런스**: `references/event_examples/` 3개를 **브라우저에서 실제로 넘겨 본다**(캡처만 보면 타이밍을 모른다). 무엇을 뽑았는지는 아래 사전의 "출처" 열
+4. **톤 시안 2~3개**: 분위기 답을 출발점으로, 같은 장면 3장(표지·본문 1·마무리)을 **움직임까지** 만들어 `tone_samples/`에 두고 캡처 비교(`톤비교.html`) + 파일 열어 보기 링크. 세 시안이 배경·전환·등장 조합이 서로 달라야 한다
+5. **조립**: `template-event.html` 복사 → `<body>` 스위치 → 무대 → 장. **글은 더 적고 크게**: 한 장에 문장 1~3개, 제목 3~7em, 본문 1.2em 이상. 인쇄·가독성 제약(하단 안전 영역·명암비 4.5:1)은 해제하되 **글자 위에 움직이는 것**은 두지 않는다. 장당 유리 8개 이하
+6. **검증**: 실무용 2종 + 아래 "이벤트 검증"
+
+### 연출 사전 — 시안 A(시네마틱 다크)·B(키노트)·C(오로라 글래스)에서 뽑은 기법
+
+색 값은 전부 **그 시안의 예**다. 새 덱은 사용자가 준 색·분위기 답에서 출발한다. 비용: 낮 = 합성만(transform·opacity) · 중 = 큰 반투명 레이어 또는 rAF 1개 · 높 = backdrop-filter·filter 애니메이션·blend.
+
+**배경(무대 — `#ev-stage` 안, 전 장 공유)**
+
+| 기법 | 쓰는 순간 | 그리는 법 | 비용 | 같이 쓰면 안 되는 것 · 출처 |
+|---|---|---|---|---|
+| 빛 번짐 메시 | 어두운 바탕에 온기·깊이 | `radial-gradient(circle, rgba(강조,.2) 0%, transparent 62%)` 원 3개(80~90vw), `animation: 26s ease-in-out infinite alternate`로 `translate(18vw,22vh) scale(1.15)`. `will-change: transform` | 낮 | 밝은 바탕(안 보임) · A(예 금 `rgba(255,181,71,.20)` + 보조 파랑 `rgba(58,85,255,.22)`) |
+| 오로라 | 몽환·유리와 짝 | 블롭 4개(위 메시와 같은 원리, 알파 .35~.55) + **리본 2개**: `width:140vw; height:38vh; mask-image: radial-gradient(ellipse 50% 50%, #000, transparent 70%)`에 가로 그라데이션, `rotate(-8deg→6deg) translateX scaleY(.7→1.2)` 18~23s alternate + 중앙 흰 하이라이트 | 중 | 입자·필름 질감(밝은 바탕에서 지저분) · C(예 청록 `#10BFAE` + 보라 `#7152FF`) |
+| 입자(먼지) | 어두운 무대의 공기감 | `<canvas class="ev-dust" data-count="110" data-color="255,226,176">` | 중(rAF 1) | 밝은 바탕 · 패럴랙스와 겹치면 rAF 2개 → 계측 필수 · A |
+| 필름 질감 | 영화 느낌 | SVG `feTurbulence` data URI 타일, `opacity:.07; mix-blend-mode: overlay; inset:-50%`, `steps(5) .8s` 흔들림 | 높(blend) | 유리·밝은 바탕 · 무대에 1장만 · A |
+| 빛줄기 | 표지 뒤 조명 | `conic-gradient(from 180deg, transparent 0 40%, rgba(255,210,150,.07) 44%, transparent 47%, …)` 340vh 원, `rotate 40s linear infinite` | 낮 | — · A |
+| 비네트 | 가장자리 어둡게 → 중앙 집중 | `radial-gradient(ellipse 75% 70% at 50% 50%, transparent 55%, rgba(0,0,0,.75))` 고정 레이어 | 0 | 밝은 바탕 · A |
+| 거대 구체(잘림) | 밝고 대담한 표지 | 34em 원을 `right:-9em`으로 화면 밖까지, `radial-gradient` 3겹(하이라이트·두 색) + 그림자 레이어, 안쪽 채움만 `rotate 14s linear infinite`. 장에 `overflow:hidden` | 낮 | 유리(경계가 흐려짐) · B(예 `#2E5BFF→#A146FF` + 하이라이트 `#FF7BC2`) |
+| 유리 구슬 | 유리 덱의 뒤층 장식 | 원에 `radial-gradient(circle at 32% 28%, rgba(255,255,255,.95), … .08 55%)` + 틴트 + `backdrop-filter: blur(6px)` + `translateY(-.6em)` 5~8s 부유. 패럴랙스 뒤층(`--z:-2`) | 높 | 장당 3개 이하 · C |
+
+**등장(텍스트·요소)**
+
+| 기법 | 쓰는 순간 | 그리는 법 | 비용 | 같이 쓰면 안 되는 것 · 출처 |
+|---|---|---|---|---|
+| 글자별 흐림→선명 | 표지 제목·마무리 한 문장(**20자 이내**) | `data-split` + `.is-active [data-split] .ev-ch { animation: ch 1.1s cubic-bezier(.2,.7,.2,1) both; animation-delay: calc(var(--d,0s) + var(--i)*45ms) }` `@keyframes ch { from { opacity:0; filter: blur(14px); transform: translateY(.25em) scale(1.15) } }` | 중(글자 수만큼 filter) | `background-clip:text` 그라데이션(글자마다 끊긴다 → 단색 + `text-shadow` 발광) · 긴 문단 · A |
+| 단어별 밀어 올리기 | 큰 제목·목차·결론 | `data-split="word"` + `.ev-w { animation: up 1s cubic-bezier(.16,.9,.2,1) both; animation-delay: calc(var(--d,.35s) + var(--i)*90ms) }` `@keyframes up { from { transform: translateY(115%) } }`. 마스크 `.ev-m`이 잘라 준다. 스텝 안이면 `[data-step].visible [data-split="word"] .ev-w` | 낮 | 글자별과 한 장에 같이 · B |
+| 자간 조이기 | 킥커·라벨(대문자 자간 .5em) | `@keyframes track { from { opacity:0; letter-spacing:1.4em; filter: blur(6px) } }` 1.4s | 낮 | 본문 · A |
+| 떠오르기 | 범용(보조 문장·카드) | `@keyframes rise { from { opacity:0; transform: translateY(1.2em); filter: blur(8px) } }` 1.2s, 요소마다 `--d` 0.15s 간격 | 낮 | — · A |
+| 타이핑 | 한 줄 문장(프롬프트·대사) | `white-space:nowrap; overflow:hidden` + `@keyframes type { from { clip-path: inset(0 100% 0 0) } to { clip-path: inset(0) } }` `steps(22, end)` 1.1s | 낮 | 두 줄 이상 · C |
+| 선 그리기 | 연결선·궤적·트랙 | SVG `pathLength="1"` + `stroke-dasharray:1; stroke-dashoffset:1` → `0`(animation 또는 transition 1s `cubic-bezier(.6,0,.2,1)`). 스텝 구간별로는 `.flow:has(.st[data-step="2"].visible) .seg2 { stroke-dashoffset:0 }` | 낮 | — · A·B·C |
+| 조립(별자리·케이블) | 요소 N개가 하나로 모이는 메시지(구성 요소·부문) | 허브 1개 + `data-step` 묶음마다: 선 그리기(0→1s) → 점 팝(`scale 0→1.8→1` .9s, `.75s + --k*.15s`) → 라벨 떠오르기(.9s+). C는 칩→케이블→창에 타이핑 | 낮~중 | 한 장에 두 조립 · A·C |
+| 팝 | 칩·배지·점·CTA | `@keyframes pop { from { opacity:0; transform: scale(.4) } }` `.9s cubic-bezier(.2,.9,.3,1.4)`(오버슈트) | 낮 | 큰 면(카드 전체) · C |
+| 3D 카드 진입 | 카드 2~4장 | 부모 `perspective:1800px`, `@keyframes in { from { opacity:0; transform: translateY(5em) rotateX(45deg) rotateY(var(--ry)) } }` 1.3s, 바깥 카드일수록 `--ry` ±10~16deg | 중(유리면 높) | 유리 + 패럴랙스 + 3D 셋 다 · C |
+| 격자선 자라기 | 표·격자에 단어를 끼울 때 | 선마다 `transform-origin: left/top` + `@keyframes grow { from { transform: scaleX(0) } }` 1.2s `cubic-bezier(.7,0,.2,1)`, 선끼리 .1s 간격 | 낮 | — · B |
+| 빛 쓸기(sheen) | 표지 제목 위 광택(반복) | `::after { content: attr(data-text); background: linear-gradient(105deg, transparent 38%, rgba(255,255,255,.95) 50%, transparent 62%); background-size: 250% 100%; background-clip: text; color: transparent }` `background-position 130%→-30%` 5.5s 반복 | 낮 | 본문 · 한 장에 1개 · A |
+| 플레어 라인 | 표지 밑줄·CTA 밑 | 2px 선 `scaleX(0→1)` 1.6s + 중심 원 `radial-gradient` `scale(0→1.4→1)` + `pulse 4s infinite`, `box-shadow: 0 0 18px 2px rgba(강조,.6)` | 낮 | — · A |
+| 충격파 | 점이 켜지는 순간 | `::after` 원 테두리 `@keyframes shock { from { transform: scale(.6); opacity:1 } to { transform: scale(2.4); opacity:0 } }` 1.4s | 낮 | — · A |
+| 혜성 | 궤적 완성 뒤 장식 | 7em 그라데이션 막대 `translateX(-7em → 53em)` 3.2s infinite, `filter: blur(1px)` | 낮 | 완성 전 · A |
+
+**전환(장 사이)**
+
+| 기법 | 쓰는 순간 | 그리는 법 | 비용 | 같이 쓰면 안 되는 것 · 출처 |
+|---|---|---|---|---|
+| 밀기(기본) | 흰·불투명 장 | 엔진 기본(translateX .5s). 스위치 없음 | 낮 | — · B |
+| 밀기 + 후퇴 | 밀기에 깊이 | `.slide.edu { transition: transform .6s cubic-bezier(.77,0,.18,1), opacity .6s }` `.exit-left { transform: translateX(-26%) scale(.94); opacity:0 }` + `.is-active { box-shadow: ±3em 0 6em rgba(…,.1) }` | 낮 | **유리가 있는 덱**(장 opacity) · B |
+| 디졸브 + 줌 | 어두운 무대 위 장면 전환 | `body.ev-dissolve` + `--ev-xf-in: scale(1.05); --ev-xf-out: scale(.96)` | 낮 | `--ev-xfade` > .6s · A |
+| 깊이에서 떠오르기 | 유리·몽환 | `body.ev-dissolve` + `--ev-xf-in: translateY(4%) scale(.93); --ev-xf-out: scale(1.1)` | 낮 | — · C |
+| 레터박스 | 표지·마무리·시상 순간 | 장에 `data-letterbox` | 0 | 본문 장 전부에(효과가 죽는다) · A |
+
+**재질**
+
+| 기법 | 쓰는 순간 | 그리는 법 | 비용 | 같이 쓰면 안 되는 것 · 출처 |
+|---|---|---|---|---|
+| 유리 카드 | 오로라·사진 무대 위 패널 | `background: linear-gradient(140deg, rgba(255,255,255,.62), rgba(255,255,255,.26)); border: 1.5px solid rgba(255,255,255,.78); backdrop-filter: blur(22px) saturate(1.6); box-shadow: 0 1.6em 3.2em -1.2em rgba(…,.28), inset 0 1px 0 rgba(255,255,255,.95)` | 높 | **조상에 opacity<1·filter·mask·clip-path·mix-blend-mode**(아래 "유리 규칙") · 장당 8개 초과 · blur 24px 초과 · C |
+| 기울임(3D) | 카드 줄에 원근 | 부모 `perspective`, 카드 `transform: rotateY(var(--ry))`, 바깥일수록 큰 각 | 낮(유리면 높) | 4장 초과 · C |
+| 패럴랙스 | 표지·마무리의 층 | `body.ev-parallax` + 층마다 `.ev-par` `--z`(-2 뒤 · 1 중간 · 3 앞). 판 자체는 `rotateY(calc(var(--px,0) * 5deg))` | 낮(rAF 1) | 본문 장 전부(멀미) · C |
+| 발광 | 다크의 강조(금·네온) | `text-shadow: 0 0 .6em rgba(강조,.55), 0 0 1.6em rgba(강조,.25)` / `box-shadow` 같은 값 | 낮~중 | 밝은 바탕 · A |
+| 외곽선 숫자 | 목차·순서의 큰 번호 | `color: transparent; -webkit-text-stroke: 1.5px rgba(강조,.85); text-shadow: 0 0 .35em rgba(강조,.25)` 6em+ | 낮 | 본문 크기 · A |
+| 그라데이션 글자 | 한 단어 강조 | `background: var(--grad); -webkit-background-clip: text; background-clip: text; color: transparent`. 한 글자 숫자는 `letter-spacing:0; padding:0 .06em; margin:0 -.06em`(음수 자간이면 오른쪽이 잘린다) | 낮 | 글자별 쪼개기(단어별까지만) · B·C |
+
+**타이포**
+
+| 기법 | 쓰는 순간 | 그리는 법 | 비용 | 같이 쓰면 안 되는 것 · 출처 |
+|---|---|---|---|---|
+| 초대형 제목 | 표지·마무리 | 7.4em · weight 800 · `letter-spacing: -.06em` · `line-height: 1.02`. 한 장에 단어 2~4개 | 0 | 두 줄 초과 · B |
+| 잘린 거대 숫자 | 목차·순서·"올해의 숫자" | 19~22em, `position:absolute; bottom:-.32em`, 장 `overflow:hidden`, 등장은 `translateY(60%)→0` 1.3s | 0 | 글자 위에 겹치기 · B |
+| 자간 넓힌 라벨 | 킥커·챕터 표시 | `.78em; letter-spacing: .5em; text-transform: uppercase`(한글은 .3em) | 0 | 본문 · A |
+| 얇은 부제 | 표지 제목 위 한 줄 | weight 300 · `letter-spacing: .3em` · 1.55em | 0 | 밝은 바탕에서 300은 명암비 확인 · A |
+| 한 단어 강조 | 결론 문장 | 문장 속 한 단어만 강조색 또는 그라데이션 글자 | 0 | 두 단어 이상 · A·B·C |
+
+### 유리 규칙 — 전환 중 흐림이 꺼졌다 튀던 원인
+
+시안 C에서 장을 넘길 때 0.6초 동안 유리 카드 뒤가 선명해졌다가 끝에 다시 흐려지며 튀었다. 원인은 **장(`.slide`)에 `opacity: 0→1` 전환을 건 것**이다. `opacity < 1`(그리고 `filter` `mask` `clip-path` `mix-blend-mode`)인 조상은 **backdrop root**가 되어, 그 안의 `backdrop-filter`는 조상 바깥(무대)을 못 보고 조상 안(투명한 장)만 흐린다 → 흐림이 없어졌다가 `opacity`가 1이 되는 순간 되돌아온다. 실측(260929, 줄무늬 무대를 깔고 전환 중간에 멈춰 캡처): 옛 시안은 유리 뒤 줄무늬가 선명, 새 메커니즘은 흐림 유지.
+
+- 템플릿의 `ev-dissolve`는 그래서 **장은 transform만, 페이드는 자식**에게 건다. 헬퍼가 유리를 품은 조상을 건너뛰고 그 안쪽에 `.ev-fade`를 붙이므로 유리 요소는 **자기 opacity만** 바뀐다(자기 자신의 opacity는 괜찮다)
+- 덱에서도 같은 규칙: 유리 요소의 **조상**에 opacity·filter·mask·clip-path·blend를 걸지 않는다 — 전환·등장 애니메이션·패럴랙스 래퍼 전부. 등장은 유리 요소 자신에게(`.c-card { animation: … }` OK) 또는 transform만으로
+- 장 자체를 페이드하는 전환(밀기+후퇴의 `opacity:0`)은 유리 없는 덱에서만
+- `transform`은 backdrop root가 아니다 — 패럴랙스(`.ev-par`)·줌·3D 회전은 유리와 같이 써도 된다(실측)
+
+### 성능 규칙
+
+- 장당 `backdrop-filter` 8개 이하, `blur()` 24px 이하, 유리끼리 겹치지 않게
+- 무한 애니메이션은 무대에만. 장 안의 무한은 2개 이하(펄스·혜성·링 회전 중 택)
+- `filter: blur()` 애니메이션은 글자 20자 이내(글자별 등장) — 문단에 쓰지 않는다
+- `mix-blend-mode` 레이어는 무대에 1장 이하
+- rAF 루프(입자·패럴랙스)는 합쳐서 2개 이하. 둘 다 켜면 `?fps=1`로 확인
+- 실측(260929, MacBook M5 · Chrome · 1280×800 창): C(유리 10개 + 오로라 6층 + 패럴랙스) 평균 60fps·최저 55 / A(입자 110 + 메시 3 + 빛줄기 + 질감) 평균 60. 1920×1080 전체화면·다른 기기는 미실측 — 행사 당일 장비에서 `?fps=1`로 한 번 돌려 본다
+
+### 이벤트 검증 (실무용 2종에 더해)
+
+- **타이밍**: 각 장 첫 진입 연출이 3초 안에 끝나 **정지 상태**가 생긴다(녹화 컷 포인트) · `data-step` 클릭마다 **한 묶음만** 움직인다 — 헤드리스로 스텝별 캡처: 복사본에 `[data-step]{opacity:1!important}` 대신 `.visible`을 붙여 가며 찍거나, 브라우저에서 →키로 직접 본다
+- **녹화 UI**: `?clean=1`(또는 H)로 진행바·카운터·네비·힌트·페이지 번호가 전부 사라지는지 캡처 1장
+- **발표자 창**: `S`로 열어 미리보기가 보이는지(디졸브 덱은 클론이 `.ev-fade` 규칙에 걸리지 않게 템플릿이 처리한다 — 덱에서 `.slide` opacity를 건드렸으면 여기서 깨진다)
+- **콘솔 0 · PDF 페이지 수 = 장수**(무대는 안 찍히므로 `@media print .slide.edu { background: … }`로 정지 배경을 준다 · `:has(.visible)`로 켜지는 것은 print에서 직접 켠다)
+- **프레임**: `deck.html?fps=1`을 **활성 창**에서 열고 전 장을 넘기며 우상단 값을 본다(백그라운드 탭은 rAF가 멈춰 0이 찍힌다). 기준: 평균 55 이상·최저 45 이상. 콘솔 `[ev-fps]` 줄로 기록. 실측 못 했으면 산출물 보고에 "프레임 미실측"이라고 쓴다
+- **reduced motion**: 시스템 설정을 켜고 한 번 넘겨 본다 — 연출이 0.01s로 줄고 내용은 전부 보여야 한다
+- **헤드리스 캡처는 `?still=1`을 붙인다** — rAF 루프(입자·패럴랙스)가 돌면 가상 시간이 소진돼 등장 애니메이션이 끝나기 전에 찍힌다(260929 실측: 제목이 흐린 채 캡처됨). 명령:
+
+```bash
+"$C" --headless=new --hide-scrollbars --window-size=1280,720 --virtual-time-budget=5000 --screenshot=sN.png "file://$PWD/덱.html?still=1#slide-N"
+"$C" --headless=new --no-pdf-header-footer --virtual-time-budget=5000 --print-to-pdf=덱.pdf "file://$PWD/덱.html?still=1"
+```
+
+### 예시 (`references/event_examples/`) — 보고 배우되 복사하지 않는다
+
+같은 5장(표지·목차·6요소·4단계·마무리)을 세 연출로 만든 것. 현재 엔진(1.6.1 발표자 스텝) + 이벤트 템플릿으로 옮겼고 내용은 중립이다. 어느 장이 어떤 기법인지는 각 장 노트 첫 줄 "이 장의 연출".
+
+| 파일 | 조합 | 배울 것 |
+|---|---|---|
+| `event_a_cinematic_dark.html` | 무대(메시+빛줄기+입자+질감+비네트) · 디졸브+줌 · 레터박스 · 글자별 흐림→선명 · 별자리 조립 · 빛의 궤적 | 어두운 무대에서 "빛"으로만 강조하는 법, 스텝과 선 그리기 연동 |
+| `event_b_keynote_light.html` | 무대 없음 · 밀기+후퇴 · 단어별 밀어 올리기 · 잘린 거대 숫자·구체 · 격자선 자라기 | 흰 바탕에서 크기와 잘림만으로 대담해지는 법(연출 비용 거의 0) |
+| `event_c_aurora_glass.html` | 오로라 무대 · 깊이에서 떠오르는 디졸브 · 패럴랙스 3층 · 유리 카드·구슬 · 3D 진입 · 케이블+타이핑 조립 | 유리 규칙(조상 opacity 금지)과 패럴랙스 층 나누기 |
+
+### 이벤트 모드 함정
+
+- 헬퍼는 `<body>` 스위치 클래스를 **로드 시 한 번** 읽는다 — 나중에 클래스를 붙여도 `.ev-fade`·패럴랙스는 안 켜진다
+- `data-split` 안에 또 `data-split`을 넣지 않는다 · 쪼갠 뒤 `innerHTML`을 바꾸면 조각이 사라진다
+- 무대 위 요소를 장 안에서 `position:absolute; inset:0` 래퍼로 감쌀 때 래퍼는 `pointer-events`를 막지 않는다(네비 버튼은 z-index 100이라 괜찮다) — 단 래퍼에 opacity 애니메이션을 걸면 안의 유리가 깨진다(유리 규칙)
+- 엔진 UI(`#kbdHint` 등)를 톤에 맞춰 덮어쓰는 건 되지만 **숨기지는 않는다** — 녹화 때만 `H`
+- 무대 `#ev-stage`는 `body.ev-stage` 없이는 장 뒤에 가려진다(장이 불투명) — 둘은 세트
+- **디졸브 퇴장 때 진입 애니메이션 요소만 툭 사라짐** — `.is-active .x { animation … both }`처럼 진입을 `is-active`에만 걸면 장을 떠날 때 애니메이션이 즉시 제거돼 `.ev-fade` 페이드가 시작도 못 한다. 선택자를 `.is-active .x, .exit-left .x, .exit-right .x`로 쓰거나 진입 애니메이션을 안쪽 요소에 건다(1.7.0 리뷰 실측)
+- **발표자 미리보기는 무대가 없다** — `ev-stage` 덱의 미리보기 배경은 템플릿이 `--tone-bg`로 채운다. 목차·힌트 등 엔진 UI 색이 다크 무대와 안 맞으면 덱 전용 스타일에서 `--bg` `--surface` `--text-*`를 덮어써도 된다(이벤트 모드에서만 허용)
+
+---
+
 ## 빌드 효과 (data-step)
 
 단계적으로 나타나는 항목은 `data-step="1"`, `data-step="2"` ... 속성을 부여한다.
@@ -487,7 +654,7 @@ C="/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
 
 ## 필수 포함 요소 체크리스트
 
-- [ ] `position: fixed; inset: 0` + **불투명 배경** 슬라이드 레이아웃
+- [ ] `position: fixed; inset: 0` + **불투명 배경** 슬라이드 레이아웃 (이벤트 모드 `ev-stage`에서만 해제 — 무대가 대신 가린다)
 - [ ] `getBoundingClientRect()` reflow + 워치독 포함 `goTo()` 함수, `isAnimating` 플래그
 - [ ] **F 전체화면 / I 목차 / N 화자 노트 / S 발표자 모드 — 표준 4키 전부**
 - [ ] 발표자 모드: `?presenter=1` UI + BroadcastChannel 양방향 동기화 + 타이머
@@ -509,6 +676,8 @@ C="/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
 - [ ] 전 장 캡처 확인 · PDF 페이지 수 = 슬라이드 수(zlib 계수) · 콘솔 에러 0
 - [ ] 빈칸 슬라이드가 있으면 정답 없는 배포용 PDF도 뽑을지 확인 — 필요하면 덱 전용 스타일에 `@media print`에서 정답을 숨기는 규칙 추가
 - [ ] 파일명 `{주제}_슬라이드_{YYMMDD}.html`
+- [ ] (이벤트 모드) 모드·분위기를 물었다(요청에 드러났으면 생략) · `template-event.html`에서 시작 · 장마다 "이 장의 연출" 한 줄, 장당 기법 1~2개, 같은 연출 3장 연속 없음 · 예시 3개 중 하나를 통째로 쓰지 않았다
+- [ ] (이벤트 모드) 유리 조상에 opacity·filter·mask 없음 · 장당 유리 8개 이하 · `--ev-xfade` ≤ .6s · 헤드리스 캡처는 `?still=1` · `?clean=1` 캡처 · `?fps=1` 실측(못 했으면 "미실측" 명기) · 인쇄용 정지 배경
 
 ---
 
@@ -520,7 +689,7 @@ C="/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
   (자식 요소 이벤트 버블링 오발 방지) + **워치독 타이머 병행** (탭 숨김 시 이벤트 유실 → 덱 영구 잠김)
 - 전환 정리 시 prev의 transition을 끄지 않으면 **유령 슬라이드**가 화면을 가로지른다
   (특히 슬라이드 배경이 반투명이면 그대로 노출)
-- `.slide`에 불투명 `background` 누락 금지 — 뒤에서 정리되는 슬라이드가 비쳐 보임
+- `.slide`에 불투명 `background` 누락 금지 — 뒤에서 정리되는 슬라이드가 비쳐 보임 (이벤트 모드 `body.ev-stage`만 예외 — 고정 무대가 뒤를 가린다)
 - URL 해시는 `location.hash` 직접 대입 대신 `history.replaceState` 사용 — 히스토리 오염 + `hashchange` 루프 방지
 - **발표자 창 화살표가 슬라이드 단위(`pmSet`)로 가면 빌드 스텝이 통째로 건너뛰어진다** — 관객 창의 `advance()`/`retreat()`를 메시지로 호출해야 한다(1.6.1, 260928. 한민님: "발표자 모드로 넘기면 순차 애니메이션이 생략된 채로 다음 장으로")
 - 발표자 모드 단축키는 **S** — P를 쓰면 `Cmd+P` 인쇄와 충돌한 전례가 있다. 키 핸들러 첫 줄에서
@@ -530,4 +699,7 @@ C="/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
 - 발표자 UI에서 덱을 숨길 때는 `body.is-presenter > .slide` (직계 자식 선택자) — 후손 선택자로 쓰면
   미리보기 클론까지 숨겨진다
 - `@page { size }` 없이 인쇄하면 fixed 슬라이드가 겹쳐 **PDF가 1장만 나온다**
+- (이벤트) **`.slide`에 opacity 전환 + 안에 `backdrop-filter`** → 전환 중 유리 흐림이 꺼졌다 튄다(backdrop root). 장은 transform만, 페이드는 자식(`ev-dissolve`)
+- (이벤트) `.slide` transition을 .6s보다 길게 주면 엔진 워치독(650ms)이 먼저 정리해 나가는 장이 뚝 끊긴다
+- (이벤트) rAF 루프가 도는 덱을 헤드리스로 찍으면 등장 애니메이션이 끝나기 전에 찍힌다 → `?still=1` · 백그라운드 탭에서는 rAF가 멈춰 fps가 0으로 찍힌다 → 활성 창에서 계측
 - 엔진 UI 목록(`.slide__list`, 목차 오버레이)의 dot 정렬은 `align-items: center`(`flex-start` + `margin-top`은 폰트 크기 바뀌면 틀어짐). **덱 본문의 불릿은 flex를 쓰지 않는다**(위 "부품 사용 주의") — 두 규칙은 대상이 다르다
