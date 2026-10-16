@@ -20,8 +20,8 @@ Claude Code 플러그인/스킬 배포 채널(강의용 배포 통일 채널) + 
 
 | 스킬 | 버전 | 용도 | 비고 |
 |---|---|---|---|
-| vanilla-slide | 1.6.2 | 강의 교안·교육자료 HTML 슬라이드 | F·I·N·S 4키 엔진 원본. **템플릿에 디자인 없음** = 엔진 + `--tone-*` 토큰 자리 + 스프라이트 26종 + 기법 3개(`.ico` `.fade-up` `.pgno`) + 검증용 3장. 파스텔 부품 판은 `references/example_pastel_paper_v150.html`(보고 배우되 복사 금지). SKILL.md 핵심 = **"보여줄 그림 먼저" 6단계 + 그림 사전 19종** |
-| vanilla-deck | 1.0.1 | 사내 보고·제안·공모전·IR 발표 덱 | vanilla-slide 엔진에서 노트(N)·발표자(S) 뺀 F·I 2키 파생. 흐름 3종 `references/flows.md` |
+| vanilla-slide | 1.8.0 | 강의 교안·교육자료 HTML 슬라이드 | F·I·N·S 4키 엔진 원본. **템플릿에 디자인 없음** = 엔진 + `--tone-*` 토큰 자리 + 스프라이트 26종 + 기법 3개(`.ico` `.fade-up` `.pgno`) + 검증용 3장. 파스텔 부품 판은 `references/example_pastel_paper_v150.html`(보고 배우되 복사 금지). SKILL.md 핵심 = **"보여줄 그림 먼저" 6단계 + 그림 사전 19종**. **이벤트 모드**(1.7.0): `assets/template-event.html`(연출 메커니즘만) + 연출 사전 34기법 + `references/event_examples/` 3개, 호출 시 실무용/이벤트용 인터뷰. **저사양 모드**(1.8.0): `<body data-lite>` 스위치 — 작업 폴더 `/psnm/` 또는 회사 PC 단서면 자동, 기본은 풀 모드 |
+| vanilla-deck | 1.0.2 | 사내 보고·제안·공모전·IR 발표 덱 | vanilla-slide 엔진에서 노트(N)·발표자(S) 뺀 F·I 2키 파생. 흐름 3종 `references/flows.md`. 저사양 모드 `data-lite` |
 | edu-designer | 1.0.0 | ADDIE·딕앤케리·메릴 기반 커리큘럼 설계 | |
 | (buildlog) | — | 제작 과정 빌드로그 | 개인용, 마켓 미등재 |
 
@@ -79,6 +79,7 @@ C="/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
 - [x] vanilla-slide 1.6.2 (260928) — 블라인드 테스트 보고서의 스킬 결함 19건 정리: 절차 한 벌로(파일 생성 절차 = 편집 규칙만), 톤 시안 장수 조건 삭제(항상), 불릿 flex 모순 해소, 1.6.0 이전 잔재 절(rem 폰트 크기·옛 마크업 패턴) 삭제, 표지 flex 함정·em 함정 범위·하단 안전 영역·챕터 쌍·시각 아이디어 기록 위치·톤 시안 규격·검증 명령·정답 숨김 PDF·pgno 규정 추가, 레퍼런스 "있을 때만", 템플릿 주석 함정(전각 꺾쇠)·중복 헤더 제거
 - [x] vanilla-slide 1.7.0 이벤트 모드 (260930) — ax-award 세션 인수인계. 한민님 결정: A/B/C 고정 템플릿이 아니라 **연출 기법을 사전으로 뽑아 덱마다 다르게 조합**, 모드 인터뷰는 AskUserQuestion 선택 창. 산출: `assets/template-event.html`(엔진 동일 + 연출 메커니즘만: 무대·디졸브·글자/단어 쪼개기·레터박스·패럴랙스·입자·H 키 UI 숨김·`?still=1`), `references/event_examples/` 3개(시안 A/B/C 이식, 회사 흔적 0), SKILL.md 모드 인터뷰·이벤트 절·연출 사전 34기법·유리 규칙(opacity 조상이 backdrop root가 돼 흐림이 튀던 원인 해결). 리뷰 4건 반영. 미실측: B 톤 fps·1920×1080·Safari
 - [x] 1.7.0 등재 점검·push (260930) — 한민님 확인 후 push. 마켓 최신 = vanilla-slide 1.7.0 · vanilla-deck 1.0.1
+- [x] 저사양 모드 — vanilla-slide 1.8.0 · vanilla-deck 1.0.2 (261016) — psnm 세션 인수인계(회사 PC 렉·메모리). 한민님 결정: **다운그레이드 금지, 스위치 하나**(`<body data-lite>`), 작업 폴더 `/psnm/`·회사 PC 단서면 자동으로 켜고 아니면 풀 모드(묻지 않음, 애매하면 선택 창). 켜면 will-change 제거·비활성 장 렌더 제외(인쇄·목차·해시·발표자 클론 보존)·즉시 전환·블러 제거·data-step opacity만·발표자 창 다음 장 미리보기 제거. 리뷰 결함 0, OFF 시 HEAD와 캡처 md5 동일, 42장 실측 LayoutObjects slide 1562→81 · deck 4748→77(GPU 레이어는 미실측). **기존 교안은 손대지 않음**(한민님 결정). 이벤트 템플릿 무변경. 테스트 덱 `_work/lite_test/`
 - [ ] 이모지 아이콘 근본 해결은 미결 — 사진·픽토그램·스프라이트가 현재 답. 블라인드 테스트에선 필요한 아이콘 6종을 에이전트가 직접 SVG로 그려 넣었음(스프라이트 보강 후보: 표·계산기·AI·자물쇠·복사·붙여넣기)
 - [ ] 톤 후보 검토 — 한민님이 260921 고른 「제품 런칭」 톤(#F5F5F7 · Pretendard 800 · 흰/검정 카드 · 파랑→보라→분홍 그라데이션 · 검정 알약 띠)을 한 번 더 써본 뒤 템플릿 두 번째 톤으로 올릴지 결정. 그림 사전 12종을 CSS 부품으로 템플릿에 실을지도(현재는 글로만 설명)
 - [ ] vanilla-deck 타임라인 라벨 아이콘도 이모지(필터 임시) → slide 스프라이트 방식으로 교체 (1.0.2)

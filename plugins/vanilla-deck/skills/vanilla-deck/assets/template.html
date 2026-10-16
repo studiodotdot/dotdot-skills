@@ -559,6 +559,22 @@ body { font-family: 'Pretendard', 'Noto Sans KR', -apple-system, 'Apple SD Gothi
 @media screen and (max-width: 768px) {
   .slide { padding: 0 28px; }
 }
+
+/* ---------- 저사양 모드 (시작) — <body data-lite> 일 때만. 없으면 아래 규칙은 하나도 적용되지 않는다 ----------
+   느린 PC(보안 프로그램·화상회의가 같이 도는 회사 PC)용 스위치. 별도 템플릿이 아니다.
+   · 장마다 잡히던 GPU 레이어(will-change)와 밀기 전환을 없애고 즉시 교체한다 (JS goTo 의 LITE 분기와 짝)
+   · 비활성 장은 렌더링에서 제외한다(visibility + content-visibility) — 인쇄 때 전부 되돌린다
+   · 흐림(backdrop-filter) 제거, 빌드 효과는 opacity 만
+   · 덱 전용 스타일에서 .slide 에 visibility·content-visibility·transform 을 걸지 않는다 (이 블록이 의존) */
+body[data-lite] > .slide { will-change: auto; transition: none; transform: none; }
+body[data-lite] > .slide:not(.is-active) { visibility: hidden; content-visibility: hidden; }
+body[data-lite] [data-step] { transform: none; transition: opacity 0.25s; }
+body[data-lite] #progressFill { transition: none; }
+body[data-lite] #kbdHint { backdrop-filter: none; background: rgba(255,255,255,0.94); }
+body[data-lite] #kbdHint .lite-tag { font: 700 0.62rem 'Inter', sans-serif; color: #fff; background: var(--text-muted); border-radius: 4px; padding: 2px 5px; }
+body[data-lite] #tocOverlay { backdrop-filter: none; background: rgba(26, 35, 50, 0.72); }
+@media print { body[data-lite] > .slide:not(.is-active) { visibility: visible; content-visibility: visible; } }   /* 숨김 규칙과 같은 특이성(0-3-1)이어야 이긴다 */
+/* ---------- 저사양 모드 (끝) ---------- */
 </style>
 </head>
 <body data-logo="EDU DIVISION">
@@ -848,6 +864,7 @@ body { font-family: 'Pretendard', 'Noto Sans KR', -apple-system, 'Apple SD Gothi
   var isAnimating = false;
   var SWIPE_THRESHOLD = 60;
   var TRANSITION_MS = 500;   // .slide의 transition-duration과 일치시킬 것
+  var LITE = document.body.hasAttribute('data-lite');   // 저사양 모드(<body data-lite>): 전환 없이 즉시 교체. 비활성 장 렌더 제외·흐림 제거는 CSS 저사양 블록이 맡는다
 
   var progressFill = document.getElementById('progressFill');
   var slideCounter = document.getElementById('slideCounter');
@@ -878,12 +895,21 @@ body { font-family: 'Pretendard', 'Noto Sans KR', -apple-system, 'Apple SD Gothi
     if (isAnimating || nextIndex === current) return;
     if (nextIndex < 0 || nextIndex >= total) return;
 
-    isAnimating = true;
-    document.body.classList.add('is-animating');
-
     var prevSlide = slides[current];
     var nextSlide = slides[nextIndex];
     var goingNext = direction === 'next';
+
+    if (LITE) {   // 저사양: 클래스만 바꾸고 끝 — 이동·reflow·transitionend·워치독 전부 생략. 비활성 장은 CSS가 렌더링에서 뺀다
+      resetSteps(nextSlide, !goingNext);
+      nextSlide.classList.add('is-active');
+      prevSlide.classList.remove('is-active', 'exit-left', 'exit-right');
+      current = nextIndex;
+      updateUI();
+      return;
+    }
+
+    isAnimating = true;
+    document.body.classList.add('is-animating');
 
     // 1. transition 없이 시작 위치 배치
     nextSlide.style.transition = 'none';
@@ -1023,6 +1049,12 @@ body { font-family: 'Pretendard', 'Noto Sans KR', -apple-system, 'Apple SD Gothi
 
   /* ---------- 초기화 ---------- */
   function init() {
+    if (LITE) {   // 모드 표시 — 단축키 힌트 끝에 "저사양" 배지 (파일을 열었을 때 켜졌는지 보이게)
+      var tag = document.createElement('span');
+      tag.className = 'lite-tag';
+      tag.textContent = '저사양';
+      document.getElementById('kbdHint').appendChild(tag);
+    }
     buildToc();
     var m = location.hash.match(/^#slide-(\d+)$/);
     var start = m ? Math.min(Math.max(Number(m[1]) - 1, 0), total - 1) : 0;

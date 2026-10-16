@@ -418,6 +418,23 @@ body.is-presenter #presenterMode {
   .slide { padding: 0 28px; }
   #notesPanel { padding: 14px 28px 18px; }
 }
+
+/* ---------- 저사양 모드 (시작) — <body data-lite> 일 때만. 없으면 아래 규칙은 하나도 적용되지 않는다 ----------
+   느린 PC(보안 프로그램·화상회의가 같이 도는 회사 PC)용 스위치. 별도 템플릿이 아니다.
+   · 장마다 잡히던 GPU 레이어(will-change)와 밀기 전환을 없애고 즉시 교체한다 (JS goTo 의 LITE 분기와 짝)
+   · 비활성 장은 렌더링에서 제외한다(visibility + content-visibility) — 인쇄 때 전부 되돌린다
+   · 흐림(backdrop-filter) 제거, 빌드 효과는 opacity 만, 발표자 창은 다음 장 미리보기 대신 제목 한 줄
+   · 덱 전용 스타일에서 .slide 에 visibility·content-visibility·transform 을 걸지 않는다 (이 블록이 의존) */
+body[data-lite] > .slide { will-change: auto; transition: none; transform: none; }
+body[data-lite] > .slide:not(.is-active) { visibility: hidden; content-visibility: hidden; }
+body[data-lite] [data-step] { transform: none; transition: opacity 0.25s; }
+body[data-lite] #progressFill { transition: none; }
+body[data-lite] #kbdHint { backdrop-filter: none; background: rgba(255,255,255,0.94); }
+body[data-lite] #kbdHint .lite-tag { font: 700 0.62rem 'Inter', sans-serif; color: #fff; background: var(--text-muted); border-radius: 4px; padding: 2px 5px; }
+body[data-lite] #tocOverlay { backdrop-filter: none; background: rgba(26, 35, 50, 0.72); }
+body[data-lite] .pm-stage--next { display: none; }   /* 다음 장은 #pmNextLabel 제목 한 줄만 */
+@media print { body[data-lite] > .slide:not(.is-active) { visibility: visible; content-visibility: visible; } }   /* 숨김 규칙과 같은 특이성(0-3-1)이어야 이긴다 */
+/* ---------- 저사양 모드 (끝) ---------- */
 </style>
 </head>
 <body>
@@ -577,6 +594,7 @@ body.is-presenter #presenterMode {
   var isAnimating = false;
   var SWIPE_THRESHOLD = 60;
   var TRANSITION_MS = 500;   // .slide의 transition-duration과 일치시킬 것
+  var LITE = document.body.hasAttribute('data-lite');   // 저사양 모드(<body data-lite>): 전환 없이 즉시 교체. 비활성 장 렌더 제외·흐림 제거는 CSS 저사양 블록이 맡는다
 
   // 발표자 모드: 같은 파일을 ?presenter=1로 열어 BroadcastChannel로 두 창을 동기화
   var IS_PRESENTER = new URLSearchParams(location.search).has('presenter');
@@ -613,12 +631,22 @@ body.is-presenter #presenterMode {
     if (isAnimating || nextIndex === current) return;
     if (nextIndex < 0 || nextIndex >= total) return;
 
-    isAnimating = true;
-    document.body.classList.add('is-animating');
-
     var prevSlide = slides[current];
     var nextSlide = slides[nextIndex];
     var goingNext = direction === 'next';
+
+    if (LITE) {   // 저사양: 클래스만 바꾸고 끝 — 이동·reflow·transitionend·워치독 전부 생략. 비활성 장은 CSS가 렌더링에서 뺀다
+      resetSteps(nextSlide, !goingNext);
+      nextSlide.classList.add('is-active');
+      prevSlide.classList.remove('is-active', 'exit-left', 'exit-right');
+      current = nextIndex;
+      updateUI();
+      if (bc) bc.postMessage({ type: 'goto', index: current });
+      return;
+    }
+
+    isAnimating = true;
+    document.body.classList.add('is-animating');
 
     // 1. transition 없이 시작 위치 배치
     nextSlide.style.transition = 'none';
@@ -786,11 +814,13 @@ body.is-presenter #presenterMode {
     var curStage = document.querySelector('.pm-left > .pm-stage');
     var nextStage = document.querySelector('.pm-stage--next');
     if (leftEl && curStage && nextStage) {
-      var curW = Math.min(leftEl.clientWidth, leftEl.clientHeight * 0.62 * 16 / 9);
+      var curW = Math.min(leftEl.clientWidth, leftEl.clientHeight * (LITE ? 0.84 : 0.62) * 16 / 9);   // 저사양: 다음 장 미리보기가 없으니 현재 장을 더 크게
       curStage.style.width = curW + 'px';
-      var avail = leftEl.clientHeight - curStage.getBoundingClientRect().height - 12;
-      var nextW = Math.max(160, Math.min(leftEl.clientWidth * 0.52, avail * 16 / 9));
-      nextStage.style.width = nextW + 'px';
+      if (!LITE) {
+        var avail = leftEl.clientHeight - curStage.getBoundingClientRect().height - 12;
+        var nextW = Math.max(160, Math.min(leftEl.clientWidth * 0.52, avail * 16 / 9));
+        nextStage.style.width = nextW + 'px';
+      }
     }
     Array.prototype.forEach.call(document.querySelectorAll('.pm-stage'), function (stage) {
       var inner = stage.querySelector('.pm-scale');
@@ -801,7 +831,7 @@ body.is-presenter #presenterMode {
     document.getElementById('pmCounter').textContent = (current + 1) + ' / ' + total;
     renderPreview('pmScaleCurrent', current);
     var hasNext = current + 1 < total;
-    renderPreview('pmScaleNext', hasNext ? current + 1 : null);
+    renderPreview('pmScaleNext', (hasNext && !LITE) ? current + 1 : null);   // 저사양: 다음 장은 제목 한 줄(#pmNextLabel)만
     document.getElementById('pmNextLabel').textContent =
       hasNext ? '다음: ' + slideTitle(slides[current + 1], current + 1) : '마지막 슬라이드입니다';
     document.getElementById('pmCurrentTitle').textContent = slideTitle(slides[current], current);
@@ -872,6 +902,12 @@ body.is-presenter #presenterMode {
 
   /* ---------- 초기화 ---------- */
   function init() {
+    if (LITE) {   // 모드 표시 — 단축키 힌트 끝에 "저사양" 배지 (파일을 열었을 때 켜졌는지 보이게)
+      var tag = document.createElement('span');
+      tag.className = 'lite-tag';
+      tag.textContent = '저사양';
+      document.getElementById('kbdHint').appendChild(tag);
+    }
     if (IS_PRESENTER) {
       document.body.classList.add('is-presenter');
       updatePresenterUI();
