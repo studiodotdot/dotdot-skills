@@ -1,0 +1,4 @@
+schema_version: "1.1"
+name: meeting-notes-lecture
+expected_outcome: |
+  실무용 교안 8장 내외 단일 HTML. 장마다 시각 아이디어 한 줄, 톤 시안 비교, F·I·N·S 4키, 자리표시 잔재 없음, 발표자 표기 중립.

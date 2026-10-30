@@ -1,0 +1,4 @@
+schema_version: "1.1"
+name: excel-pivot-4h-brief
+expected_outcome: |
+  HTML 과정개발계획서 저장, 시간 합계 240분, Bloom 학습목표, 메릴 차시, 휴식 행, 가정 목록.

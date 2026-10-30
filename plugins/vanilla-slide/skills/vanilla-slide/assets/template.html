@@ -1,0 +1,904 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!-- ✏️ 교체: 문서 제목 -->
+<title>자료 제목 — vanilla-slide 템플릿</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+/* ================================================================
+   엔진 CSS — 슬라이드 콘텐츠용 클래스 외에는 수정하지 않는다.
+   ================================================================ */
+:root {
+  /* ---- 엔진 토큰 (UI: 진행바·목차·노트·발표자 창) ---- */
+  --bg:             #F0F2F5;
+  --surface:        #FFFFFF;
+  --border:         #E2E8F0;
+  --text-primary:   #1A2332;
+  --text-secondary: #4A5568;
+  --text-muted:     #94A3B8;
+  --accent:         #4A8FDB;
+  --accent-light:   #BFDBF7;
+  --accent-dark:    #2563EB;
+  --point:          #F59E0B;   /* 어두운 발표자 창 강조색 */
+  --shadow:         0 2px 12px rgba(26,35,50,0.07);
+  --shadow-lg:      0 8px 32px rgba(26,35,50,0.12);
+  --radius:         14px;
+
+  /* ================================================================
+     ✏️ 덱 톤 토큰 — 이 덱의 톤 시안에서 정한 값으로 전부 교체한다.
+     아래 값은 자리표시(중립 회색)다. 이대로 내보내지 않는다.
+     톤 = 바탕 · 잉크 · 강조 1색(단색 또는 그라데이션) · 카드 면 · 챕터 색 쌍
+     ================================================================ */
+  --tone-bg:        #F4F5F7;   /* 슬라이드 바탕 */
+  --tone-card:      #FFFFFF;   /* 카드·패널 면 */
+  --tone-ink:       #1E2430;   /* 제목·본문 */
+  --tone-ink2:      #4B5563;   /* 보조 글자 */
+  --tone-muted:     #8A93A3;   /* 캡션·페이지 번호 */
+  --tone-accent:    #3B5BDB;   /* 강조 1색 — 정답·밑줄·배지·CTA */
+  --tone-accent-2:  #DCE3FA;   /* 강조색 틴트 — 칩·표 헤더 */
+  /* 챕터 색 코딩(선택) — 배경과 배지 색이 한 쌍. 색 = 위치 기억. 안 쓰면 비워 둔다 */
+  --ch1: #3B5BDB;  --ch1-bg: #F4F5F7;
+  --ch2: #3B5BDB;  --ch2-bg: #F4F5F7;
+  --ch3: #3B5BDB;  --ch3-bg: #F4F5F7;
+  --ch4: #3B5BDB;  --ch4-bg: #F4F5F7;
+}
+
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; }
+body {
+  font-family: 'Noto Sans KR', 'Inter', -apple-system, 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif;
+  background: var(--bg);
+  color: var(--text-primary);
+  overflow: hidden;
+  word-break: keep-all;          /* 한국어: 단어 중간 끊김 방지 */
+  overflow-wrap: break-word;
+  touch-action: pan-y;
+  overscroll-behavior: none;
+  -webkit-font-smoothing: antialiased;
+}
+[hidden] { display: none !important; }
+
+/* ---------- 슬라이드 레이어 ---------- */
+.slide {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 60px;
+  background: var(--bg);                /* 불투명 필수 — 정리 중인 뒷슬라이드 가림 */
+  transform: translateX(100%);          /* 기본: 오른쪽 대기 */
+  transition: transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  will-change: transform;
+}
+.slide.is-active  { transform: translateX(0); }
+.slide.exit-left  { transform: translateX(-100%); }
+.slide.exit-right { transform: translateX(100%); }
+body.is-animating { pointer-events: none; }   /* 전환 중 클릭 차단 */
+
+.slide__content { width: 100%; max-width: 1280px; }
+
+/* ---------- 타이포그래피 ---------- */
+.slide__tag {
+  font: 600 1.05rem 'Inter', sans-serif;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 20px;
+}
+.slide__title {
+  font-size: clamp(2.6rem, 5.2vw, 4.2rem);
+  font-weight: 700;
+  line-height: 1.18;
+  margin-bottom: 24px;
+}
+.slide__subtitle {
+  font-size: clamp(1.4rem, 2.9vw, 2rem);
+  font-weight: 400;
+  color: var(--text-secondary);
+  line-height: 1.4;
+  margin-bottom: 16px;
+}
+.slide__body {
+  font-size: clamp(1.3rem, 2.35vw, 1.5rem);
+  color: var(--text-secondary);
+  line-height: 1.65;
+  margin-bottom: 16px;
+}
+.slide__meta { font-size: 1.1rem; color: var(--text-muted); margin-top: 36px; }
+
+/* ---------- 리스트 (dot 정렬: align-items center 고정) ---------- */
+.slide__list { list-style: none; margin-top: 28px; }
+.slide__list li {
+  display: flex;
+  align-items: center;               /* flex-start + margin-top 금지 */
+  gap: 12px;
+  font-size: clamp(1.3rem, 2.35vw, 1.5rem);
+  color: var(--text-secondary);
+  line-height: 1.65;
+  padding: 10px 0;
+}
+.slide__list li::before {
+  content: '';
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  background: var(--accent);
+  flex-shrink: 0;
+}
+
+/* ---------- 카드 ---------- */
+.cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 24px;
+  margin-top: 36px;
+}
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 30px 28px;
+  box-shadow: var(--shadow);
+}
+.card__icon  { font-size: 2.6rem; margin-bottom: 14px; }
+.card__title { font-size: 1.35rem; font-weight: 700; margin-bottom: 10px; }
+.card__body  { font-size: 1.2rem; color: var(--text-secondary); line-height: 1.6; }
+
+/* ---------- 코드 블록 ---------- */
+.code-block {
+  background: #1A2332;
+  color: #E2E8F0;
+  border-radius: var(--radius);
+  padding: 26px 30px;
+  margin-top: 28px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 1.05rem;
+  line-height: 1.7;
+  overflow-x: auto;
+  box-shadow: var(--shadow-lg);
+}
+.code-block .cm { color: #94A3B8; }   /* 주석용 */
+
+/* ================================================================
+   덱 장 기본 — 크기 체계와 페이지 번호만. 부품(카드·원·띠·제목 스타일)은 여기 없다.
+   장마다 "보여줄 그림"을 정하고 그 그림을 ✏️ 덱 전용 스타일에서 직접 그린다.
+   크기는 전부 em — .slide.edu 의 font-size 가 화면에 맞춰 변한다 (1280×720 기준 19.2px)
+   ================================================================ */
+.slide.edu {
+  font-size: min(1.5vw, 2.6667vh);
+  font-family: 'Pretendard', 'Noto Sans KR', -apple-system, 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif;   /* CDN이 막혀도 시스템 한글 폰트로 대체 */
+  color: var(--tone-ink);
+  padding: 0; display: block;
+  background: var(--ch-bg, var(--tone-bg));
+  --ch: var(--tone-accent);
+}
+.slide.edu[data-chapter="1"] { --ch: var(--ch1); --ch-bg: var(--ch1-bg); }
+.slide.edu[data-chapter="2"] { --ch: var(--ch2); --ch-bg: var(--ch2-bg); }
+.slide.edu[data-chapter="3"] { --ch: var(--ch3); --ch-bg: var(--ch3-bg); }
+.slide.edu[data-chapter="4"] { --ch: var(--ch4); --ch-bg: var(--ch4-bg); }
+.slide.edu b, .slide.edu strong { font-weight: 800; }
+/* 페이지 번호 — 하단 중앙. 헬퍼가 자동으로 붙인다(표지 .edu--cover 제외). 모양은 덱 전용 스타일에서 덮어써도 된다 */
+.pgno {
+  position: absolute; bottom: 0.45em; left: 50%; transform: translateX(-50%);
+  width: 1.9em; height: 1.9em; border-radius: 50%;
+  background: var(--ch); color: #fff;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.9em; font-weight: 700; font-variant-numeric: tabular-nums;
+}
+
+/* 라인 아이콘 — <svg class="ico"><use href="#i-…"/></svg>. 크기 = font-size, 색 = color (원 안에 넣을 땐 원 지름의 50~60%) */
+.ico { width: 1em; height: 1em; display: block; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; flex-shrink: 0; }
+/* 사진 페이드 — 위로 갈수록 투명해져 뒤 요소가 비친다 (흰 덮개 방식 금지, 마스크로) */
+.fade-up { -webkit-mask-image: linear-gradient(180deg, transparent 0%, #000 var(--fade, 60%)); mask-image: linear-gradient(180deg, transparent 0%, #000 var(--fade, 60%)); }
+
+/* ================================================================
+   ✏️ 덱 전용 스타일 — 이 덱의 그림·부품은 전부 여기서 그린다.
+   규칙: 클래스는 이 덱의 약칭 접두어(예: 엑셀 기초 → xl-)를 붙인다. 아래 예시의 ex- 는 예시 전용이라 지우고 새로 쓴다 · 장 자체의 display·padding·배경을 바꾸는 규칙은 .slide.edu.xl-… 로 써야 기본 규칙(.slide.edu, 0-2-0)을 이긴다 ·
+        위치·높이는 em을 자기 글자 크기에 곱하지 말 것(%·부모 기준) ·
+        슬라이드 밖으로 나가는 장식이 있는 장은 overflow: hidden · 같은 그림 3장 연속 금지
+   아래는 검증용 예시(타임라인 + 점선 실루엣 + 하단 결론 띠). 실제 덱에서는 지우고 새로 그린다.
+   ================================================================ */
+.ex-title { position: absolute; left: 6%; top: 8%; right: 6%; }
+.ex-title small { display: block; font-size: 0.8em; color: var(--tone-muted); font-weight: 700; margin-bottom: 0.3em; }
+.ex-title h2 { font-size: 2.2em; font-weight: 800; letter-spacing: -0.03em; line-height: 1.15; }
+.ex-tl { position: absolute; left: 6%; right: 6%; top: 40%; height: 2px; background: var(--tone-ink2); }
+.ex-tl__pt { position: absolute; top: 50%; width: 0.7em; height: 0.7em; border-radius: 50%; background: var(--tone-accent); transform: translate(-50%, -50%); }
+.ex-tl__pt.is-off { background: #fff; border: 2px solid var(--tone-muted); }
+.ex-obj { position: absolute; bottom: 1.4em; left: 50%; transform: translateX(-50%); width: 4.2em; height: 7.4em; border-radius: 0.9em; background: var(--tone-accent); }
+.ex-obj.is-off { background: transparent; border: 0.16em dashed var(--tone-muted); color: var(--tone-muted); font-size: 1em; display: flex; align-items: center; justify-content: center; font-weight: 800; }
+.ex-obj.is-off::after { content: '?'; font-size: 2.2em; }
+.ex-lab { position: absolute; top: 1.2em; left: 50%; transform: translateX(-50%); text-align: center; white-space: nowrap; font-size: 0.85em; color: var(--tone-ink2); }
+.ex-lab b { display: block; font-size: 1.15em; color: var(--tone-ink); }
+.ex-band { position: absolute; left: 0; right: 0; margin: 0 auto; width: fit-content; bottom: 2.6em; max-width: 58%;   /* data-step 요소는 transform으로 위치를 잡지 않는다 — 엔진의 [data-step] transform이 덮어써 공개 순간 밀린다 */
+  background: var(--tone-ink); color: #fff; border-radius: 2.4em; padding: 0.7em 2.2em; font-size: 1.05em; font-weight: 800; text-align: center; }
+.slide.edu.ex-cover { display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 0 8%; }
+.slide.edu.ex-cover h1 { font-size: 3.2em; font-weight: 800; letter-spacing: -0.03em; line-height: 1.15; }
+.slide.edu.ex-cover p { font-size: 1.15em; color: var(--tone-ink2); margin-top: 1em; }
+
+/* ---------- 빌드 효과 ---------- */
+[data-step] {
+  opacity: 0;
+  transform: translateY(12px);
+  transition: opacity 0.35s, transform 0.35s;
+}
+[data-step].visible { opacity: 1; transform: translateY(0); }
+
+/* ---------- 진행바 · 카운터 · 네비 버튼 ---------- */
+#progressBar {
+  position: fixed; top: 0; left: 0;
+  width: 100%; height: 3px;
+  background: var(--border);
+  z-index: 100;
+}
+#progressFill { height: 100%; width: 0; background: var(--accent); transition: width 0.4s ease; }
+#slideCounter {
+  position: fixed; bottom: 20px; right: 24px;
+  font: 400 0.8rem 'Inter', sans-serif;
+  color: var(--text-muted);
+  z-index: 100;
+}
+.nav-btn {
+  position: fixed; bottom: 16px;
+  width: 40px; height: 40px;
+  border-radius: 50%;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text-secondary);
+  font-size: 1rem;
+  cursor: pointer;
+  z-index: 100;
+  opacity: 0.55;
+  transition: opacity 0.2s, color 0.2s;
+}
+.nav-btn:hover { opacity: 1; color: var(--accent); }
+#btnPrev { left: 24px; }
+#btnNext { left: 72px; }
+
+/* ---------- 단축키 힌트 (항상 표시) ---------- */
+#kbdHint {
+  position: fixed; bottom: 48px; right: 14px;
+  display: flex; gap: 8px;
+  background: rgba(255,255,255,0.72);
+  backdrop-filter: blur(6px);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 6px 10px;
+  z-index: 100;
+  font-size: 0.72rem; color: var(--text-muted);
+}
+#kbdHint span { display: inline-flex; align-items: center; gap: 3px; }
+#kbdHint kbd {
+  font: 700 0.68rem 'Inter', sans-serif; color: var(--accent);
+  background: var(--surface); border: 1px solid var(--border); border-bottom-width: 2px;
+  border-radius: 4px; padding: 1px 5px;
+}
+
+/* ---------- 목차 오버레이 (I 키) ---------- */
+#tocOverlay {
+  position: fixed; inset: 0;
+  background: rgba(26, 35, 50, 0.55);
+  backdrop-filter: blur(6px);
+  z-index: 200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.toc__panel {
+  background: var(--surface);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-lg);
+  width: min(720px, 90vw);
+  max-height: 80vh;
+  overflow-y: auto;
+  padding: 34px 38px;
+}
+.toc__title {
+  font: 600 0.8rem 'Inter', sans-serif;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-bottom: 18px;
+}
+#tocList { list-style: none; }
+#tocList button {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  width: 100%;
+  text-align: left;
+  padding: 12px 14px;
+  border: 0;
+  background: none;
+  border-radius: 10px;
+  font-family: inherit;
+  font-size: 1.1rem;
+  color: var(--text-secondary);
+  cursor: pointer;
+}
+#tocList button:hover { background: var(--bg); color: var(--text-primary); }
+#tocList li.is-current button { background: var(--accent-light); color: var(--text-primary); font-weight: 700; }
+.toc__num { font: 600 0.85rem 'Inter', sans-serif; color: var(--accent); }
+
+/* ---------- 화자 노트 패널 (N 키) ---------- */
+.slide .notes { display: none; }          /* 슬라이드 안의 노트 원본은 항상 숨김 */
+#notesPanel {
+  position: fixed; left: 0; right: 0; bottom: 0;
+  background: rgba(26, 35, 50, 0.94);
+  color: #E2E8F0;
+  padding: 18px 60px 22px;
+  z-index: 90;
+  max-height: 32vh;
+  overflow-y: auto;
+  font-size: 1.05rem;
+  line-height: 1.6;
+}
+#notesPanel .notes__label {
+  font: 600 0.75rem 'Inter', sans-serif;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #94A3B8;
+  margin-bottom: 6px;
+}
+
+/* ---------- 발표자 모드 (S 키 → 같은 파일 ?presenter=1 창) ---------- */
+body.is-presenter { background: #0F1419; overflow: hidden; }
+body.is-presenter > .slide,          /* 직계 자식만 — 미리보기 클론은 살려야 함 */
+body.is-presenter #progressBar, body.is-presenter #slideCounter,
+body.is-presenter .nav-btn, body.is-presenter #tocOverlay,
+body.is-presenter #kbdHint,
+body.is-presenter #notesPanel { display: none !important; }
+#presenterMode { display: none; }
+body.is-presenter #presenterMode {
+  display: flex; flex-direction: column;
+  position: fixed; inset: 0; padding: 18px 22px;
+  color: #fff; z-index: 1000;
+}
+.pm-header { display: flex; justify-content: space-between; align-items: center; padding-bottom: 12px; border-bottom: 1px solid rgba(255,255,255,.12); margin-bottom: 14px; }
+.pm-title { font: 700 0.85rem 'Inter', sans-serif; letter-spacing: 2px; text-transform: uppercase; color: var(--point); }
+.pm-counter { font: 700 1.4rem 'Inter', sans-serif; }
+.pm-timer { font: 700 1.8rem 'Inter', sans-serif; color: var(--point); font-variant-numeric: tabular-nums; }
+.pm-timer-reset { margin-left: 10px; background: rgba(255,255,255,.1); border: 1px solid rgba(255,255,255,.2); color: #fff; border-radius: 6px; padding: 4px 10px; font-size: 0.75rem; cursor: pointer; }
+.pm-timer-reset:hover { background: rgba(255,255,255,.2); }
+.pm-body { flex: 1; display: grid; grid-template-columns: 1.15fr 1fr; gap: 18px; min-height: 0; }
+.pm-left { display: flex; flex-direction: column; gap: 12px; min-height: 0; overflow: hidden; }
+.pm-stage { position: relative; width: 100%; aspect-ratio: 16/9; background: var(--bg); border-radius: 10px; overflow: hidden; border: 1px solid rgba(255,255,255,.18); flex-shrink: 0; }
+.pm-stage--next { width: 52%; }
+.pm-scale { position: absolute; top: 0; left: 0; width: 1280px; height: 720px; transform-origin: top left; }
+.pm-scale .slide { position: absolute !important; inset: 0; transform: none !important; transition: none !important; color: var(--text-primary); }   /* 발표자 창 흰 글자 상속 차단 */
+.pm-scale .slide * { transition: none !important; animation: none !important; }
+.pm-scale [data-step] { opacity: 1 !important; transform: translateY(0) !important; }
+.pm-scale .notes { display: none !important; }
+.pm-next-row { display: flex; align-items: flex-start; gap: 14px; flex: 1 1 auto; min-height: 0; overflow: hidden; }
+.pm-next-label { font-size: 0.85rem; color: rgba(255,255,255,.6); padding-bottom: 6px; }
+.pm-panel { background: rgba(255,255,255,.04); border: 1px solid rgba(255,255,255,.08); border-radius: 12px; padding: 24px 28px; display: flex; flex-direction: column; min-height: 0; }
+.pm-panel__label { font: 700 0.78rem 'Inter', sans-serif; letter-spacing: 2px; text-transform: uppercase; color: var(--point); margin-bottom: 14px; flex-shrink: 0; }
+.pm-current-title { font-size: 1.4rem; font-weight: 700; margin-bottom: 16px; padding-bottom: 12px; border-bottom: 1px solid rgba(255,255,255,.1); flex-shrink: 0; }
+.pm-notes-content { flex: 1; overflow-y: auto; font-size: 1.35rem; line-height: 1.8; color: rgba(255,255,255,.95); padding-right: 10px; }
+.pm-notes-content::-webkit-scrollbar { width: 6px; }
+.pm-notes-content::-webkit-scrollbar-thumb { background: rgba(255,255,255,.2); border-radius: 3px; }
+.pm-footer { display: flex; justify-content: space-between; align-items: center; padding-top: 12px; margin-top: 14px; border-top: 1px solid rgba(255,255,255,.12); font-size: 0.85rem; color: rgba(255,255,255,.55); }
+.pm-kbd { display: inline-flex; gap: 10px; }
+.pm-kbd span { display: inline-flex; align-items: center; gap: 4px; }
+.pm-kbd kbd { display: inline-block; background: rgba(255,255,255,.1); border: 1px solid rgba(255,255,255,.2); border-bottom-width: 2px; border-radius: 4px; padding: 2px 7px; font: 700 0.72rem 'Inter', sans-serif; color: var(--point); min-width: 14px; text-align: center; }
+
+/* ---------- 인쇄(PDF 배포) — 전 장표가 각 1페이지 ---------- */
+@page { size: 1280px 720px; margin: 0; }
+@media print {
+  html, body {
+    overflow: visible; height: auto; background: #fff;
+    -webkit-print-color-adjust: exact; print-color-adjust: exact;
+  }
+  .slide {
+    position: relative;
+    inset: auto;
+    transform: none !important;
+    transition: none;
+    height: 100vh;
+    page-break-after: always;
+    break-after: page;
+    break-inside: avoid;
+  }
+  .slide:last-of-type { page-break-after: auto; break-after: auto; }  /* 마지막 빈 페이지 방지 */
+  [data-step] { opacity: 1 !important; transform: none !important; }
+  #progressBar, #slideCounter, .nav-btn, #kbdHint, #tocOverlay, #notesPanel, #presenterMode { display: none !important; }
+}
+
+/* ---------- 접근성 · 반응형 ---------- */
+@media (prefers-reduced-motion: reduce) {
+  .slide, [data-step] { transition-duration: 0.01s; }
+}
+@media screen and (max-width: 768px) {
+  .slide { padding: 0 28px; }
+  #notesPanel { padding: 14px 28px 18px; }
+}
+</style>
+</head>
+<body>
+
+<!-- ================================================================
+     🔧 라인 아이콘 스프라이트 — 26종. 사용: <svg class="ico"><use href="#i-eye"/></svg>
+     stroke 기반 24×24. 색은 CSS color, 크기는 font-size 로 조절된다.
+     새 아이콘이 필요하면 <symbol id="i-이름" viewBox="0 0 24 24">…</symbol> 을 여기 추가한다
+     (Lucide·Tabler 등 오픈 라이선스 아이콘의 path 를 붙여 넣어도 된다 — 라이선스 표기는 파일 상단 주석에)
+     ================================================================ -->
+<svg xmlns="http://www.w3.org/2000/svg" style="display:none" aria-hidden="true">
+  <symbol id="i-eye" viewBox="0 0 24 24"><path d="M2 12s3.5-6.5 10-6.5S22 12 22 12s-3.5 6.5-10 6.5S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></symbol>
+  <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/></symbol>
+  <symbol id="i-hourglass" viewBox="0 0 24 24"><path d="M6 3h12M6 21h12M8 3v3.5a4 4 0 0 0 4 4 4 4 0 0 0 4-4V3M8 21v-3.5a4 4 0 0 1 4-4 4 4 0 0 1 4 4V21"/></symbol>
+  <symbol id="i-chat" viewBox="0 0 24 24"><path d="M5 4h14a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2h-6l-4 4v-4H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z"/><path d="M8 9.5h8M8 13h5"/></symbol>
+  <symbol id="i-mic" viewBox="0 0 24 24"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3M9 21h6"/></symbol>
+  <symbol id="i-ear" viewBox="0 0 24 24"><path d="M6 10a6 6 0 0 1 12 0c0 3-2 4-3 6s-1 5-4 5a3 3 0 0 1-3-3"/><path d="M9.5 10a2.5 2.5 0 0 1 5 0c0 1.5-1.5 2-1.5 3.5"/></symbol>
+  <symbol id="i-bulb" viewBox="0 0 24 24"><path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-4 10.5c.7.7 1 1.5 1 2.5h6c0-1 .3-1.8 1-2.5A6 6 0 0 0 12 3z"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="m8 12.5 3 3 5.5-6.5"/></symbol>
+  <symbol id="i-star" viewBox="0 0 24 24"><path d="m12 3 2.8 5.7 6.2.9-4.5 4.4 1.1 6.2L12 17.3 6.4 20.2l1.1-6.2L3 9.6l6.2-.9z"/></symbol>
+  <symbol id="i-target" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.2"/></symbol>
+  <symbol id="i-users" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c0-3.5 3-6 6.5-6s6.5 2.5 6.5 6"/><circle cx="17" cy="9" r="2.5"/><path d="M17.5 14c2.5.3 4 2.3 4 5"/></symbol>
+  <symbol id="i-user" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4.5 21c0-4 3.5-7 7.5-7s7.5 3 7.5 7"/></symbol>
+  <symbol id="i-heart" viewBox="0 0 24 24"><path d="M12 20.5S4.5 16 4.5 10a4 4 0 0 1 7.5-2 4 4 0 0 1 7.5 2c0 6-7.5 10.5-7.5 10.5z"/></symbol>
+  <symbol id="i-hand" viewBox="0 0 24 24"><path d="M8 12V5.5a1.5 1.5 0 0 1 3 0V11M11 11V4a1.5 1.5 0 0 1 3 0v7M14 11V5.5a1.5 1.5 0 0 1 3 0V13M17 13V9.5a1.5 1.5 0 0 1 3 0V15a6 6 0 0 1-6 6h-1a6 6 0 0 1-5-2.7l-3.4-5A1.5 1.5 0 0 1 7 11.6l1 1.4"/></symbol>
+  <symbol id="i-book" viewBox="0 0 24 24"><path d="M3 4.5h6a3 3 0 0 1 3 3V20a2 2 0 0 0-2-2H3zM21 4.5h-6a3 3 0 0 0-3 3V20a2 2 0 0 1 2-2h7z"/></symbol>
+  <symbol id="i-pen" viewBox="0 0 24 24"><path d="m4 20 1-4L16.5 4.5a2.1 2.1 0 0 1 3 3L8 19z"/><path d="m14 7 3 3"/></symbol>
+  <symbol id="i-clipboard" viewBox="0 0 24 24"><rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 4V2.5h6V4M9 10h6M9 14h4"/></symbol>
+  <symbol id="i-list" viewBox="0 0 24 24"><path d="M8 6h13M8 12h13M8 18h13M3.5 6h0M3.5 12h0M3.5 18h0"/></symbol>
+  <symbol id="i-chart" viewBox="0 0 24 24"><path d="M4 20h16M7 16V9M12 16V5M17 16v-6"/></symbol>
+  <symbol id="i-help" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.5 2.5 0 1 1 3.6 2.2c-.8.4-1.1.9-1.1 1.8M12 17h0"/></symbol>
+  <symbol id="i-alert" viewBox="0 0 24 24"><path d="M12 3.5 2.5 20h19z"/><path d="M12 10v4M12 17h0"/></symbol>
+  <symbol id="i-flag" viewBox="0 0 24 24"><path d="M5 21V4h11.5l-1.5 4 1.5 4H5"/></symbol>
+  <symbol id="i-smile" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M8.5 14.5s1.3 2 3.5 2 3.5-2 3.5-2M9 9.5h0M15 9.5h0"/></symbol>
+  <symbol id="i-frown" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M8.5 16.5s1.3-2 3.5-2 3.5 2 3.5 2M9 9.5h0M15 9.5h0"/></symbol>
+  <symbol id="i-home" viewBox="0 0 24 24"><path d="m3 11 9-7 9 7v9a1 1 0 0 1-1 1h-5v-6h-6v6H4a1 1 0 0 1-1-1z"/></symbol>
+  <symbol id="i-grad" viewBox="0 0 24 24"><path d="m2 9 10-5 10 5-10 5z"/><path d="M6 11.5V16c0 1.5 3 3 6 3s6-1.5 6-3v-4.5M22 9v6"/></symbol>
+</svg>
+
+<!-- ================================================================
+     ✏️ 슬라이드 영역 — 이 블록 안의 〈section〉만 교체/추가/삭제한다.
+     규칙:
+       · 각 장은 〈section class="slide edu" id="slide-N" data-title="목차용 제목"〉 (N은 1부터). 표지·마무리는 class에 edu--cover 추가(페이지 번호 안 붙음)
+         (이 주석의 꺾쇠는 일부러 전각 — 스크립트가 실제 태그 문자열로 첫 장을 찾다 주석을 자르는 사고 방지)
+       · data-chapter="1~4" 를 달면 챕터 색 쌍(--chN / --chN-bg)이 적용된다 — 색 = 위치 기억
+       · 장마다 "보여줄 그림" 한 줄을 먼저 정하고(SKILL.md 그림 사전), 그 그림을 ✏️ 덱 전용 스타일에서 직접 그린다. 여기엔 부품이 없다
+       · 사진·캡처는 원형으로 꽉 채우거나 .fade-up 으로 사라지게. 라인 아이콘은 <svg class="ico"><use href="#i-…"/></svg>
+       · 화자 노트는 〈aside class="notes"〉 — 첫 줄에 "이 장의 그림: …", 이어서 발표 대본 · 순차 등장은 data-step="1","2",…
+       · 아래 3장은 엔진 검증용 예시다. 실제 덱에서는 전부 교체한다
+     ================================================================ -->
+
+<section class="slide edu edu--cover ex-cover" id="slide-1" data-title="표지">
+  <h1>자료 제목</h1>
+  <p>과정명 · 차시 · 발표자 이름</p>
+  <aside class="notes">여는 멘트: "…" <br>강조: … <br>전환: "…"</aside>
+</section>
+
+<section class="slide edu" id="slide-2" data-title="예시 — 시간·순서는 타임라인 위 실루엣">
+  <div class="ex-title"><small>Q1</small><h2>최종본까지 다 나왔죠?</h2></div>
+  <div class="ex-tl">
+    <div class="ex-tl__pt" style="left:18%"><div class="ex-obj"></div><div class="ex-lab"><b>초안</b>완료</div></div>
+    <div class="ex-tl__pt" style="left:50%"><div class="ex-obj"></div><div class="ex-lab"><b>수정본</b>검토 중</div></div>
+    <div class="ex-tl__pt is-off" style="left:82%"><div class="ex-obj is-off"></div><div class="ex-lab"><b>최종본</b>아직 없음</div></div>
+  </div>
+  <div class="ex-band" data-step="1">정답 X — 아직 없는 단계는 점선으로</div>
+  <aside class="notes">이 장의 그림: 타임라인 위 실루엣, 미발표는 점선 + "?". 글을 가려도 "셋 중 하나는 없다"가 보여야 한다.</aside>
+</section>
+
+<section class="slide edu edu--cover ex-cover" id="slide-3" data-title="마무리">
+  <h1>감사합니다</h1>
+  <p>질문 채널 · 다음 차시 예고</p>
+  <aside class="notes">마무리 멘트.</aside>
+</section>
+
+<script>
+/* ================================================================
+   🔧 교육 헬퍼 — 수정하지 않는다.
+   표지·마무리(.edu--cover)를 뺀 모든 .slide.edu 에 페이지 번호(.pgno)를 붙인다.
+   ================================================================ */
+(function () {
+  'use strict';
+  var slides = Array.prototype.slice.call(document.querySelectorAll('body > .slide.edu'));
+  slides.forEach(function (s, i) {
+    if (s.classList.contains('edu--cover')) return;
+    var p = document.createElement('div');
+    p.className = 'pgno';
+    p.textContent = i + 1;
+    s.appendChild(p);
+  });
+})();
+</script>
+
+<!-- ================================================================
+     ⛔ 여기부터 엔진 — 수정하지 않는다.
+     ================================================================ -->
+
+<div id="progressBar"><div id="progressFill"></div></div>
+<div id="slideCounter">1 / 1</div>
+<button class="nav-btn" id="btnPrev" type="button" aria-label="이전 슬라이드">←</button>
+<button class="nav-btn" id="btnNext" type="button" aria-label="다음 슬라이드">→</button>
+<div id="kbdHint">
+  <span><kbd>F</kbd>전체화면</span>
+  <span><kbd>I</kbd>목차</span>
+  <span><kbd>N</kbd>노트</span>
+  <span><kbd>S</kbd>발표자</span>
+</div>
+
+<div id="tocOverlay" hidden>
+  <div class="toc__panel">
+    <p class="toc__title">목차 · 클릭하여 이동 (I 또는 Esc로 닫기)</p>
+    <ol id="tocList"></ol>
+  </div>
+</div>
+
+<div id="notesPanel" hidden>
+  <div class="notes__label">화자 노트</div>
+  <div id="notesBody"></div>
+</div>
+
+<div id="presenterMode">
+  <div class="pm-header">
+    <span class="pm-title">발표자 모드</span>
+    <span class="pm-counter" id="pmCounter">1 / 1</span>
+    <span><span class="pm-timer" id="pmTimer">00:00:00</span><button class="pm-timer-reset" id="pmTimerReset" type="button">리셋</button></span>
+  </div>
+  <div class="pm-body">
+    <div class="pm-left">
+      <div class="pm-stage"><div class="pm-scale" id="pmScaleCurrent"></div></div>
+      <div class="pm-next-row">
+        <div class="pm-stage pm-stage--next"><div class="pm-scale" id="pmScaleNext"></div></div>
+        <div class="pm-next-label" id="pmNextLabel">다음 슬라이드</div>
+      </div>
+    </div>
+    <div class="pm-panel">
+      <div class="pm-panel__label">화자 노트</div>
+      <div class="pm-current-title" id="pmCurrentTitle"></div>
+      <div class="pm-notes-content" id="pmNotesContent"></div>
+    </div>
+  </div>
+  <div class="pm-footer">
+    <div class="pm-kbd">
+      <span><kbd>&larr;</kbd>이전</span>
+      <span><kbd>&rarr;</kbd>다음</span>
+      <span><kbd>Esc</kbd>창 닫기</span>
+    </div>
+    <span>관객 창과 자동 동기화 &middot; 양방향 컨트롤</span>
+  </div>
+</div>
+
+<script>
+(function () {
+  'use strict';
+
+  var slides = Array.prototype.slice.call(document.querySelectorAll('.slide'));
+  var total = slides.length;
+  var current = 0;
+  var isAnimating = false;
+  var SWIPE_THRESHOLD = 60;
+  var TRANSITION_MS = 500;   // .slide의 transition-duration과 일치시킬 것
+
+  // 발표자 모드: 같은 파일을 ?presenter=1로 열어 BroadcastChannel로 두 창을 동기화
+  var IS_PRESENTER = new URLSearchParams(location.search).has('presenter');
+  var bc = ('BroadcastChannel' in window) ? new BroadcastChannel('vanilla-slide::' + location.pathname) : null;
+
+  var progressFill = document.getElementById('progressFill');
+  var slideCounter = document.getElementById('slideCounter');
+  var tocOverlay = document.getElementById('tocOverlay');
+  var tocList = document.getElementById('tocList');
+  var notesPanel = document.getElementById('notesPanel');
+  var notesBody = document.getElementById('notesBody');
+
+  /* ---------- 빌드 스텝 ---------- */
+  function stepsOf(slide) {
+    return Array.prototype.slice.call(slide.querySelectorAll('[data-step]'))
+      .sort(function (a, b) { return Number(a.dataset.step) - Number(b.dataset.step); });
+  }
+  function resetSteps(slide, visible) {
+    stepsOf(slide).forEach(function (el) { el.classList.toggle('visible', visible); });
+  }
+  function advance() {
+    var hidden = stepsOf(slides[current]).filter(function (el) { return !el.classList.contains('visible'); });
+    if (hidden.length) { hidden[0].classList.add('visible'); return; }
+    goTo(current + 1, 'next');
+  }
+  function retreat() {
+    var visible = stepsOf(slides[current]).filter(function (el) { return el.classList.contains('visible'); });
+    if (visible.length) { visible[visible.length - 1].classList.remove('visible'); return; }
+    goTo(current - 1, 'prev');
+  }
+
+  /* ---------- 슬라이드 전환 ---------- */
+  function goTo(nextIndex, direction) {
+    if (isAnimating || nextIndex === current) return;
+    if (nextIndex < 0 || nextIndex >= total) return;
+
+    isAnimating = true;
+    document.body.classList.add('is-animating');
+
+    var prevSlide = slides[current];
+    var nextSlide = slides[nextIndex];
+    var goingNext = direction === 'next';
+
+    // 1. transition 없이 시작 위치 배치
+    nextSlide.style.transition = 'none';
+    nextSlide.classList.remove('is-active', 'exit-left', 'exit-right');
+    nextSlide.style.transform = goingNext ? 'translateX(100%)' : 'translateX(-100%)';
+
+    // 2. 강제 reflow — 이 줄이 없으면 transition이 무시되어 순간이동 버그 발생
+    nextSlide.getBoundingClientRect();
+
+    // 3. transition 복원
+    nextSlide.style.transition = '';
+    nextSlide.style.transform = '';
+
+    // 4. 동시 이동 (뒤로 진입하는 슬라이드는 스텝 전부 표시)
+    prevSlide.classList.remove('is-active');
+    prevSlide.classList.add(goingNext ? 'exit-left' : 'exit-right');
+    resetSteps(nextSlide, !goingNext);
+    nextSlide.classList.add('is-active');
+
+    current = nextIndex;
+    updateUI();
+    if (bc) bc.postMessage({ type: 'goto', index: current });
+
+    // 5. 전환 완료 후 정리 — transition을 잠시 꺼서 유령 슬라이드 방지.
+    //    transitionend가 유실될 수 있으므로(탭 숨김·전환 취소 등) 워치독 타이머로 이중 보장.
+    var finished = false;
+    function finish() {
+      if (finished) return;
+      finished = true;
+      prevSlide.style.transition = 'none';
+      prevSlide.classList.remove('exit-left', 'exit-right');
+      prevSlide.getBoundingClientRect();
+      prevSlide.style.transition = '';
+      document.body.classList.remove('is-animating');
+      isAnimating = false;
+      nextSlide.removeEventListener('transitionend', handler);
+    }
+    function handler(e) {
+      if (e.target !== nextSlide || e.propertyName !== 'transform') return;
+      finish();
+    }
+    nextSlide.addEventListener('transitionend', handler);
+    setTimeout(finish, TRANSITION_MS + 150);
+  }
+
+  /* ---------- UI 갱신 ---------- */
+  function updateUI() {
+    progressFill.style.width = (((current + 1) / total) * 100) + '%';
+    slideCounter.textContent = (current + 1) + ' / ' + total;
+    history.replaceState(null, '', '#slide-' + (current + 1));
+    Array.prototype.forEach.call(tocList.children, function (li, i) {
+      li.classList.toggle('is-current', i === current);
+    });
+    updateNotes();
+  }
+  function updateNotes() {
+    var notes = slides[current].querySelector('.notes');
+    notesBody.innerHTML = notes ? notes.innerHTML : '<em>이 슬라이드에는 화자 노트가 없습니다.</em>';
+  }
+
+  /* ---------- 목차 오버레이 ---------- */
+  function slideTitle(slide, i) {
+    if (slide.dataset.title) return slide.dataset.title;
+    var t = slide.querySelector('.slide__title');
+    return t ? t.textContent.trim() : '슬라이드 ' + (i + 1);
+  }
+  function buildToc() {
+    slides.forEach(function (slide, i) {
+      var li = document.createElement('li');
+      var btn = document.createElement('button');
+      btn.type = 'button';
+      var num = document.createElement('span');
+      num.className = 'toc__num';
+      num.textContent = (i + 1 < 10 ? '0' : '') + (i + 1);
+      btn.appendChild(num);
+      btn.appendChild(document.createTextNode(slideTitle(slide, i)));
+      btn.addEventListener('click', function () {
+        closeToc();
+        goTo(i, i > current ? 'next' : 'prev');
+      });
+      li.appendChild(btn);
+      tocList.appendChild(li);
+    });
+  }
+  function openToc()  { tocOverlay.hidden = false; }
+  function closeToc() { tocOverlay.hidden = true; }
+  function toggleToc() { tocOverlay.hidden ? openToc() : closeToc(); }
+  tocOverlay.addEventListener('click', function (e) { if (e.target === tocOverlay) closeToc(); });
+
+  /* ---------- 전체화면 · 노트 ---------- */
+  function toggleFullscreen() {
+    if (document.fullscreenElement) document.exitFullscreen();
+    else document.documentElement.requestFullscreen().catch(function () {});
+  }
+  function toggleNotes() { notesPanel.hidden = !notesPanel.hidden; }
+
+  /* ---------- 키보드 (e.code 사용: 한/영 입력 상태 무관) ---------- */
+  document.addEventListener('keydown', function (e) {
+    if (e.metaKey || e.ctrlKey || e.altKey) return;   // 브라우저 단축키(Cmd+P 인쇄 등) 보존
+    var code = e.code;
+
+    if (IS_PRESENTER) {   // 발표자 창: 화살표는 청중 창의 advance/retreat 를 그대로 실행(빌드 스텝 포함) + Esc로 창 닫기
+      switch (code) {
+        case 'ArrowRight': case 'Space': case 'PageDown':
+          e.preventDefault(); pmStep('advance'); break;
+        case 'ArrowLeft': case 'PageUp':
+          e.preventDefault(); pmStep('retreat'); break;
+        case 'Home': pmSet(0); break;
+        case 'End':  pmSet(total - 1); break;
+        case 'Escape': window.close(); break;
+      }
+      return;
+    }
+
+    if (code === 'Escape') { if (!tocOverlay.hidden) closeToc(); return; }
+    if (code === 'KeyI') { e.preventDefault(); toggleToc(); return; }
+    if (!tocOverlay.hidden) return;   // 목차 열려 있으면 나머지 키 무시
+
+    switch (code) {
+      case 'ArrowRight': case 'Space': case 'PageDown':
+        e.preventDefault(); advance(); break;
+      case 'ArrowLeft': case 'PageUp':
+        e.preventDefault(); retreat(); break;
+      case 'Home': e.preventDefault(); goTo(0, 'prev'); break;
+      case 'End':  e.preventDefault(); goTo(total - 1, 'next'); break;
+      case 'KeyF': toggleFullscreen(); break;
+      case 'KeyN': toggleNotes(); break;
+      case 'KeyS': openPresenter(); break;
+    }
+  });
+
+  /* ---------- 스와이프 (Pointer Events) ---------- */
+  var pointerStart = null;
+  document.addEventListener('pointerdown', function (e) {
+    if (IS_PRESENTER) return;
+    if (!tocOverlay.hidden) return;
+    if (e.target.closest('button, a, #notesPanel')) return;
+    pointerStart = { x: e.clientX, y: e.clientY };
+  });
+  document.addEventListener('pointerup', function (e) {
+    if (!pointerStart) return;
+    var dx = e.clientX - pointerStart.x;
+    var dy = e.clientY - pointerStart.y;
+    pointerStart = null;
+    if (Math.abs(dx) < SWIPE_THRESHOLD || Math.abs(dx) < Math.abs(dy)) return;
+    if (dx < 0) advance(); else retreat();
+  });
+
+  /* ---------- 네비 버튼 ---------- */
+  document.getElementById('btnPrev').addEventListener('click', retreat);
+  document.getElementById('btnNext').addEventListener('click', advance);
+
+  /* ---------- 발표자 모드 ---------- */
+  function renderPreview(elId, idx) {
+    var box = document.getElementById(elId);
+    box.innerHTML = '';
+    if (idx === null || idx < 0 || idx >= total) return;
+    var clone = slides[idx].cloneNode(true);
+    clone.removeAttribute('id');
+    box.appendChild(clone);
+  }
+  function fitPreviewStages() {
+    // 창 크기와 무관하게 겹침 없이: 현재 미리보기는 세로 62% 이내, 다음 미리보기는 남은 높이에 맞춤
+    var leftEl = document.querySelector('.pm-left');
+    var curStage = document.querySelector('.pm-left > .pm-stage');
+    var nextStage = document.querySelector('.pm-stage--next');
+    if (leftEl && curStage && nextStage) {
+      var curW = Math.min(leftEl.clientWidth, leftEl.clientHeight * 0.62 * 16 / 9);
+      curStage.style.width = curW + 'px';
+      var avail = leftEl.clientHeight - curStage.getBoundingClientRect().height - 12;
+      var nextW = Math.max(160, Math.min(leftEl.clientWidth * 0.52, avail * 16 / 9));
+      nextStage.style.width = nextW + 'px';
+    }
+    Array.prototype.forEach.call(document.querySelectorAll('.pm-stage'), function (stage) {
+      var inner = stage.querySelector('.pm-scale');
+      if (inner) inner.style.transform = 'scale(' + (stage.clientWidth / 1280) + ')';
+    });
+  }
+  function updatePresenterUI() {
+    document.getElementById('pmCounter').textContent = (current + 1) + ' / ' + total;
+    renderPreview('pmScaleCurrent', current);
+    var hasNext = current + 1 < total;
+    renderPreview('pmScaleNext', hasNext ? current + 1 : null);
+    document.getElementById('pmNextLabel').textContent =
+      hasNext ? '다음: ' + slideTitle(slides[current + 1], current + 1) : '마지막 슬라이드입니다';
+    document.getElementById('pmCurrentTitle').textContent = slideTitle(slides[current], current);
+    var notes = slides[current].querySelector('.notes');
+    document.getElementById('pmNotesContent').innerHTML =
+      (notes && notes.innerHTML.trim()) ? notes.innerHTML : '(노트 없음)';
+    fitPreviewStages();
+  }
+  var pmAcked = false;
+  function pmStep(cmd) {   // 발표자 창 화살표: 청중 창에 스텝 단위 명령. 청중 창은 항상 goto 로 답한다
+    var fallback = cmd === 'advance' ? current + 1 : current - 1;
+    if (!bc) { pmSet(fallback); return; }
+    pmAcked = false;
+    bc.postMessage({ type: cmd });
+    setTimeout(function () { if (!pmAcked) pmSet(fallback); }, 300);   // 청중 창이 없거나 옛 엔진이면 슬라이드 단위로 자체 이동
+  }
+  function pmSet(idx) {   // 발표자 창 전용 이동 (슬라이드 단위 — Home/End·청중 창 없을 때)
+    idx = Math.min(Math.max(idx, 0), total - 1);
+    if (idx === current) return;
+    current = idx;
+    updatePresenterUI();
+    if (bc) bc.postMessage({ type: 'goto', index: idx });
+  }
+  var pmTimerStart = Date.now();
+  function fmtTime(ms) {
+    var s = Math.floor(ms / 1000);
+    var h = Math.floor(s / 3600); s -= h * 3600;
+    var m = Math.floor(s / 60); s -= m * 60;
+    return String(h).padStart(2, '0') + ':' + String(m).padStart(2, '0') + ':' + String(s).padStart(2, '0');
+  }
+  function startTimer() {
+    setInterval(function () {
+      document.getElementById('pmTimer').textContent = fmtTime(Date.now() - pmTimerStart);
+    }, 1000);
+  }
+  function openPresenter() {   // 메인 창 전용 — S 키
+    var url = location.href.split('?')[0].split('#')[0] + '?presenter=1';
+    var win = window.open(url, 'presenter_window', 'width=1400,height=900');
+    if (!win) alert('팝업이 차단되었습니다. 주소창의 팝업 차단 아이콘에서 허용해 주세요.');
+  }
+  if (bc) bc.onmessage = function (ev) {
+    var msg = ev.data || {};
+    if (IS_PRESENTER) {
+      if (msg.type === 'goto') pmAcked = true;
+      if (msg.type === 'goto' && typeof msg.index === 'number' && msg.index !== current) {
+        current = msg.index;
+        updatePresenterUI();
+      }
+    } else {
+      if (msg.type === 'goto' && typeof msg.index === 'number' && msg.index !== current) {
+        goTo(msg.index, msg.index > current ? 'next' : 'prev');
+      }
+      if (msg.type === 'advance' || msg.type === 'retreat') {   // 발표자 창 화살표 — 빌드 스텝을 청중 창과 똑같이 하나씩
+        if (msg.type === 'advance') advance(); else retreat();
+        bc.postMessage({ type: 'goto', index: current });   // 스텝만 바뀌어도 항상 답신(발표자 창 폴백 억제)
+      }
+      if (msg.type === 'request-state') bc.postMessage({ type: 'goto', index: current });
+    }
+  };
+
+  /* ---------- URL 해시 ---------- */
+  window.addEventListener('hashchange', function () {
+    var m = location.hash.match(/^#slide-(\d+)$/);
+    if (!m) return;
+    var idx = Math.min(Math.max(Number(m[1]) - 1, 0), total - 1);
+    if (idx !== current) goTo(idx, idx > current ? 'next' : 'prev');
+  });
+
+  /* ---------- 초기화 ---------- */
+  function init() {
+    if (IS_PRESENTER) {
+      document.body.classList.add('is-presenter');
+      updatePresenterUI();
+      startTimer();
+      document.getElementById('pmTimerReset').addEventListener('click', function () {
+        pmTimerStart = Date.now();
+        document.getElementById('pmTimer').textContent = '00:00:00';
+      });
+      window.addEventListener('resize', fitPreviewStages);
+      if (document.fonts && document.fonts.ready) document.fonts.ready.then(fitPreviewStages);
+      if (bc) bc.postMessage({ type: 'request-state' });   // 메인 창에 현재 위치 요청
+      return;
+    }
+    buildToc();
+    var m = location.hash.match(/^#slide-(\d+)$/);
+    var start = m ? Math.min(Math.max(Number(m[1]) - 1, 0), total - 1) : 0;
+    current = start;
+    var s = slides[start];
+    s.style.transition = 'none';
+    s.classList.add('is-active');
+    s.getBoundingClientRect();
+    s.style.transition = '';
+    updateUI();
+  }
+  init();
+})();
+</script>
+</body>
+</html>

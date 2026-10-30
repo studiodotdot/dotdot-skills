@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!-- ✏️ 교체: 문서 제목 -->
+<title>{{과정명}} — 과정개발계획서</title>
+<!-- Pretendard 웹폰트. CDN이 막힌 네트워크에서는 body의 시스템 한글 폰트로 대체된다 -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+<style>
+  /* ================================================================
+     ⛔ 서식 CSS — 수정하지 않는다. 콘텐츠만 교체한다.
+     ================================================================ */
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    font-family: "Pretendard", "Pretendard Variable", -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Malgun Gothic", "Noto Sans KR", sans-serif;
+    color: #1a1d24;
+    background: #f2f4f7;
+    line-height: 1.65;
+    word-break: keep-all;
+    overflow-wrap: break-word;
+  }
+  .page { max-width: 880px; margin: 0 auto; background: #fff; padding: 56px 60px 72px; }
+
+  /* ─── 헤더 ─── */
+  .doc-label { font-size: 13px; font-weight: 700; letter-spacing: 2px; color: #2563eb; margin-bottom: 10px; }
+  h1 { font-size: 30px; font-weight: 800; letter-spacing: -0.5px; line-height: 1.3; }
+  .doc-meta { margin-top: 14px; font-size: 13.5px; color: #6b7280; display: flex; gap: 18px; flex-wrap: wrap; }
+  .doc-meta span b { color: #374151; font-weight: 600; }
+  .divider { height: 3px; background: #1a1d24; margin: 26px 0 0; }
+
+  /* ─── 섹션 ─── */
+  section { margin-top: 44px; }
+  h2 { font-size: 19px; font-weight: 800; letter-spacing: -0.3px; padding-left: 12px; border-left: 5px solid #2563eb; margin-bottom: 16px; }
+  h3 { font-size: 15.5px; font-weight: 700; margin: 24px 0 10px; color: #111827; }
+  p { font-size: 14.5px; color: #374151; }
+  .note { font-size: 13px; color: #6b7280; margin-top: 8px; }
+
+  /* ─── 테이블 공통 ─── */
+  table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+  th { background: #1f2937; color: #fff; font-weight: 600; text-align: left; padding: 9px 12px; font-size: 13px; white-space: nowrap; }
+  td { padding: 10px 12px; border-bottom: 1px solid #e5e7eb; vertical-align: top; color: #374151; }
+  tr:nth-child(even) td { background: #f9fafb; }
+  td.mod { font-weight: 700; color: #2563eb; white-space: nowrap; }
+  td.time { white-space: nowrap; font-weight: 600; color: #111827; }
+  .total-row td { background: #eff6ff !important; font-weight: 700; color: #1e40af; border-top: 2px solid #2563eb; }
+
+  /* ─── 개요 테이블 ─── */
+  .overview td:first-child { width: 140px; font-weight: 700; color: #111827; background: #f3f4f6; }
+
+  /* ─── 목표 리스트 ─── */
+  ol.goals { padding-left: 22px; font-size: 14.5px; color: #374151; }
+  ol.goals li { margin-bottom: 7px; }
+  ol.goals b { color: #1e40af; }
+
+  /* ─── 구조도 (세로 나열 카드 + 내부 줄) ─── */
+  .flow { display: flex; flex-direction: column; gap: 14px; margin: 14px 0 6px; }
+  .flow-box { width: 100%; border: 2px solid #2563eb; border-radius: 12px; background: #fff; overflow: hidden; }
+  .flow-box.second { border-color: #7c3aed; }
+  .flow-box .head { display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; background: #2563eb; color: #fff; padding: 10px 18px; }
+  .flow-box.second .head { background: #7c3aed; }
+  .flow-box .t { font-size: 12.5px; font-weight: 700; letter-spacing: 1px; opacity: 0.85; }
+  .flow-box .n { font-size: 16.5px; font-weight: 800; }
+  .flow-box .inner { width: 100%; border-collapse: collapse; }
+  .flow-box .inner td { padding: 11px 16px; font-size: 13.5px; color: #374151; border-bottom: 1px solid #e5e7eb; background: #fff !important; vertical-align: top; }
+  .flow-box .inner tr:last-child td { border-bottom: none; }
+  .flow-box .inner td.lbl { width: 64px; font-weight: 800; font-size: 13px; color: #1e40af; background: #eff6ff !important; border-right: 1px solid #e5e7eb; white-space: nowrap; }
+  .flow-box.second .inner td.lbl { color: #6d28d9; background: #f5f3ff !important; }
+  .flow-box.third { border-color: #0f766e; }
+  .flow-box.third .head { background: #0f766e; }
+  .flow-box.third .inner td.lbl { color: #115e59; background: #f0fdfa !important; }
+  .link-note { margin-top: 12px; background: #fffbeb; border: 1px solid #fcd34d; border-radius: 8px; padding: 10px 14px; font-size: 13px; color: #92400e; }
+
+  /* ─── 회차 헤더 ─── */
+  .session-header { display: flex; align-items: baseline; gap: 12px; margin: 30px 0 12px; padding: 12px 16px; border-radius: 10px; background: #eff6ff; }
+  .session-header.second { background: #f5f3ff; }
+  .session-header .badge { font-size: 12px; font-weight: 800; color: #fff; background: #2563eb; padding: 3px 10px; border-radius: 999px; white-space: nowrap; }
+  .session-header.second .badge { background: #7c3aed; }
+  .session-header.third { background: #f0fdfa; }
+  .session-header.third .badge { background: #0f766e; }
+  .session-header .title { font-size: 16px; font-weight: 800; }
+  .session-header .sub { font-size: 12.5px; color: #6b7280; margin-left: auto; white-space: nowrap; }
+  .grand-total { margin-top: 24px; }
+  tr.break-row td { color: #9ca3af; font-size: 12.5px; }
+
+  /* ─── 메릴 차시 구성 카드 ─── */
+  .merrill { margin-top: 10px; border: 1px solid #e5e7eb; border-radius: 10px; overflow: hidden; }
+  .merrill-title { background: #f3f4f6; padding: 8px 14px; font-size: 13px; font-weight: 700; color: #374151; }
+  .merrill table { font-size: 13px; }
+  .merrill th { background: #6b7280; }
+
+  /* ─── 박스 ─── */
+  .callout { background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 10px; padding: 16px 20px; margin-top: 12px; }
+  .callout h4 { font-size: 14px; font-weight: 700; margin-bottom: 8px; color: #111827; }
+  .callout ul { padding-left: 20px; font-size: 13.5px; color: #4b5563; }
+  .callout ul li { margin-bottom: 5px; }
+  .callout.warn { background: #fffbeb; border-color: #fcd34d; }
+  .callout.warn h4 { color: #92400e; }
+  .callout.warn ul { color: #92400e; }
+
+  /* ─── 인쇄 (A4) ─── */
+  @page { size: A4; margin: 12mm 11mm; }
+  @media print {
+    * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    body { background: #fff; font-size: 12px; }
+    .page { max-width: none; padding: 0; }
+    .pb { break-before: page; }                       /* 페이지 강제 분할 지점 */
+    table, .merrill, .callout, .flow-box, .link-note, .session-header { break-inside: avoid; }
+    tr { break-inside: avoid; }
+    h2, h3 { break-after: avoid; }
+    .session-block { break-inside: avoid; }
+    section { margin-top: 18px; }
+    h1 { font-size: 21px; }
+    .doc-label { font-size: 11px; margin-bottom: 6px; }
+    .doc-meta { font-size: 11px; margin-top: 8px; }
+    .divider { margin-top: 14px; height: 2px; }
+    .overview td { padding: 6px 10px; }
+    ol.goals li { margin-bottom: 4px; }
+    .flow { gap: 10px; margin: 10px 0 4px; }
+    .flow-box .head { padding: 7px 14px; }
+    .flow-box .n { font-size: 14px; }
+    .flow-box .inner td { padding: 8px 12px; }
+    .link-note { margin-top: 8px; padding: 8px 12px; font-size: 11.5px; }
+    h2 { font-size: 16px; margin-bottom: 10px; }
+    h3 { font-size: 13.5px; margin: 14px 0 6px; }
+    p, ol.goals { font-size: 12px; }
+    table { font-size: 11.5px; }
+    th { padding: 6px 9px; font-size: 11px; }
+    td { padding: 7px 9px; }
+    .merrill table { font-size: 11px; }
+    .callout { padding: 10px 14px; }
+    .callout ul, .flow-box .inner td { font-size: 11.5px; }
+    .session-header { margin: 18px 0 8px; padding: 8px 12px; }
+  }
+  @media (max-width: 640px) {
+    .page { padding: 32px 20px 48px; }
+    .doc-meta { gap: 10px; }
+  }
+</style>
+</head>
+<body>
+<!-- ================================================================
+     ✏️ 콘텐츠 영역 — 아래 내용만 교체한다. 위 CSS는 건드리지 않는다.
+
+     구조 규칙
+       · 단일 세션 과정(1회 완결)  → session-header 없이 모듈 테이블 하나
+       · 다회차 과정(2회 이상)     → 회차마다 .session-block + .session-header
+       · 회차 색(flow-box·session-header 공통): 1회차 기본(파랑) · 2회차 second(보라)
+                                     · 3회차 third(청록) · 4회차부터 기본→second→third 순환
+       · 페이지를 나누고 싶은 지점의 <section> 또는 블록에 class="pb"
+       · 표의 마지막 줄은 항상 <tr class="total-row"> 합계 행
+       · 휴식은 별도 행 <tr class="break-row">, 교수법 칸에 "휴식" (시간 합계에 포함)
+     ================================================================ -->
+<div class="page">
+
+  <div class="doc-label">과정개발계획서</div>
+  <h1>{{과정명}}<br>{{부제 — 없으면 이 줄과 br 삭제}}</h1>
+  <div class="doc-meta">
+    <span><b>작성</b> {{작성자/부서}}</span>
+    <span><b>작성일</b> {{YYYY. MM. DD}}</span>
+    <span><b>버전</b> v1.0 (초안)</span>
+  </div>
+  <div class="divider"></div>
+
+  <!-- ═══ 1. 과정 개요 ═══ -->
+  <section>
+    <h2>1. 과정 개요</h2>
+    <table class="overview">
+      <tr><td>교육 과정명</td><td>{{과정명}}</td></tr>
+      <tr><td>교육 목적</td><td>{{1~2문장}}</td></tr>
+      <tr><td>대상 학습자</td><td>{{직군·직급·인원}}</td></tr>
+      <tr><td>총 교육 시간</td><td>{{예: 40분 / 1.5H × 2회}}</td></tr>
+      <tr><td>교육 형태</td><td>{{오프라인 집합 / 온라인 실시간(도구) / 블렌디드}}</td></tr>
+      <tr><td>적용 교육 모델</td><td>{{예: ADDIE(전체 구조) + 메릴 교수원리(모듈 내부)}}</td></tr>
+      <tr><td>실습 환경</td><td>{{실습 도구·환경. 없으면 이 행 삭제}}</td></tr>
+    </table>
+  </section>
+
+  <!-- ═══ 2. 학습목표 ═══ -->
+  <section>
+    <h2>2. 학습목표</h2>
+    <p>이 과정을 이수한 학습자는 다음을 할 수 있다.</p>
+    <ol class="goals" style="margin-top:10px">
+      <li><b>[{{Bloom 수준}}]</b> {{~할 수 있다}}</li>
+      <li><b>[{{Bloom 수준}}]</b> {{~할 수 있다}}</li>
+      <li><b>[{{Bloom 수준}}]</b> {{~할 수 있다}}</li>
+    </ol>
+  </section>
+
+  <!-- ═══ 3. 과정 구조 ═══ -->
+  <section>
+    <h2>3. 과정 구조</h2>
+    <div class="flow">
+      <!-- 단일 세션이면 flow-box 하나, 다회차면 회차 수만큼 (2회차 second · 3회차 third · 4회차부터 순환) -->
+      <div class="flow-box">
+        <div class="head">
+          <span class="t">{{1회차 · 90분 · 키워드}}</span>
+          <span class="n">{{회차 제목}}</span>
+        </div>
+        <table class="inner">
+          <tr><td class="lbl">목표</td><td>{{이 회차/구간의 목표 한 문장}}</td></tr>
+          <tr><td class="lbl">내용</td><td>{{주제 → 주제 → 주제 흐름}}</td></tr>
+        </table>
+      </div>
+      <div class="flow-box second">
+        <div class="head">
+          <span class="t">{{2회차 · 90분 · 키워드}}</span>
+          <span class="n">{{회차 제목}}</span>
+        </div>
+        <table class="inner">
+          <tr><td class="lbl">목표</td><td>{{목표}}</td></tr>
+          <tr><td class="lbl">내용</td><td>{{내용 흐름}}</td></tr>
+        </table>
+      </div>
+    </div>
+    <div class="link-note">
+      <b>{{회차 간 연계 / 모듈 간 연계}}</b> — {{앞 구간의 무엇이 뒤 구간의 기반이 되는지, 계열화 논리 1~2문장}}
+    </div>
+  </section>
+
+  <!-- ═══ 4. 상세 커리큘럼 ═══ -->
+  <section class="pb">
+    <h2>4. 상세 커리큘럼</h2>
+
+    <div class="session-block">
+      <!-- 단일 세션 과정이면 session-header 줄을 통째로 삭제 -->
+      <div class="session-header">
+        <span class="badge">1회차</span>
+        <span class="title">{{회차 제목}}</span>
+        <span class="sub">{{온라인 실시간 90분}}</span>
+      </div>
+      <table>
+        <thead>
+          <tr><th>모듈</th><th>주제</th><th>학습목표 / 세부내용</th><th>시간</th><th>교수법</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="mod">M0</td><td><b>{{주제}}</b></td>
+            <td><b>{{학습목표 — ~할 수 있다}}</b><br>
+              · {{세부내용}}<br>
+              · {{세부내용}}</td>
+            <td class="time">{{00분}}</td><td>{{교수법}}</td>
+          </tr>
+          <tr>
+            <td class="mod">M1</td><td><b>{{주제}}</b></td>
+            <td><b>{{학습목표}}</b><br>
+              · {{세부내용}}<br>
+              · {{세부내용}}</td>
+            <td class="time">{{00분}}</td><td>{{교수법}}</td>
+          </tr>
+          <!-- 휴식 행: 모듈 경계에 둔다. 회당 연속 진행이 2시간 이하라 휴식이 없으면 삭제 -->
+          <tr class="break-row"><td class="mod">—</td><td colspan="2">휴식</td><td class="time">{{10분}}</td><td>휴식</td></tr>
+          <tr class="total-row"><td colspan="3">{{1회차}} 합계</td><td class="time">{{00분}}</td><td></td></tr>
+        </tbody>
+      </table>
+
+      <!-- 메릴 차시 카드는 핵심 모듈에만: 회차마다 실습 시간(분)이 가장 긴 모듈 1개, 과정 전체 최대 3개
+           (전 모듈에 붙이면 문서가 비대해짐) -->
+      <div class="merrill">
+        <div class="merrill-title">{{M2}} 차시 구성 — 메릴 교수원리</div>
+        <table>
+          <thead><tr><th>단계</th><th>시간</th><th>활동</th></tr></thead>
+          <tbody>
+            <tr><td>문제 제시</td><td class="time">{{0분}}</td><td>{{실제 상황·사례}}</td></tr>
+            <tr><td>활성화</td><td class="time">{{0분}}</td><td>{{경험 공유·사전 점검}}</td></tr>
+            <tr><td>시연</td><td class="time">{{0분}}</td><td>{{개념 설명·시범}}</td></tr>
+            <tr><td>적용</td><td class="time">{{0분}}</td><td>{{실습·롤플레이}}</td></tr>
+            <tr><td>통합</td><td class="time">{{0분}}</td><td>{{정리·현업 적용}}</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- 다회차면 위 session-block을 회차 수만큼 복제 (2회차 second · 3회차 third · 4회차부터 순환) -->
+
+    <!-- 다회차일 때만: 모든 회차 블록 뒤, 4절 맨 끝에 과정 전체 합계. 단일 세션이면 삭제 -->
+    <table class="grand-total">
+      <tbody>
+        <tr class="total-row"><td>과정 전체 합계 ({{N}}회차)</td><td class="time">{{000분}}</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- ═══ 5. 설계 근거 ═══ -->
+  <section class="pb">
+    <h2>5. 설계 근거</h2>
+    <h3>적용 교육 모델</h3>
+    <p>{{어떤 모델을 왜 선택했는지}}</p>
+    <h3>계열화 논리</h3>
+    <p>{{모듈 순서를 왜 이렇게 배치했는지 — 구조화·계열화(Easy→Hard 등)·모듈 간 연계}}</p>
+    <h3>교수방법 선택 이유</h3>
+    <table>
+      <thead><tr><th>모듈</th><th>교수방법</th><th>선택 근거</th></tr></thead>
+      <tbody>
+        <tr><td class="mod">{{M1}}</td><td>{{방법}}</td><td>{{근거}}</td></tr>
+        <tr><td class="mod">{{M2}}</td><td>{{방법}}</td><td>{{근거}}</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- ═══ 6. 평가 계획 ═══ -->
+  <section>
+    <h2>6. 평가 계획</h2>
+    <table>
+      <thead><tr><th>평가 유형</th><th>시점</th><th>대상</th><th>방법</th><th>기준</th></tr></thead>
+      <tbody>
+        <tr><td>형성평가</td><td>{{시점}}</td><td>{{모듈}}</td><td>{{방법}}</td><td>{{기준}}</td></tr>
+        <tr><td>총괄평가</td><td>과정 종료 시</td><td>전체</td><td>{{방법}}</td><td>{{기준}}</td></tr>
+      </tbody>
+    </table>
+    <p class="note">{{평가와 학습목표의 정렬 관계를 한 줄로}}</p>
+  </section>
+
+  <!-- ═══ 7. 시간 배분 요약 ═══ -->
+  <section>
+    <h2>7. 시간 배분 요약</h2>
+    <table>
+      <thead><tr><th>{{모듈 / 회차}}</th><th>이론(강의·시연)</th><th>실습·공유</th><th>정리·평가</th><th>합계</th></tr></thead>
+      <tbody>
+        <tr><td><b>{{M1}}</b> {{주제}}</td><td>{{0분}}</td><td>{{0분}}</td><td>—</td><td class="time">{{0분}}</td></tr>
+        <!-- 휴식은 열을 늘리지 않고 별도 행으로. 휴식이 없으면 삭제 -->
+        <tr class="break-row"><td>휴식</td><td>—</td><td>—</td><td>—</td><td class="time">{{0분}}</td></tr>
+        <tr class="total-row"><td>합계</td><td>{{0분 (00%)}}</td><td>{{0분 (00%)}}</td><td>{{0분 (00%)}}</td><td class="time">{{00분}}</td></tr>
+      </tbody>
+    </table>
+    <p class="note">비율은 휴식을 뺀 학습 시간({{00분}}) 기준. {{실습 비중과 그 이유 한 줄}}</p>
+  </section>
+
+  <!-- ═══ 8. 운영 준비사항 ═══ -->
+  <section>
+    <h2>8. 운영 준비사항</h2>
+    <div class="callout">
+      <h4>사전 안내 (교육 {{3}}일 전 발송 권장)</h4>
+      <ul>
+        <li>{{준비물·사전 과제}}</li>
+        <li>{{환경 점검 사항}}</li>
+      </ul>
+    </div>
+    <!-- 반드시 지켜야 할 제약이 있으면 경고 박스 사용, 없으면 삭제 -->
+    <div class="callout warn">
+      <h4>운영 시 유의사항</h4>
+      <ul>
+        <li>{{리스크와 대응}}</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ═══ 9. 설계 시 가정 — 가정한 항목이 하나라도 있으면 남기고, 없으면 섹션째 삭제 ═══ -->
+  <section>
+    <h2>9. 설계 시 가정</h2>
+    <div class="callout">
+      <ul>
+        <li>{{가정 1}}</li>
+        <li>{{가정 2}}</li>
+      </ul>
+    </div>
+  </section>
+
+</div>
+</body>
+</html>

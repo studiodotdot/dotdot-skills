@@ -1,0 +1,4 @@
+schema_version: "1.1"
+name: cafe-app-contest
+expected_outcome: |
+  공모전 덱 8장. 없는 수치를 지어내지 않고, 실적 없는 아이디어면 성과 장 대신 검증 계획.

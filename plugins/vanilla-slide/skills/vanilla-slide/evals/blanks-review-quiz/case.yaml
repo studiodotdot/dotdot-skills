@@ -1,0 +1,4 @@
+schema_version: "1.1"
+name: blanks-review-quiz
+expected_outcome: |
+  빈칸 채우기 2장, data-step으로 정답 순차 공개, 정리 장, 4키, 정답 요소가 공개될 때 위치가 밀리지 않음.

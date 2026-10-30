@@ -1,0 +1,53 @@
+{
+  "name": "dotdot-skills",
+  "description": "교육자료·발표자료·커리큘럼 제작용 Claude Code 플러그인 모음",
+  "owner": {
+    "name": "dotdot-skills",
+    "url": "https://github.com/studiodotdot"
+  },
+  "plugins": [
+    {
+      "name": "vanilla-slide",
+      "description": "교안·교육자료용 풀스크린 웹 슬라이드 단일 파일 생성. 완성형 엔진 템플릿 동봉 — 전체화면(F)·목차(I)·화자 노트(N)·발표자 모드(S, 듀얼 창 동기화)·빌드 효과·인쇄(PDF 전 장 저장) + 교육자료 설계 규칙(니모닉 목차·빈칸 채우기·정리·금지 예시·활동지·챕터별 색 코딩). \"보여줄 그림 먼저\" 제작 절차 — 장별 시각 아이디어 → 메시지 유형별 그림 사전 → 톤 시안 비교 → 메시지 검수. 템플릿에는 디자인이 없다(엔진 + 톤 토큰 자리 + 아이콘 스프라이트) — 톤과 그림은 덱마다 새로.",
+      "source": "./plugins/vanilla-slide",
+      "category": "education",
+      "tags": [
+        "slides",
+        "presentation",
+        "html",
+        "korean",
+        "education",
+        "single-file"
+      ]
+    },
+    {
+      "name": "vanilla-deck",
+      "description": "보고·제안·공모전·IR 발표용 단일 파일 HTML 덱 생성. vanilla-slide 엔진 파생(F 전체화면·I 목차·PDF 전 장 인쇄) + 국내 발표자료 포트폴리오 실측 시각 문법 — 다크 표지·간지, 완결 문장 제목 밴드, 챕터 내비, 차트→요인→영향 3단, 컬러 카드 격자, 목표·기대효과, 타임라인, 결론 밴드, 출처·페이지 푸터.",
+      "source": "./plugins/vanilla-deck",
+      "category": "education",
+      "tags": [
+        "slides",
+        "presentation",
+        "report",
+        "proposal",
+        "html",
+        "korean",
+        "single-file"
+      ]
+    },
+    {
+      "name": "edu-designer",
+      "description": "검증된 교육 모델(ADDIE·딕앤케리·메릴) 기반 커리큘럼 설계. 니즈 분석 인터뷰 → 모델 선택 → 모듈 구성 → HTML 과정개발계획서(A4 인쇄 서식) 산출까지 교육 과정 개발 워크플로우 — 블룸 텍사노미·교수법 레퍼런스 동봉.",
+      "source": "./plugins/edu-designer",
+      "category": "education",
+      "tags": [
+        "curriculum",
+        "instructional-design",
+        "addie",
+        "education",
+        "korean",
+        "training"
+      ]
+    }
+  ]
+}
